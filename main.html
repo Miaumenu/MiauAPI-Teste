@@ -211,23 +211,16 @@
         function showInfobox(message, position, size, level) {
             console.log('[MiauAPI] showInfobox:', { message, position, size, level });
 
-            // Determinar a posição (preset ou custom)
-            let positionKey;
-            let finalPosition;
-
-            if (positionPresets[position]) {
-                // Usar preset de posição
-                positionKey = position;
-                finalPosition = positionPresets[position];
-            } else if (position && position.includes(',')) {
-                // Usar posição customizada
-                positionKey = `custom-${position}`;
-                finalPosition = position;
-            } else {
-                // Default: superior-esquerdo
-                positionKey = 'superior-esquerdo';
-                finalPosition = positionPresets['superior-esquerdo'];
+            // Verificar se a posição é válida
+            if (!positionPresets[position]) {
+                console.error('[MiauAPI] Posição inválida:', position);
+                console.log('[MiauAPI] Posições válidas:', Object.keys(positionPresets));
+                return;
             }
+
+            // Usar preset de posição
+            const positionKey = position;
+            const finalPosition = positionPresets[position];
 
             // Parse tamanho (altura,largura)
             const [height, width] = size ? size.split(',').map(v => parseInt(v.trim())) : [58, 252];
@@ -291,9 +284,7 @@
         // ==========================================
         
         window.MiauAPI = {
-            infobox: showInfobox,
-            // Expor os presets para uso externo se necessário
-            positions: positionPresets
+            infobox: showInfobox
         };
 
         // ==========================================
