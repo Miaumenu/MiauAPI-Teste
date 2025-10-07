@@ -3,364 +3,36 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MiauAPI - Hub Central</title>
+  <title>MiauAPI - API Central</title>
   <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
   <style>
-    * { 
-      box-sizing: border-box; 
-      margin: 0; 
-      padding: 0; 
-      font-family: "Inter", sans-serif; 
-    }
-    
     body { 
-      background: linear-gradient(135deg, #1e1e2e, #2d2d44); 
-      color: #ffffff; 
-      min-height: 100vh;
-      overflow-x: hidden;
-    }
-
-    /* Container Principal */
-    .main-container {
-      display: flex;
-      min-height: 100vh;
-    }
-
-    /* Sidebar de Navegação */
-    .sidebar {
-      width: 250px;
-      background: rgba(0, 0, 0, 0.3);
-      backdrop-filter: blur(10px);
-      border-right: 1px solid rgba(255, 255, 255, 0.1);
-      padding: 20px;
-      position: fixed;
-      height: 100vh;
-      overflow-y: auto;
-    }
-
-    .sidebar h2 {
-      color: #00AAFF;
-      margin-bottom: 20px;
-      text-align: center;
-      font-size: 1.5em;
-    }
-
-    .nav-item {
-      display: block;
-      padding: 12px 16px;
-      margin: 8px 0;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 8px;
-      color: #ffffff;
-      text-decoration: none;
-      transition: all 0.3s ease;
-      cursor: pointer;
-    }
-
-    .nav-item:hover {
-      background: rgba(0, 170, 255, 0.2);
-      border-color: #00AAFF;
-      transform: translateX(5px);
-    }
-
-    .nav-item.active {
-      background: rgba(0, 170, 255, 0.3);
-      border-color: #00AAFF;
-    }
-
-    /* Conteúdo Principal */
-    .content {
-      flex: 1;
-      margin-left: 250px;
-      padding: 20px;
-    }
-
-    .content-section {
-      display: none;
-      animation: fadeIn 0.3s ease;
-    }
-
-    .content-section.active {
-      display: block;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* Sistema de Notificações */
-    .notify-container {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-      gap: 10px;
-      z-index: 9999;
-    }
-
-    .notify {
-      position: relative;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      width: 252px;
-      min-height: 58px;
-      padding: 10px 14px;
-      background: linear-gradient(0deg, #000000, #000000);
-      border: 1px solid rgba(255,255,255,0.15);
-      box-shadow: 0px 0px 18px 2px rgba(0,0,0,0.4);
-      border-radius: 7px;
-      color: #FFFFFF;
-      overflow: hidden;
-      animation: slideIn 0.4s ease;
-      pointer-events: all;
-      cursor: pointer;
-    }
-
-    .notify p {
-      font-weight: 600;
-      font-size: 10px;
-      line-height: 12px;
-      letter-spacing: -0.02em;
-      color: #FFFFFF;
-      margin-left: 8px;
-      text-shadow: 0 0 4px rgba(255,255,255,0.2);
-    }
-
-    .notify::before {
-      content: "";
-      position: absolute;
-      left: 0;
-      top: 6px;
-      width: 3px;
-      height: 46px;
-      border-radius: 7px;
-      box-shadow: 0px 0px 4px 2px rgba(255,255,255,0.4);
-    }
-
-    .notify.info {
-      border: 1px solid rgba(0,170,255,0.71);
-      box-shadow: 0px 0px 18px 2px rgba(0,170,255,0.25);
-    }
-    .notify.info::before {
-      background: #00AAFF;
-      box-shadow: 0px 0px 4px 2px rgba(0,170,255,0.61);
-    }
-
-    .notify.sucesso {
-      border: 1px solid rgba(17,255,0,0.71);
-      box-shadow: 0px 0px 18px 2px rgba(17,255,0,0.25);
-    }
-    .notify.sucesso::before {
-      background: #11FF00;
-      box-shadow: 0px 0px 4px 2px rgba(17,255,0,0.61);
-    }
-
-    .notify.erro {
-      border: 1px solid rgba(255,0,0,0.71);
-      box-shadow: 0px 0px 18px 2px rgba(255,0,0,0.25);
-    }
-    .notify.erro::before {
-      background: #FF0000;
-      box-shadow: 0px 0px 4px 2px rgba(255,0,0,0.61);
-    }
-
-    .notify.warning {
-      border: 1px solid rgba(238,255,0,0.71);
-      box-shadow: 0px 0px 18px 2px rgba(238,255,0,0.25);
-    }
-    .notify.warning::before {
-      background: #EEFF00;
-      box-shadow: 0px 0px 4px 2px rgba(238,255,0,0.61);
-    }
-
-    @keyframes slideIn {
-      from { transform: translateX(100%); opacity: 0; }
-      to { transform: translateX(0); opacity: 1; }
-    }
-
-    /* Iframe para carregar arquivos específicos */
-    .file-iframe {
-      width: 100%;
-      height: 80vh;
-      border: 2px solid #00AAFF;
-      border-radius: 12px;
-      background: #ffffff;
-    }
-
-    .loading {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 200px;
-      color: #00AAFF;
-      font-size: 18px;
-    }
-
-    /* Responsividade */
-    @media (max-width: 768px) {
-      .sidebar {
-        width: 100%;
-        height: auto;
-        position: relative;
-      }
+      background: transparent; 
+      margin: 0; 
       
-      .content {
-        margin-left: 0;
-      }
+      padding: 0; 
+      overflow: hidden;
     }
   </style>
 </head>
 <body>
   <div id="app">
-    <!-- Sistema de Notificações -->
-    <div class="notify-container">
-      <TransitionGroup name="slide" tag="div">
-        <div v-for="n in notifications"
-             :key="n.id"
-             class="notify"
-             :class="n.level"
-             @click="removeNotification(n.id)">
-          <p>{{ n.message }}</p>
-        </div>
-      </TransitionGroup>
-    </div>
-
-    <!-- Container Principal -->
-    <div class="main-container">
-      <!-- Sidebar de Navegação -->
-      <div class="sidebar">
-        <h2>MiauAPI Hub</h2>
-        <div class="nav-item" :class="{ active: currentSection === 'dashboard' }" @click="setSection('dashboard')">
-          📊 Dashboard
-        </div>
-        <div class="nav-item" :class="{ active: currentSection === 'notifications' }" @click="setSection('notifications')">
-          🔔 Notificações
-        </div>
-        <div class="nav-item" :class="{ active: currentSection === 'drawing' }" @click="setSection('drawing')">
-          🎨 Desenho
-        </div>
-        <div class="nav-item" :class="{ active: currentSection === 'media' }" @click="setSection('media')">
-          🎬 Mídia
-        </div>
-        <div class="nav-item" :class="{ active: currentSection === 'api' }" @click="setSection('api')">
-          🔧 API
-        </div>
-      </div>
-
-      <!-- Conteúdo Principal -->
-      <div class="content">
-        <!-- Dashboard -->
-        <div class="content-section" :class="{ active: currentSection === 'dashboard' }">
-          <h1>🎯 MiauAPI Hub Central</h1>
-          <p>Este é o hub central que conecta todos os módulos da MiauAPI:</p>
-          
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin: 20px 0;">
-            <div style="background: rgba(0,170,255,0.1); padding: 20px; border-radius: 12px; border: 1px solid #00AAFF;">
-              <h3>🔔 Sistema de Notificações</h3>
-              <p>Carrega: <code>infobox/infobox.html</code></p>
-              <button @click="setSection('notifications')" style="padding: 10px 20px; background: #00AAFF; border: none; border-radius: 6px; color: white; cursor: pointer;">
-                Abrir Notificações
-              </button>
-            </div>
-            
-            <div style="background: rgba(0,170,255,0.1); padding: 20px; border-radius: 12px; border: 1px solid #00AAFF;">
-              <h3>🎨 Ferramentas de Desenho</h3>
-              <p>Carrega: <code>Drawing/DrawLine.html</code>, <code>Drawing/DrawCircle.html</code>, <code>Drawing/DrawRect.html</code></p>
-              <button @click="setSection('drawing')" style="padding: 10px 20px; background: #00AAFF; border: none; border-radius: 6px; color: white; cursor: pointer;">
-                Abrir Desenho
-              </button>
-            </div>
-            
-            <div style="background: rgba(0,170,255,0.1); padding: 20px; border-radius: 12px; border: 1px solid #00AAFF;">
-              <h3>🎬 Gerenciamento de Mídia</h3>
-              <p>Carrega módulos de mídia dinamicamente</p>
-              <button @click="setSection('media')" style="padding: 10px 20px; background: #00AAFF; border: none; border-radius: 6px; color: white; cursor: pointer;">
-                Abrir Mídia
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Seção de Notificações -->
-        <div class="content-section" :class="{ active: currentSection === 'notifications' }">
-          <h1>🔔 Sistema de Notificações</h1>
-          <p>Carregando módulo de notificações...</p>
-          <div v-if="loading" class="loading">
-            Carregando infobox/infobox.html...
-          </div>
-          <iframe v-else-if="currentFile" :src="currentFile" class="file-iframe"></iframe>
-        </div>
-
-        <!-- Seção de Desenho -->
-        <div class="content-section" :class="{ active: currentSection === 'drawing' }">
-          <h1>🎨 Ferramentas de Desenho</h1>
-          <p>Escolha uma ferramenta de desenho:</p>
-          
-          <div style="display: flex; gap: 15px; margin: 20px 0; flex-wrap: wrap;">
-            <button @click="loadDrawingFile('Drawing/DrawLine.html')" style="padding: 15px 25px; background: rgba(0,170,255,0.2); border: 2px solid #00AAFF; border-radius: 8px; color: white; cursor: pointer;">
-              📏 Desenhar Linhas
-            </button>
-            <button @click="loadDrawingFile('Drawing/DrawCircle.html')" style="padding: 15px 25px; background: rgba(0,170,255,0.2); border: 2px solid #00AAFF; border-radius: 8px; color: white; cursor: pointer;">
-              ⭕ Desenhar Círculos
-            </button>
-            <button @click="loadDrawingFile('Drawing/DrawRect.html')" style="padding: 15px 25px; background: rgba(0,170,255,0.2); border: 2px solid #00AAFF; border-radius: 8px; color: white; cursor: pointer;">
-              📐 Desenhar Retângulos
-            </button>
-          </div>
-          
-          <div v-if="loading" class="loading">
-            Carregando {{ currentFile }}...
-          </div>
-          <iframe v-else-if="currentFile" :src="currentFile" class="file-iframe"></iframe>
-        </div>
-
-        <!-- Seção de Mídia -->
-        <div class="content-section" :class="{ active: currentSection === 'media' }">
-          <h1>🎬 Gerenciamento de Mídia</h1>
-          <p>Módulos de mídia serão carregados dinamicamente conforme necessário.</p>
-          <div class="loading">
-            Módulos de mídia em desenvolvimento...
-          </div>
-        </div>
-
-        <!-- Seção da API -->
-        <div class="content-section" :class="{ active: currentSection === 'api' }">
-          <h1>🔧 Documentação da API</h1>
-          <p>Use a API global MiauAPI para integrar com seus projetos:</p>
-          
-          <div style="background: rgba(0,0,0,0.3); padding: 20px; border-radius: 12px; margin: 20px 0;">
-            <h3>📋 Exemplos de Uso:</h3>
-            <pre style="background: rgba(0,0,0,0.5); padding: 15px; border-radius: 6px; overflow-x: auto; color: #00AAFF;">
-// Notificações
-MiauAPI_NotifySuccess("Mensagem de sucesso!");
-MiauAPI_NotifyError("Erro encontrado!");
-MiauAPI_NotifyWarning("Aviso importante!");
-MiauAPI_NotifyInfo("Informação útil!");
-
-// Desenho
-MiauAPI_DrawLine(x1, y1, x2, y2, color, width);
-MiauAPI_DrawCircle(x, y, radius, color, width, type);
-MiauAPI_DrawRectangle(x, y, width, height, color, lineWidth, filled);
-
-// Mídia
-MiauAPI_LoadImage(url);
-MiauAPI_LoadVideo(url);
-MiauAPI_LoadGif(url);
-
-// Controle
-MiauAPI_SetSection("drawing");
-MiauAPI_Show();
-MiauAPI_Hide();
-MiauAPI_Destroy();
-            </pre>
-          </div>
-        </div>
+    <!-- Sistema de Notificações (invisível) -->
+    <div style="position: fixed; top: 20px; right: 20px; z-index: 9999;">
+      <div v-for="n in notifications" :key="n.id" 
+           :style="{
+             background: 'linear-gradient(0deg, #000000, #000000)',
+             border: '1px solid rgba(255,255,255,0.15)',
+             borderRadius: '7px',
+             color: '#FFFFFF',
+             padding: '10px 14px',
+             margin: '5px 0',
+             minWidth: '200px',
+             fontSize: '12px',
+             cursor: 'pointer'
+           }"
+           @click="removeNotification(n.id)">
+        {{ n.message }}
       </div>
     </div>
   </div>
@@ -370,24 +42,7 @@ MiauAPI_Destroy();
 
     createApp({
       setup() {
-        // Estado da aplicação
-        const currentSection = ref('dashboard');
         const notifications = ref([]);
-        const currentFile = ref('');
-        const loading = ref(false);
-
-        // Funções de navegação
-        const setSection = (section) => {
-          currentSection.value = section;
-          currentFile.value = '';
-          loading.value = false;
-        };
-
-        const loadDrawingFile = (filePath) => {
-          loading.value = true;
-          currentFile.value = filePath;
-          loading.value = false;
-        };
 
         // Funções de notificação
         const addNotification = (message, duration = 5000, level = "info") => {
@@ -422,35 +77,56 @@ MiauAPI_Destroy();
               );
               break;
 
-            case "setSection":
-              if (data.section) {
-                setSection(data.section);
+            case "loadFile":
+              if (data.filePath) {
+                // Carrega arquivo específico em nova janela/iframe
+                window.open(data.filePath, '_blank');
               }
               break;
 
-            case "loadFile":
-              if (data.filePath) {
-                loadDrawingFile(data.filePath);
+            case "loadDrawingTool":
+              if (data.tool) {
+                let filePath = "";
+                if (data.tool === "line") filePath = "https://miaumenu.github.io/MiauAPI-Teste/Drawing/DrawLine.html";
+                else if (data.tool === "circle") filePath = "https://miaumenu.github.io/MiauAPI-Teste/Drawing/DrawCircle.html";
+                else if (data.tool === "rectangle") filePath = "https://miaumenu.github.io/MiauAPI-Teste/Drawing/DrawRect.html";
+                
+                if (filePath) {
+                  window.open(filePath, '_blank');
+                }
               }
               break;
+
+            case "loadNotifications":
+              window.open("https://miaumenu.github.io/MiauAPI-Teste/infobox/infobox.html", '_blank');
+              break;
+
+            case "sendToClient":
+              // Envia mensagem de volta para o client Lua
+              if (window.parent && window.parent !== window) {
+                window.parent.postMessage(data, '*');
+              }
+              break;
+          }
+        });
+
+        // Sistema de comunicação bidirecional
+        window.addEventListener("message", (event) => {
+          // Reenvia mensagens para o client Lua se necessário
+          if (event.data && event.data.forwardToClient) {
+            // Aqui você pode implementar lógica para enviar de volta para o Lua
+            console.log("Mensagem para enviar ao client:", event.data);
           }
         });
 
         // API Global
         window.MiauAPI = {
           infobox: (msg, dur = 5000, level = "info") =>
-            addNotification(msg, dur, level),
-          setSection: setSection,
-          loadFile: loadDrawingFile
+            addNotification(msg, dur, level)
         };
 
         return {
-          currentSection,
           notifications,
-          currentFile,
-          loading,
-          setSection,
-          loadDrawingFile,
           addNotification,
           removeNotification
         };
