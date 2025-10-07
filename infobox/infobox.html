@@ -1,175 +1,285 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Teste MiauAPI Infobox</title>
-  <style>
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      padding: 20px;
-      color: white;
+<!-- ==========================================
+     MiauAPI Infobox Module
+     Arquivo: infobox/infobox.html
+     ========================================== -->
+
+<style>
+    /* Container de infoboxes */
+    .infobox-container {
+        position: absolute;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        z-index: 9999;
+        pointer-events: none;
     }
-    .container {
-      max-width: 800px;
-      margin: 0 auto;
-      background: rgba(0, 0, 0, 0.5);
-      padding: 30px;
-      border-radius: 15px;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+
+    /* Estilo dos infoboxes */
+    .infobox {
+        background: var(--infobox-bg);
+        color: #fff;
+        border-radius: 7px;
+        font-family: 'Inter', sans-serif;
+        box-shadow: var(--infobox-shadow);
+        text-align: left;
+        pointer-events: auto;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 1px solid var(--infobox-border);
+        position: relative;
+        overflow: hidden;
+        transform: translateZ(0);
+        will-change: transform, opacity;
+        display: flex;
+        align-items: center;
+        gap: 0;
+        padding: 0;
     }
-    h1 { text-align: center; margin-bottom: 30px; }
-    .btn-group {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 15px;
-      margin-bottom: 30px;
+
+    .infobox-accent {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 3px;
+        background: var(--infobox-accent);
+        box-shadow: var(--infobox-accent-shadow);
+        border-radius: 7px;
+        flex-shrink: 0;
+        margin-left: 6px;
+        height: calc(100% - 12px);
     }
-    button {
-      padding: 15px 20px;
-      border: none;
-      border-radius: 8px;
-      font-size: 16px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      color: white;
+
+    .infobox-content {
+        padding: 10px 15px;
+        position: relative;
+        z-index: 2;
+        flex: 1;
+        display: flex;
+        align-items: center;
     }
-    button:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3); }
-    .btn-info { background: linear-gradient(135deg, #00AAFF, #0088CC); }
-    .btn-success { background: linear-gradient(135deg, #11FF00, #00CC00); }
-    .btn-error { background: linear-gradient(135deg, #FF0000, #CC0000); }
-    .btn-warning { background: linear-gradient(135deg, #EEFF00, #CCDD00); color: #333; }
+
+    .infobox-message {
+        font-size: 10px;
+        font-weight: 600;
+        line-height: 12px;
+        letter-spacing: -0.02em;
+        color: #FFFFFF;
+        word-wrap: break-word;
+    }
+
+    /* Níveis de infobox */
+    .infobox.info {
+        --infobox-bg: linear-gradient(97.75deg, rgba(47, 47, 47, 0.1911) -3.82%, rgba(0, 170, 255, 0.1407) 104.72%);
+        --infobox-border: rgba(0, 170, 255, 0.61);
+        --infobox-shadow: 0px 0px 4px 2px rgba(0, 170, 255, 0.25);
+        --infobox-accent: #00AAFF;
+        --infobox-accent-shadow: 0px 0px 4px 2px rgba(0, 170, 255, 0.61);
+    }
+
+    .infobox.success {
+        --infobox-bg: linear-gradient(97.75deg, rgba(47, 47, 47, 0.1911) -3.82%, rgba(17, 255, 0, 0.1407) 104.72%);
+        --infobox-border: rgba(17, 255, 0, 0.61);
+        --infobox-shadow: 0px 0px 4px rgba(17, 255, 0, 0.25);
+        --infobox-accent: #11FF00;
+        --infobox-accent-shadow: 0px 0px 4px 2px rgba(17, 255, 0, 0.25);
+    }
+
+    .infobox.warning {
+        --infobox-bg: linear-gradient(97.75deg, rgba(47, 47, 47, 0.1911) -3.82%, rgba(238, 255, 0, 0.1407) 104.72%);
+        --infobox-border: rgba(238, 255, 0, 0.61);
+        --infobox-shadow: 0px 0px 4px 2px rgba(238, 255, 0, 0.25);
+        --infobox-accent: #EEFF00;
+        --infobox-accent-shadow: 0px 0px 4px 2px rgba(238, 255, 0, 0.61);
+    }
+
+    .infobox.error {
+        --infobox-bg: linear-gradient(97.75deg, rgba(47, 47, 47, 0.1911) -3.82%, rgba(255, 0, 0, 0.1407) 104.72%);
+        --infobox-border: rgba(255, 0, 0, 0.61);
+        --infobox-shadow: 0px 0px 4px 2px rgba(255, 0, 0, 0.25);
+        --infobox-accent: #FF0000;
+        --infobox-accent-shadow: 0px 0px 4px 2px rgba(255, 0, 0, 0.25);
+    }
+
+    /* Animação de entrada */
+    .infobox-enter {
+        animation: infobox-slide-in 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    @keyframes infobox-slide-in {
+        0% {
+            transform: translateY(-20px);
+            opacity: 0;
+        }
+        100% {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+
+    /* Animação de saída */
+    .infobox-exit {
+        animation: infobox-slide-out 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    @keyframes infobox-slide-out {
+        0% {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        100% {
+            transform: translateY(-20px);
+            opacity: 0;
+        }
+    }
+</style>
+
+<script>
+    // ==========================================
+    // MiauAPI Infobox Module
+    // ==========================================
     
-    .code-example {
-      background: #1e1e1e;
-      padding: 20px;
-      border-radius: 8px;
-      margin: 20px 0;
-      overflow-x: auto;
+    class InfoboxModule {
+        constructor() {
+            this.containers = new Map();
+            this.infoboxes = [];
+            this.defaultDuration = 5000;
+        }
+
+        init() {
+            console.log('[MiauAPI] Módulo Infobox inicializado!');
+        }
+
+        // Obter ou criar container para uma posição específica
+        getContainer(x, y) {
+            const key = `${x},${y}`;
+            
+            if (!this.containers.has(key)) {
+                const container = document.createElement('div');
+                container.className = 'infobox-container';
+                container.style.left = `${x}px`;
+                container.style.top = `${y}px`;
+                
+                document.getElementById('modules-container').appendChild(container);
+                this.containers.set(key, container);
+            }
+            
+            return this.containers.get(key);
+        }
+
+        // Mostrar infobox
+        show(message, position, size, level) {
+            // Parse da posição (formato: "x,y")
+            const [x, y] = position ? position.split(',').map(v => parseInt(v.trim())) : [20, 20];
+            
+            // Parse do tamanho (formato: "altura,largura")
+            const [height, width] = size ? size.split(',').map(v => parseInt(v.trim())) : [58, 248];
+            
+            // Normalizar o level
+            const normalizedLevel = this.normalizeLevel(level);
+            
+            // Criar o infobox
+            const id = Date.now() + Math.random();
+            const container = this.getContainer(x, y);
+            const infobox = this.createInfobox(id, message, normalizedLevel, width, height);
+            
+            // Adicionar ao container
+            container.appendChild(infobox);
+            
+            // Guardar referência
+            this.infoboxes.push({
+                id,
+                element: infobox,
+                container,
+                position: `${x},${y}`
+            });
+            
+            // Adicionar animação de entrada
+            setTimeout(() => {
+                infobox.classList.add('infobox-enter');
+            }, 10);
+            
+            // Auto-remover após a duração
+            setTimeout(() => {
+                this.remove(id);
+            }, this.defaultDuration);
+            
+            return id;
+        }
+
+        // Criar elemento infobox
+        createInfobox(id, message, level, width, height) {
+            const infobox = document.createElement('div');
+            infobox.className = `infobox ${level}`;
+            infobox.dataset.id = id;
+            infobox.style.width = `${width}px`;
+            infobox.style.height = `${height}px`;
+            
+            infobox.innerHTML = `
+                <div class="infobox-accent"></div>
+                <div class="infobox-content">
+                    <div class="infobox-message">${message}</div>
+                </div>
+            `;
+            
+            return infobox;
+        }
+
+        // Normalizar o nível
+        normalizeLevel(level) {
+            const levelMap = {
+                'sucesso': 'success',
+                'erro': 'error',
+                'aviso': 'warning',
+                'informacao': 'info',
+                'info': 'info'
+            };
+            
+            const normalized = (level || 'info').toLowerCase();
+            return levelMap[normalized] || normalized;
+        }
+
+        // Remover infobox
+        remove(id) {
+            const index = this.infoboxes.findIndex(ib => ib.id === id);
+            
+            if (index !== -1) {
+                const { element, container } = this.infoboxes[index];
+                
+                element.classList.add('infobox-exit');
+                
+                setTimeout(() => {
+                    if (element.parentNode) {
+                        element.parentNode.removeChild(element);
+                    }
+                    
+                    // Remover da lista
+                    this.infoboxes.splice(index, 1);
+                    
+                    // Limpar container vazio
+                    if (container.children.length === 0) {
+                        const key = Array.from(this.containers.entries())
+                            .find(([, v]) => v === container)?.[0];
+                        
+                        if (key) {
+                            container.remove();
+                            this.containers.delete(key);
+                        }
+                    }
+                }, 300);
+            }
+        }
+
+        // Limpar todos os infoboxes
+        clear() {
+            this.infoboxes.forEach(({ id }) => this.remove(id));
+        }
     }
-    .code-example code {
-      color: #9cdcfe;
-      font-family: 'Consolas', 'Courier New', monospace;
-      font-size: 14px;
-      line-height: 1.6;
+
+    // Registrar módulo na API global
+    if (window.MiauAPI) {
+        const infoboxModule = new InfoboxModule();
+        window.MiauAPI.registerModule('infobox', infoboxModule);
+        infoboxModule.init();
+    } else {
+        console.error('[Infobox] MiauAPI não está disponível!');
     }
-    .highlight { color: #ce9178; }
-    .keyword { color: #569cd6; }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <h1>🐱 MiauAPI - Teste de Infobox</h1>
-    
-    <div class="btn-group">
-      <button class="btn-info" onclick="testeInfo()">📋 Info</button>
-      <button class="btn-success" onclick="testeSucesso()">✅ Sucesso</button>
-      <button class="btn-error" onclick="testeErro()">❌ Erro</button>
-      <button class="btn-warning" onclick="testeWarning()">⚠️ Warning</button>
-    </div>
-
-    <div class="btn-group">
-      <button class="btn-info" onclick="testeTopLeft()">↖️ Top Left</button>
-      <button class="btn-success" onclick="testeCenter()">🎯 Center</button>
-      <button class="btn-error" onclick="testeBottomRight()">↘️ Bottom Right</button>
-      <button class="btn-warning" onclick="testeCustomSize()">📏 Custom Size</button>
-    </div>
-
-    <h2>📖 Exemplos de Uso</h2>
-    
-    <div class="code-example">
-      <code>
-<span class="keyword">// Sintaxe básica</span><br>
-MiauAPI.infobox(<span class="highlight">"Mensagem"</span>, duração, <span class="highlight">"posX,posY"</span>, <span class="highlight">"altura,largura"</span>, <span class="highlight">"level"</span>);<br><br>
-
-<span class="keyword">// Exemplo 1: Posição e tamanho padrão</span><br>
-MiauAPI.infobox(<span class="highlight">"Bem-vindo ao servidor!"</span>, 5000, <span class="highlight">""</span>, <span class="highlight">""</span>, <span class="highlight">"info"</span>);<br><br>
-
-<span class="keyword">// Exemplo 2: Posição customizada</span><br>
-MiauAPI.infobox(<span class="highlight">"Arma pega com sucesso"</span>, 5000, <span class="highlight">"500,800"</span>, <span class="highlight">"100,200"</span>, <span class="highlight">"sucesso"</span>);<br><br>
-
-<span class="keyword">// Exemplo 3: Notificação de erro centralizada</span><br>
-MiauAPI.infobox(<span class="highlight">"Você não tem permissão!"</span>, 4000, <span class="highlight">"760,400"</span>, <span class="highlight">"80,400"</span>, <span class="highlight">"erro"</span>);<br><br>
-
-<span class="keyword">// Exemplo 4: Warning grande</span><br>
-MiauAPI.infobox(<span class="highlight">"Atenção! Zona de perigo!"</span>, 6000, <span class="highlight">"600,300"</span>, <span class="highlight">"120,500"</span>, <span class="highlight">"warning"</span>);
-      </code>
-    </div>
-
-    <h3>📌 Parâmetros:</h3>
-    <ul style="line-height: 2;">
-      <li><strong>Mensagem:</strong> Texto da notificação</li>
-      <li><strong>Duração:</strong> Tempo em milissegundos (ex: 5000 = 5 segundos)</li>
-      <li><strong>Posição:</strong> "posX,posY" - Posição em pixels (ex: "500,800")</li>
-      <li><strong>Tamanho:</strong> "altura,largura" - Dimensões em pixels (ex: "100,200")</li>
-      <li><strong>Level:</strong> "info", "sucesso", "erro" ou "warning"</li>
-    </ul>
-  </div>
-
-  <script>
-    // Carrega o main.html em um iframe invisível
-    const iframe = document.createElement('iframe');
-    iframe.src = 'main.html';
-    iframe.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;border:none;pointer-events:none;z-index:9999;';
-    document.body.appendChild(iframe);
-
-    // Aguarda o iframe carregar
-    iframe.onload = function() {
-      window.MiauAPI = iframe.contentWindow.MiauAPI;
-      console.log('MiauAPI carregado com sucesso!');
-    };
-
-    // Funções de teste
-    function testeInfo() {
-      if (window.MiauAPI) {
-        MiauAPI.infobox("Esta é uma notificação de informação!", 5000, "", "", "info");
-      }
-    }
-
-    function testeSucesso() {
-      if (window.MiauAPI) {
-        MiauAPI.infobox("Operação realizada com sucesso!", 5000, "", "", "sucesso");
-      }
-    }
-
-    function testeErro() {
-      if (window.MiauAPI) {
-        MiauAPI.infobox("Erro! Algo deu errado.", 5000, "", "", "erro");
-      }
-    }
-
-    function testeWarning() {
-      if (window.MiauAPI) {
-        MiauAPI.infobox("Atenção! Cuidado com esta ação.", 5000, "", "", "warning");
-      }
-    }
-
-    function testeTopLeft() {
-      if (window.MiauAPI) {
-        MiauAPI.infobox("Notificação no canto superior esquerdo", 5000, "20,20", "58,300", "info");
-      }
-    }
-
-    function testeCenter() {
-      if (window.MiauAPI) {
-        MiauAPI.infobox("Notificação centralizada na tela", 5000, "760,400", "80,400", "sucesso");
-      }
-    }
-
-    function testeBottomRight() {
-      if (window.MiauAPI) {
-        MiauAPI.infobox("Notificação no canto inferior direito", 5000, "1600,1000", "58,300", "warning");
-      }
-    }
-
-    function testeCustomSize() {
-      if (window.MiauAPI) {
-        MiauAPI.infobox("Notificação com tamanho customizado - Muito maior!", 6000, "500,500", "150,500", "erro");
-      }
-    }
-  </script>
-</body>
-</html>
-
+</script>
