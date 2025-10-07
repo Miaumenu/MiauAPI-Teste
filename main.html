@@ -49,16 +49,43 @@
 
           if (!data || !data.action) return;
 
-          // Apenas processa notificações
-          if (data.action === "notify") {
-            sendToInfobox({
-              action: "notify",
-              message: data.message || "Sem mensagem",
-              duration: data.duration || 5000,
-              position: data.position || "",
-              size: data.size || "",
-              level: data.level || "info"
-            });
+          switch (data.action) {
+            case "notify":
+              // Envia notificação para o infobox.html
+              sendToInfobox({
+                action: "notify",
+                message: data.message || "Sem mensagem",
+                duration: data.duration || 5000,
+                position: data.position || "",
+                size: data.size || "",
+                level: data.level || "info"
+              });
+              break;
+
+            case "loadFile":
+              if (data.filePath) {
+                window.open(data.filePath, '_blank');
+              }
+              break;
+
+            case "loadDrawingTool":
+              if (data.tool) {
+                let filePath = "";
+                if (data.tool === "line") filePath = "https://miaumenu.github.io/MiauAPI-Teste/Drawing/DrawLine.html";
+                else if (data.tool === "circle") filePath = "https://miaumenu.github.io/MiauAPI-Teste/Drawing/DrawCircle.html";
+                else if (data.tool === "rectangle") filePath = "https://miaumenu.github.io/MiauAPI-Teste/Drawing/DrawRect.html";
+                
+                if (filePath) {
+                  window.open(filePath, '_blank');
+                }
+              }
+              break;
+
+            case "sendToClient":
+              if (window.parent && window.parent !== window) {
+                window.parent.postMessage(data, '*');
+              }
+              break;
           }
         });
 
