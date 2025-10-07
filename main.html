@@ -35,41 +35,40 @@
             position: fixed;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 15px;
             z-index: 9999;
         }
 
         .infobox {
             box-sizing: border-box;
             position: relative;
-            width: 252px;
-            height: 58px;
+            width: 350px; /* AUMENTADO */
+            height: 80px; /* AUMENTADO */
             display: flex;
             align-items: center;
-            gap: 9px;
-            padding-left: 6px;
-            border-radius: 7px;
+            gap: 12px; /* AUMENTADO */
+            padding-left: 8px; /* AUMENTADO */
+            border-radius: 10px; /* AUMENTADO */
             
-            /* Background com blur - SEM FUNDO PRETO */
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
+            /* 100% TRANSPARENTE - SEM BACKGROUND */
+            background: transparent;
             
             /* Border e shadow dinâmicos */
             border: 1px solid var(--infobox-border);
             box-shadow: var(--infobox-shadow);
             
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
+            animation: slideIn 0.2s cubic-bezier(0.4, 0, 0.2, 1) forwards; /* INSTANTÂNEO */
         }
 
         /* Accent bar (Rectangle 683) */
         .infobox-accent {
             position: relative;
-            width: 3px;
-            height: 46px;
+            width: 5px; /* AUMENTADO */
+            height: 60px; /* AUMENTADO */
             background: var(--infobox-accent);
             box-shadow: var(--infobox-accent-shadow);
-            border-radius: 7px;
+            border-radius: 10px; /* AUMENTADO */
             flex-shrink: 0;
         }
 
@@ -78,21 +77,21 @@
             flex: 1;
             display: flex;
             align-items: center;
-            padding-right: 15px;
+            padding-right: 20px; /* AUMENTADO */
         }
 
-        /* Message text */
+        /* Message text - MAIOR E MAIS LEGÍVEL */
         .infobox-message {
             font-family: 'Inter', sans-serif;
             font-style: normal;
             font-weight: 600;
-            font-size: 10px;
-            line-height: 12px;
+            font-size: 14px; /* AUMENTADO */
+            line-height: 16px; /* AUMENTADO */
             letter-spacing: -0.02em;
             color: #FFFFFF;
             word-wrap: break-word;
-            max-width: 201px;
-            text-shadow: 0px 0px 4px rgba(0, 0, 0, 0.8);
+            max-width: 280px; /* AUMENTADO */
+            text-shadow: 0px 0px 6px rgba(0, 0, 0, 0.9); /* MELHORADO */
         }
 
         /* ==========================================
@@ -101,43 +100,43 @@
 
         /* INFO - Azul */
         .infobox.info {
-            --infobox-border: rgba(0, 170, 255, 0.71);
-            --infobox-shadow: 0px 0px 18px 2px rgba(0, 170, 255, 0.25);
+            --infobox-border: rgba(0, 170, 255, 0.85);
+            --infobox-shadow: 0px 0px 25px 3px rgba(0, 170, 255, 0.4);
             --infobox-accent: #00AAFF;
-            --infobox-accent-shadow: 0px 0px 4px 2px rgba(0, 170, 255, 0.61);
+            --infobox-accent-shadow: 0px 0px 8px 3px rgba(0, 170, 255, 0.8);
         }
 
         /* SUCCESS - Verde */
         .infobox.success {
-            --infobox-border: rgba(17, 255, 0, 0.71);
-            --infobox-shadow: 0px 0px 18px 2px rgba(17, 255, 0, 0.25);
+            --infobox-border: rgba(17, 255, 0, 0.85);
+            --infobox-shadow: 0px 0px 25px 3px rgba(17, 255, 0, 0.4);
             --infobox-accent: #11FF00;
-            --infobox-accent-shadow: 0px 0px 4px 2px rgba(17, 255, 0, 0.61);
+            --infobox-accent-shadow: 0px 0px 8px 3px rgba(17, 255, 0, 0.8);
         }
 
         /* WARNING - Amarelo */
         .infobox.warning {
-            --infobox-border: rgba(238, 255, 0, 0.71);
-            --infobox-shadow: 0px 0px 18px 2px rgba(238, 255, 0, 0.25);
+            --infobox-border: rgba(238, 255, 0, 0.85);
+            --infobox-shadow: 0px 0px 25px 3px rgba(238, 255, 0, 0.4);
             --infobox-accent: #EEFF00;
-            --infobox-accent-shadow: 0px 0px 4px 2px rgba(238, 255, 0, 0.61);
+            --infobox-accent-shadow: 0px 0px 8px 3px rgba(238, 255, 0, 0.8);
         }
 
         /* ERROR - Vermelho */
         .infobox.error {
-            --infobox-border: rgba(255, 0, 0, 0.71);
-            --infobox-shadow: 0px 0px 18px 2px rgba(255, 0, 0, 0.25);
+            --infobox-border: rgba(255, 0, 0, 0.85);
+            --infobox-shadow: 0px 0px 25px 3px rgba(255, 0, 0, 0.4);
             --infobox-accent: #FF0000;
-            --infobox-accent-shadow: 0px 0px 4px 2px rgba(255, 0, 0, 0.61);
+            --infobox-accent-shadow: 0px 0px 8px 3px rgba(255, 0, 0, 0.8);
         }
 
         /* ==========================================
-           ANIMAÇÕES
+           ANIMAÇÕES - INSTANTÂNEO
            ========================================== */
 
         @keyframes slideIn {
             from {
-                transform: translateY(-20px);
+                transform: translateY(-10px);
                 opacity: 0;
             }
             to {
@@ -152,17 +151,17 @@
                 opacity: 1;
             }
             to {
-                transform: translateY(-20px);
+                transform: translateY(-10px);
                 opacity: 0;
             }
         }
 
         .infobox-enter {
-            animation: slideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            animation: slideIn 0.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
         }
 
         .infobox-exit {
-            animation: slideOut 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            animation: slideOut 0.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
         }
     </style>
 </head>
@@ -176,12 +175,12 @@
         
         const positionPresets = {
             'superior-esquerdo': '20,20',
-            'superior-direito': '1648,20', // 1920 - 252 - 20
-            'inferior-esquerdo': '20,1002', // 1080 - 58 - 20
-            'inferior-direito': '1648,1002',
-            'centro-superior': '834,20', // (1920 - 252) / 2
-            'centro-inferior': '834,1002',
-            'centro': '834,511' // (1080 - 58) / 2
+            'superior-direito': '1550,20', // 1920 - 350 - 20
+            'inferior-esquerdo': '20,980', // 1080 - 80 - 20
+            'inferior-direito': '1550,980',
+            'centro-superior': '785,20', // (1920 - 350) / 2
+            'centro-inferior': '785,980',
+            'centro': '785,500' // (1080 - 80) / 2
         };
 
         const containers = {};
@@ -222,8 +221,8 @@
             const positionKey = position;
             const finalPosition = positionPresets[position];
 
-            // Parse tamanho (altura,largura)
-            const [height, width] = size ? size.split(',').map(v => parseInt(v.trim())) : [58, 252];
+            // Parse tamanho (altura,largura) - agora maior por padrão
+            const [height, width] = size ? size.split(',').map(v => parseInt(v.trim())) : [80, 350];
 
             // Normalizar level
             const levelMap = {
@@ -237,7 +236,7 @@
             // Criar infobox
             const container = getContainer(positionKey);
             const infobox = document.createElement('div');
-            infobox.className = `infobox ${normalizedLevel}`;
+            infobox.className = `infobox ${normalizedLevel} infobox-enter`; // ANIMAÇÃO INSTANTÂNEA
             
             // Aplicar tamanho customizado se fornecido
             if (size) {
@@ -253,13 +252,8 @@
                 </div>
             `;
 
-            // Adicionar ao container
+            // Adicionar ao container - INSTANTÂNEO
             container.appendChild(infobox);
-
-            // Animação de entrada
-            setTimeout(() => {
-                infobox.classList.add('infobox-enter');
-            }, 10);
 
             console.log('[MiauAPI] Infobox criado com sucesso!', { position: positionKey });
 
@@ -275,7 +269,7 @@
                         container.remove();
                         delete containers[positionKey];
                     }
-                }, 300);
+                }, 200);
             }, 5000);
         }
 
