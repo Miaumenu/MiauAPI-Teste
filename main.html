@@ -36,23 +36,23 @@
             position: fixed;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 15px;
             z-index: 9999;
         }
 
         .infobox {
             box-sizing: border-box;
             position: relative;
-            width: 400px;
-            height: 80px;
+            width: 600px;
+            height: 100px;
             display: flex;
             align-items: center;
-            gap: 15px;
-            padding-left: 10px;
+            gap: 20px;
+            padding-left: 15px;
             
             /* Fundo preto com 70% de opacidade */
             background: rgba(0, 0, 0, 0.7);
-            border-radius: 7px;
+            border-radius: 10px;
             
             /* Border e shadow dinâmicos */
             border: 1px solid var(--infobox-border);
@@ -62,11 +62,11 @@
         /* Accent bar (Rectangle 683) - EXATAMENTE como no exemplo */
         .infobox-accent {
             position: relative;
-            width: 4px;
-            height: 64px;
+            width: 5px;
+            height: 80px;
             background: var(--infobox-accent);
             box-shadow: var(--infobox-accent-shadow);
-            border-radius: 7px;
+            border-radius: 10px;
             flex-shrink: 0;
         }
 
@@ -75,7 +75,7 @@
             flex: 1;
             display: flex;
             align-items: center;
-            padding-right: 20px;
+            padding-right: 25px;
         }
 
         /* Message text - EXATAMENTE como no exemplo */
@@ -86,12 +86,12 @@
             font-family: 'Inter';
             font-style: normal;
             font-weight: 600;
-            font-size: 14px;
-            line-height: 17px;
+            font-size: 16px;
+            line-height: 19px;
             letter-spacing: -0.02em;
             color: #FFFFFF;
             word-wrap: break-word;
-            max-width: 330px;
+            max-width: 500px;
         }
 
         .infobox-prefix {
@@ -150,7 +150,7 @@
 
         @keyframes slideIn {
             from {
-                transform: translateY(-10px);
+                transform: translateY(-15px);
                 opacity: 0;
             }
             to {
@@ -165,17 +165,17 @@
                 opacity: 1;
             }
             to {
-                transform: translateY(-10px);
+                transform: translateY(-15px);
                 opacity: 0;
             }
         }
 
         .infobox-enter {
-            animation: slideIn 0.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+            animation: slideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
         }
 
         .infobox-exit {
-            animation: slideOut 0.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+            animation: slideOut 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
         }
     </style>
 </head>
@@ -189,12 +189,12 @@
         
         const positionPresets = {
             'superior-esquerdo': '20,20',
-            'superior-direito': '1500,20', // 1920 - 400 - 20
-            'inferior-esquerdo': '20,980', // 1080 - 80 - 20
-            'inferior-direito': '1500,980',
-            'centro-superior': '760,20', // (1920 - 400) / 2
-            'centro-inferior': '760,980',
-            'centro': '760,500' // (1080 - 80) / 2
+            'superior-direito': '1300,20', // 1920 - 600 - 20
+            'inferior-esquerdo': '20,960', // 1080 - 100 - 20
+            'inferior-direito': '1300,960',
+            'centro-superior': '660,20', // (1920 - 600) / 2
+            'centro-inferior': '660,960',
+            'centro': '660,490' // (1080 - 100) / 2
         };
 
         const containers = {};
@@ -249,7 +249,7 @@
             }
 
             const positionKey = position;
-            const [height, width] = size ? size.split(',').map(v => parseInt(v.trim())) : [80, 400];
+            const [height, width] = size ? size.split(',').map(v => parseInt(v.trim())) : [100, 600];
 
             // Normalizar level
             const levelMap = {
@@ -311,7 +311,7 @@
                         container.remove();
                         delete containers[positionKey];
                     }
-                }, 200);
+                }, 300);
             }, 5000);
         }
 
