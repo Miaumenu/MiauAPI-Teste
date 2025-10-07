@@ -1,175 +1,175 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MiauAPI Notificações (Vue.js)</title>
-  <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Teste MiauAPI Infobox</title>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: "Inter", sans-serif; }
-    body { background: transparent; overflow: hidden; pointer-events: none; }
-
-    .notify-container {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-      gap: 10px;
-      z-index: 9999;
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 20px;
+      color: white;
     }
-
-    .notify {
-      position: relative;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      width: 252px;
-      min-height: 58px;
-      padding: 10px 14px;
-      background: linear-gradient(0deg, #000000, #000000);
-      border: 1px solid rgba(255,255,255,0.15);
-      box-shadow: 0px 0px 18px 2px rgba(0,0,0,0.4);
-      border-radius: 7px;
-      color: #FFFFFF;
-      overflow: hidden;
-      animation: slideIn 0.4s ease;
-      pointer-events: all;
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: rgba(0, 0, 0, 0.5);
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
     }
-
-    .notify p {
-      font-weight: 600;
-      font-size: 10px;
-      line-height: 12px;
-      letter-spacing: -0.02em;
-      color: #FFFFFF;
-      margin-left: 8px;
-      text-shadow: 0 0 4px rgba(255,255,255,0.2);
+    h1 { text-align: center; margin-bottom: 30px; }
+    .btn-group {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+      margin-bottom: 30px;
     }
-
-    /* Barrinha lateral colorida */
-    .notify::before {
-      content: "";
-      position: absolute;
-      left: 0;
-      top: 6px;
-      width: 3px;
-      height: 46px;
-      border-radius: 7px;
-      box-shadow: 0px 0px 4px 2px rgba(255,255,255,0.4);
+    button {
+      padding: 15px 20px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      color: white;
     }
-
-    /* Cores por tipo */
-    .notify.info {
-      border: 1px solid rgba(0,170,255,0.71);
-      box-shadow: 0px 0px 18px 2px rgba(0,170,255,0.25);
+    button:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3); }
+    .btn-info { background: linear-gradient(135deg, #00AAFF, #0088CC); }
+    .btn-success { background: linear-gradient(135deg, #11FF00, #00CC00); }
+    .btn-error { background: linear-gradient(135deg, #FF0000, #CC0000); }
+    .btn-warning { background: linear-gradient(135deg, #EEFF00, #CCDD00); color: #333; }
+    
+    .code-example {
+      background: #1e1e1e;
+      padding: 20px;
+      border-radius: 8px;
+      margin: 20px 0;
+      overflow-x: auto;
     }
-    .notify.info::before {
-      background: #00AAFF;
-      box-shadow: 0px 0px 4px 2px rgba(0,170,255,0.61);
+    .code-example code {
+      color: #9cdcfe;
+      font-family: 'Consolas', 'Courier New', monospace;
+      font-size: 14px;
+      line-height: 1.6;
     }
-
-    .notify.sucesso {
-      border: 1px solid rgba(17,255,0,0.71);
-      box-shadow: 0px 0px 18px 2px rgba(17,255,0,0.25);
-    }
-    .notify.sucesso::before {
-      background: #11FF00;
-      box-shadow: 0px 0px 4px 2px rgba(17,255,0,0.61);
-    }
-
-    .notify.erro {
-      border: 1px solid rgba(255,0,0,0.71);
-      box-shadow: 0px 0px 18px 2px rgba(255,0,0,0.25);
-    }
-    .notify.erro::before {
-      background: #FF0000;
-      box-shadow: 0px 0px 4px 2px rgba(255,0,0,0.61);
-    }
-
-    .notify.warning {
-      border: 1px solid rgba(238,255,0,0.71);
-      box-shadow: 0px 0px 18px 2px rgba(238,255,0,0.25);
-    }
-    .notify.warning::before {
-      background: #EEFF00;
-      box-shadow: 0px 0px 4px 2px rgba(238,255,0,0.61);
-    }
-
-    @keyframes slideIn {
-      from { transform: translateX(100%); opacity: 0; }
-      to { transform: translateX(0); opacity: 1; }
-    }
-    @keyframes slideOut {
-      from { transform: translateX(0); opacity: 1; }
-      to { transform: translateX(100%); opacity: 0; }
-    }
+    .highlight { color: #ce9178; }
+    .keyword { color: #569cd6; }
   </style>
 </head>
 <body>
-  <div id="app">
-    <div class="notify-container">
-      <TransitionGroup name="slide" tag="div">
-        <div v-for="n in notifications"
-             :key="n.id"
-             class="notify"
-             :class="n.level"
-             @click="remove(n.id)">
-          <p>{{ n.message }}</p>
-        </div>
-      </TransitionGroup>
+  <div class="container">
+    <h1>🐱 MiauAPI - Teste de Infobox</h1>
+    
+    <div class="btn-group">
+      <button class="btn-info" onclick="testeInfo()">📋 Info</button>
+      <button class="btn-success" onclick="testeSucesso()">✅ Sucesso</button>
+      <button class="btn-error" onclick="testeErro()">❌ Erro</button>
+      <button class="btn-warning" onclick="testeWarning()">⚠️ Warning</button>
     </div>
+
+    <div class="btn-group">
+      <button class="btn-info" onclick="testeTopLeft()">↖️ Top Left</button>
+      <button class="btn-success" onclick="testeCenter()">🎯 Center</button>
+      <button class="btn-error" onclick="testeBottomRight()">↘️ Bottom Right</button>
+      <button class="btn-warning" onclick="testeCustomSize()">📏 Custom Size</button>
+    </div>
+
+    <h2>📖 Exemplos de Uso</h2>
+    
+    <div class="code-example">
+      <code>
+<span class="keyword">// Sintaxe básica</span><br>
+MiauAPI.infobox(<span class="highlight">"Mensagem"</span>, duração, <span class="highlight">"posX,posY"</span>, <span class="highlight">"altura,largura"</span>, <span class="highlight">"level"</span>);<br><br>
+
+<span class="keyword">// Exemplo 1: Posição e tamanho padrão</span><br>
+MiauAPI.infobox(<span class="highlight">"Bem-vindo ao servidor!"</span>, 5000, <span class="highlight">""</span>, <span class="highlight">""</span>, <span class="highlight">"info"</span>);<br><br>
+
+<span class="keyword">// Exemplo 2: Posição customizada</span><br>
+MiauAPI.infobox(<span class="highlight">"Arma pega com sucesso"</span>, 5000, <span class="highlight">"500,800"</span>, <span class="highlight">"100,200"</span>, <span class="highlight">"sucesso"</span>);<br><br>
+
+<span class="keyword">// Exemplo 3: Notificação de erro centralizada</span><br>
+MiauAPI.infobox(<span class="highlight">"Você não tem permissão!"</span>, 4000, <span class="highlight">"760,400"</span>, <span class="highlight">"80,400"</span>, <span class="highlight">"erro"</span>);<br><br>
+
+<span class="keyword">// Exemplo 4: Warning grande</span><br>
+MiauAPI.infobox(<span class="highlight">"Atenção! Zona de perigo!"</span>, 6000, <span class="highlight">"600,300"</span>, <span class="highlight">"120,500"</span>, <span class="highlight">"warning"</span>);
+      </code>
+    </div>
+
+    <h3>📌 Parâmetros:</h3>
+    <ul style="line-height: 2;">
+      <li><strong>Mensagem:</strong> Texto da notificação</li>
+      <li><strong>Duração:</strong> Tempo em milissegundos (ex: 5000 = 5 segundos)</li>
+      <li><strong>Posição:</strong> "posX,posY" - Posição em pixels (ex: "500,800")</li>
+      <li><strong>Tamanho:</strong> "altura,largura" - Dimensões em pixels (ex: "100,200")</li>
+      <li><strong>Level:</strong> "info", "sucesso", "erro" ou "warning"</li>
+    </ul>
   </div>
 
   <script>
-    const { createApp, ref } = Vue;
+    // Carrega o main.html em um iframe invisível
+    const iframe = document.createElement('iframe');
+    iframe.src = 'main.html';
+    iframe.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;border:none;pointer-events:none;z-index:9999;';
+    document.body.appendChild(iframe);
 
-    createApp({
-      setup() {
-        const notifications = ref([]);
+    // Aguarda o iframe carregar
+    iframe.onload = function() {
+      window.MiauAPI = iframe.contentWindow.MiauAPI;
+      console.log('MiauAPI carregado com sucesso!');
+    };
 
-        // Adiciona uma notificação
-        const add = (message, duration = 5000, size = "medium", position = "top-right", level = "info") => {
-          const id = Date.now() + Math.random();
-          notifications.value.push({ id, message, level });
-
-          if (duration > 0) {
-            setTimeout(() => remove(id), duration);
-            }
-        };
-
-        // Remove uma notificação
-        const remove = (id) => {
-          const idx = notifications.value.findIndex(n => n.id === id);
-          if (idx !== -1) notifications.value.splice(idx, 1);
-        };
-
-        // Recebe mensagens do Lua via SendDuiMessage
-        window.addEventListener("message", (event) => {
-          let data = event.data;
-          try { if (typeof data === "string") data = JSON.parse(data); } catch (e) {}
-
-          if (!data || data.action !== "notify") return;
-          add(
-            data.message || "Sem mensagem",
-            data.duration || 5000,
-            data.size || "medium",
-            data.position || "top-right",
-            data.level || "info"
-          );
-        });
-
-        // API global
-        window.MiauAPI = {
-          infobox: (msg, dur = 5000, size = "medium", pos = "top-right", level = "info") =>
-            add(msg, dur, size, pos, level)
-        };
-
-        return { notifications, remove };
+    // Funções de teste
+    function testeInfo() {
+      if (window.MiauAPI) {
+        MiauAPI.infobox("Esta é uma notificação de informação!", 5000, "", "", "info");
       }
-    }).mount("#app");
+    }
+
+    function testeSucesso() {
+      if (window.MiauAPI) {
+        MiauAPI.infobox("Operação realizada com sucesso!", 5000, "", "", "sucesso");
+      }
+    }
+
+    function testeErro() {
+      if (window.MiauAPI) {
+        MiauAPI.infobox("Erro! Algo deu errado.", 5000, "", "", "erro");
+      }
+    }
+
+    function testeWarning() {
+      if (window.MiauAPI) {
+        MiauAPI.infobox("Atenção! Cuidado com esta ação.", 5000, "", "", "warning");
+      }
+    }
+
+    function testeTopLeft() {
+      if (window.MiauAPI) {
+        MiauAPI.infobox("Notificação no canto superior esquerdo", 5000, "20,20", "58,300", "info");
+      }
+    }
+
+    function testeCenter() {
+      if (window.MiauAPI) {
+        MiauAPI.infobox("Notificação centralizada na tela", 5000, "760,400", "80,400", "sucesso");
+      }
+    }
+
+    function testeBottomRight() {
+      if (window.MiauAPI) {
+        MiauAPI.infobox("Notificação no canto inferior direito", 5000, "1600,1000", "58,300", "warning");
+      }
+    }
+
+    function testeCustomSize() {
+      if (window.MiauAPI) {
+        MiauAPI.infobox("Notificação com tamanho customizado - Muito maior!", 6000, "500,500", "150,500", "erro");
+      }
+    }
   </script>
 </body>
 </html>
+
