@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MiauAPI - Sistema Modular</title>
+    <title>MiauAPI - Vue.js</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <style>
         * {
             margin: 0;
@@ -19,18 +20,34 @@
             font-family: Arial, sans-serif;
         }
 
-        /* Debug - Remova depois de testar */
-        #test-box {
+        /* Indicador de Debug - MUITO VISÍVEL */
+        .debug-indicator {
             position: fixed;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background: rgba(255, 0, 0, 0.8);
+            background: #ff0000;
             color: white;
-            padding: 20px;
-            border-radius: 10px;
-            font-size: 24px;
-            z-index: 99999;
+            padding: 30px 50px;
+            border-radius: 15px;
+            font-size: 32px;
+            font-weight: bold;
+            z-index: 999999;
+            border: 5px solid white;
+            box-shadow: 0 0 30px rgba(255, 0, 0, 0.8);
+            text-align: center;
+        }
+
+        .debug-small {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: rgba(0, 255, 0, 0.9);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            z-index: 999998;
         }
 
         .infobox-container {
@@ -50,6 +67,7 @@
             display: flex;
             align-items: center;
             padding: 0;
+            transition: all 0.3s ease;
         }
 
         .infobox-accent {
@@ -71,6 +89,7 @@
             color: #FFFFFF;
         }
 
+        /* Níveis */
         .infobox.info {
             --bg: linear-gradient(97.75deg, rgba(47, 47, 47, 0.9) -3.82%, rgba(0, 170, 255, 0.3) 104.72%);
             --border: rgba(0, 170, 255, 0.8);
@@ -99,6 +118,15 @@
             --accent: #FF0000;
         }
 
+        /* Animações Vue */
+        .slide-enter-active {
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .slide-leave-active {
+            animation: slideOut 0.3s ease-in;
+        }
+
         @keyframes slideIn {
             from {
                 transform: translateY(-20px);
@@ -120,152 +148,194 @@
                 opacity: 0;
             }
         }
-
-        .infobox-enter {
-            animation: slideIn 0.3s ease-out;
-        }
-
-        .infobox-exit {
-            animation: slideOut 0.3s ease-in;
-        }
     </style>
 </head>
 <body>
-    <!-- Debug Box - Remova depois -->
-    <div id="test-box">MiauAPI Carregado! ✓</div>
+    <div id="app">
+        <!-- Debug Indicator -->
+        <div v-if="showDebug" class="debug-indicator">
+            🐱 MiauAPI Vue.js<br>
+            CARREGADO!<br>
+            <small style="font-size: 16px;">Aguarde testes...</small>
+        </div>
 
-    <script>
-        // Remove o test-box após 3 segundos
-        setTimeout(() => {
-            const testBox = document.getElementById('test-box');
-            if (testBox) testBox.remove();
-        }, 3000);
+        <div v-if="!showDebug" class="debug-small">
+            Vue Ativo ✓ | Infoboxes: {{ totalInfoboxes }}
+        </div>
 
-        // Sistema de Infobox
-        class InfoboxSystem {
-            constructor() {
-                this.containers = new Map();
-                this.infoboxes = [];
-            }
-
-            getContainer(x, y) {
-                const key = `${x},${y}`;
-                
-                if (!this.containers.has(key)) {
-                    const container = document.createElement('div');
-                    container.className = 'infobox-container';
-                    container.style.left = x + 'px';
-                    container.style.top = y + 'px';
-                    document.body.appendChild(container);
-                    this.containers.set(key, container);
-                }
-                
-                return this.containers.get(key);
-            }
-
-            show(message, position, size, level) {
-                // Parse posição
-                let x = 20, y = 20;
-                if (position && position.includes(',')) {
-                    const parts = position.split(',');
-                    x = parseInt(parts[0]);
-                    y = parseInt(parts[1]);
-                }
-
-                // Parse tamanho
-                let height = 58, width = 248;
-                if (size && size.includes(',')) {
-                    const parts = size.split(',');
-                    height = parseInt(parts[0]);
-                    width = parseInt(parts[1]);
-                }
-
-                // Normalizar level
-                const levelMap = {
-                    'sucesso': 'success',
-                    'erro': 'error',
-                    'aviso': 'warning'
-                };
-                level = levelMap[level] || level || 'info';
-
-                // Criar infobox
-                const container = this.getContainer(x, y);
-                const infobox = document.createElement('div');
-                infobox.className = `infobox ${level}`;
-                infobox.style.width = width + 'px';
-                infobox.style.height = height + 'px';
-                
-                infobox.innerHTML = `
+        <!-- Containers de Infobox -->
+        <div 
+            v-for="(container, key) in containers" 
+            :key="key"
+            class="infobox-container"
+            :style="{ left: container.x + 'px', top: container.y + 'px' }"
+        >
+            <transition-group name="slide">
+                <div 
+                    v-for="infobox in container.items"
+                    :key="infobox.id"
+                    :class="['infobox', infobox.level]"
+                    :style="{ width: infobox.width + 'px', height: infobox.height + 'px' }"
+                >
                     <div class="infobox-accent"></div>
                     <div class="infobox-content">
-                        <div class="infobox-message">${message}</div>
+                        <div class="infobox-message">{{ infobox.message }}</div>
                     </div>
-                `;
+                </div>
+            </transition-group>
+        </div>
+    </div>
 
-                container.appendChild(infobox);
+    <script>
+        const { createApp } = Vue;
 
-                // Animação de entrada
-                setTimeout(() => infobox.classList.add('infobox-enter'), 10);
-
-                // Remover após 5 segundos
+        const app = createApp({
+            data() {
+                return {
+                    containers: {},
+                    showDebug: true,
+                    totalInfoboxes: 0
+                }
+            },
+            mounted() {
+                console.log('[MiauAPI Vue] Aplicação montada!');
+                
+                // Esconder debug após 3 segundos
                 setTimeout(() => {
-                    infobox.classList.add('infobox-exit');
+                    this.showDebug = false;
+                }, 3000);
+
+                // Iniciar testes automáticos
+                this.startAutoTests();
+
+                // Listener para mensagens NUI do FiveM
+                window.addEventListener('message', (event) => {
+                    console.log('[MiauAPI Vue] Mensagem recebida:', event.data);
+                    
+                    if (event.data && event.data.action === 'infobox') {
+                        this.showInfobox(
+                            event.data.message,
+                            event.data.position,
+                            event.data.size,
+                            event.data.level
+                        );
+                    }
+                });
+
+                // Expor API global
+                window.MiauAPI = {
+                    infobox: (message, position, size, level) => {
+                        this.showInfobox(message, position, size, level);
+                    }
+                };
+
+                console.log('[MiauAPI Vue] Sistema pronto!');
+            },
+            methods: {
+                showInfobox(message, position = '20,20', size = '58,248', level = 'info') {
+                    console.log('[MiauAPI Vue] showInfobox chamado:', { message, position, size, level });
+
+                    // Parse posição
+                    const [x, y] = position.split(',').map(v => parseInt(v.trim()));
+                    
+                    // Parse tamanho
+                    const [height, width] = size.split(',').map(v => parseInt(v.trim()));
+
+                    // Normalizar level
+                    const levelMap = {
+                        'sucesso': 'success',
+                        'erro': 'error',
+                        'aviso': 'warning',
+                        'informacao': 'info'
+                    };
+                    const normalizedLevel = levelMap[level?.toLowerCase()] || level || 'info';
+
+                    // Criar chave do container
+                    const containerKey = `${x},${y}`;
+
+                    // Criar container se não existir
+                    if (!this.containers[containerKey]) {
+                        this.containers[containerKey] = {
+                            x,
+                            y,
+                            items: []
+                        };
+                    }
+
+                    // Criar infobox
+                    const infobox = {
+                        id: Date.now() + Math.random(),
+                        message,
+                        level: normalizedLevel,
+                        width,
+                        height
+                    };
+
+                    // Adicionar ao container
+                    this.containers[containerKey].items.push(infobox);
+                    this.totalInfoboxes++;
+
+                    console.log('[MiauAPI Vue] Infobox criado:', infobox.id);
+
+                    // Remover após 5 segundos
                     setTimeout(() => {
-                        if (infobox.parentNode) {
-                            infobox.parentNode.removeChild(infobox);
+                        this.removeInfobox(containerKey, infobox.id);
+                    }, 5000);
+                },
+
+                removeInfobox(containerKey, id) {
+                    const container = this.containers[containerKey];
+                    if (container) {
+                        const index = container.items.findIndex(item => item.id === id);
+                        if (index !== -1) {
+                            container.items.splice(index, 1);
+                            this.totalInfoboxes--;
+
+                            // Limpar container vazio
+                            if (container.items.length === 0) {
+                                delete this.containers[containerKey];
+                            }
+
+                            console.log('[MiauAPI Vue] Infobox removido:', id);
                         }
-                        // Limpar container vazio
-                        if (container.children.length === 0) {
-                            container.remove();
-                            this.containers.delete(`${x},${y}`);
-                        }
-                    }, 300);
-                }, 5000);
-            }
-        }
+                    }
+                },
 
-        // Criar instância global
-        const infoboxSystem = new InfoboxSystem();
+                startAutoTests() {
+                    console.log('[MiauAPI Vue] Iniciando testes automáticos...');
 
-        // API Global
-        window.MiauAPI = {
-            infobox: function(message, position, size, level) {
-                infoboxSystem.show(message, position, size, level);
-            }
-        };
+                    setTimeout(() => {
+                        console.log('[MiauAPI Vue] Teste 1 - SUCCESS');
+                        this.showInfobox('✓ Sistema Iniciado!', '20,20', '70,300', 'success');
+                    }, 3500);
 
-        // Listener para mensagens do FiveM
-        window.addEventListener('message', function(event) {
-            const data = event.data;
-            
-            if (data && data.action === 'infobox') {
-                infoboxSystem.show(
-                    data.message,
-                    data.position,
-                    data.size,
-                    data.level
-                );
+                    setTimeout(() => {
+                        console.log('[MiauAPI Vue] Teste 2 - INFO');
+                        this.showInfobox('ℹ Teste de Informação', '20,20', '58,248', 'info');
+                    }, 5000);
+
+                    setTimeout(() => {
+                        console.log('[MiauAPI Vue] Teste 3 - WARNING');
+                        this.showInfobox('⚠ Teste de Aviso', '20,20', '58,248', 'warning');
+                    }, 6500);
+
+                    setTimeout(() => {
+                        console.log('[MiauAPI Vue] Teste 4 - ERROR');
+                        this.showInfobox('✖ Teste de Erro', '20,20', '58,248', 'error');
+                    }, 8000);
+
+                    setTimeout(() => {
+                        console.log('[MiauAPI Vue] Teste 5 - MÚLTIPLAS');
+                        this.showInfobox('Notificação 1', '400,300', '58,248', 'info');
+                        setTimeout(() => this.showInfobox('Notificação 2', '400,300', '58,248', 'success'), 500);
+                        setTimeout(() => this.showInfobox('Notificação 3', '400,300', '58,248', 'warning'), 1000);
+                    }, 10000);
+                }
             }
         });
 
-        // Teste automático
-        setTimeout(() => {
-            infoboxSystem.show('Sistema Iniciado!', '20,20', '58,248', 'success');
-        }, 3500);
-
-        setTimeout(() => {
-            infoboxSystem.show('Teste Info', '20,20', '58,248', 'info');
-        }, 5000);
-
-        setTimeout(() => {
-            infoboxSystem.show('Teste Warning', '20,20', '58,248', 'warning');
-        }, 6500);
-
-        setTimeout(() => {
-            infoboxSystem.show('Teste Error', '20,20', '58,248', 'error');
-        }, 8000);
-
-        console.log('MiauAPI carregado com sucesso!');
+        app.mount('#app');
+        console.log('[MiauAPI Vue] App montado com sucesso!');
     </script>
 </body>
 </html>
