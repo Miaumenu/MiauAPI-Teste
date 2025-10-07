@@ -36,23 +36,23 @@
             position: fixed;
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 20px;
             z-index: 9999;
         }
 
         .infobox {
             box-sizing: border-box;
             position: relative;
-            width: 600px;
-            height: 100px;
+            width: 800px;
+            height: 120px;
             display: flex;
             align-items: center;
-            gap: 20px;
-            padding-left: 15px;
+            gap: 25px;
+            padding-left: 20px;
             
             /* Fundo preto com 70% de opacidade */
             background: rgba(0, 0, 0, 0.7);
-            border-radius: 10px;
+            border-radius: 12px;
             
             /* Border e shadow dinâmicos */
             border: 1px solid var(--infobox-border);
@@ -62,11 +62,11 @@
         /* Accent bar (Rectangle 683) - EXATAMENTE como no exemplo */
         .infobox-accent {
             position: relative;
-            width: 5px;
-            height: 80px;
+            width: 6px;
+            height: 96px;
             background: var(--infobox-accent);
             box-shadow: var(--infobox-accent-shadow);
-            border-radius: 10px;
+            border-radius: 12px;
             flex-shrink: 0;
         }
 
@@ -75,7 +75,7 @@
             flex: 1;
             display: flex;
             align-items: center;
-            padding-right: 25px;
+            padding-right: 30px;
         }
 
         /* Message text - EXATAMENTE como no exemplo */
@@ -86,12 +86,12 @@
             font-family: 'Inter';
             font-style: normal;
             font-weight: 600;
-            font-size: 16px;
-            line-height: 19px;
+            font-size: 18px;
+            line-height: 22px;
             letter-spacing: -0.02em;
             color: #FFFFFF;
             word-wrap: break-word;
-            max-width: 500px;
+            max-width: 680px;
         }
 
         .infobox-prefix {
@@ -150,7 +150,7 @@
 
         @keyframes slideIn {
             from {
-                transform: translateY(-15px);
+                transform: translateY(-20px);
                 opacity: 0;
             }
             to {
@@ -165,7 +165,7 @@
                 opacity: 1;
             }
             to {
-                transform: translateY(-15px);
+                transform: translateY(-20px);
                 opacity: 0;
             }
         }
@@ -189,12 +189,12 @@
         
         const positionPresets = {
             'superior-esquerdo': '20,20',
-            'superior-direito': '1300,20', // 1920 - 600 - 20
-            'inferior-esquerdo': '20,960', // 1080 - 100 - 20
-            'inferior-direito': '1300,960',
-            'centro-superior': '660,20', // (1920 - 600) / 2
-            'centro-inferior': '660,960',
-            'centro': '660,490' // (1080 - 100) / 2
+            'superior-direito': '1100,20', // 1920 - 800 - 20
+            'inferior-esquerdo': '20,940', // 1080 - 120 - 20
+            'inferior-direito': '1100,940',
+            'centro-superior': '560,20', // (1920 - 800) / 2
+            'centro-inferior': '560,940',
+            'centro': '560,480' // (1080 - 120) / 2
         };
 
         const containers = {};
@@ -249,7 +249,7 @@
             }
 
             const positionKey = position;
-            const [height, width] = size ? size.split(',').map(v => parseInt(v.trim())) : [100, 600];
+            const [height, width] = size ? size.split(',').map(v => parseInt(v.trim())) : [120, 800];
 
             // Normalizar level
             const levelMap = {
