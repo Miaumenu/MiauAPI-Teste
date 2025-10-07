@@ -7,6 +7,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Estilos do Infobox integrados -->
     <style>
         * {
             margin: 0;
@@ -28,22 +30,306 @@
             position: relative;
         }
 
-        /* Container para módulos */
         #modules-container {
             width: 100%;
             height: 100%;
             position: relative;
         }
+
+        /* Container de infoboxes */
+        .infobox-container {
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 9999;
+            pointer-events: none;
+        }
+
+        /* Estilo dos infoboxes */
+        .infobox {
+            background: var(--infobox-bg);
+            color: #fff;
+            border-radius: 7px;
+            font-family: 'Inter', sans-serif;
+            box-shadow: var(--infobox-shadow);
+            text-align: left;
+            pointer-events: auto;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid var(--infobox-border);
+            position: relative;
+            overflow: hidden;
+            transform: translateZ(0);
+            will-change: transform, opacity;
+            display: flex;
+            align-items: center;
+            gap: 0;
+            padding: 0;
+        }
+
+        .infobox-accent {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 3px;
+            background: var(--infobox-accent);
+            box-shadow: var(--infobox-accent-shadow);
+            border-radius: 7px;
+            flex-shrink: 0;
+            margin-left: 6px;
+            height: calc(100% - 12px);
+        }
+
+        .infobox-content {
+            padding: 10px 15px;
+            position: relative;
+            z-index: 2;
+            flex: 1;
+            display: flex;
+            align-items: center;
+        }
+
+        .infobox-message {
+            font-size: 10px;
+            font-weight: 600;
+            line-height: 12px;
+            letter-spacing: -0.02em;
+            color: #FFFFFF;
+            word-wrap: break-word;
+        }
+
+        /* Níveis de infobox */
+        .infobox.info {
+            --infobox-bg: linear-gradient(97.75deg, rgba(47, 47, 47, 0.1911) -3.82%, rgba(0, 170, 255, 0.1407) 104.72%);
+            --infobox-border: rgba(0, 170, 255, 0.61);
+            --infobox-shadow: 0px 0px 4px 2px rgba(0, 170, 255, 0.25);
+            --infobox-accent: #00AAFF;
+            --infobox-accent-shadow: 0px 0px 4px 2px rgba(0, 170, 255, 0.61);
+        }
+
+        .infobox.success {
+            --infobox-bg: linear-gradient(97.75deg, rgba(47, 47, 47, 0.1911) -3.82%, rgba(17, 255, 0, 0.1407) 104.72%);
+            --infobox-border: rgba(17, 255, 0, 0.61);
+            --infobox-shadow: 0px 0px 4px rgba(17, 255, 0, 0.25);
+            --infobox-accent: #11FF00;
+            --infobox-accent-shadow: 0px 0px 4px 2px rgba(17, 255, 0, 0.25);
+        }
+
+        .infobox.warning {
+            --infobox-bg: linear-gradient(97.75deg, rgba(47, 47, 47, 0.1911) -3.82%, rgba(238, 255, 0, 0.1407) 104.72%);
+            --infobox-border: rgba(238, 255, 0, 0.61);
+            --infobox-shadow: 0px 0px 4px 2px rgba(238, 255, 0, 0.25);
+            --infobox-accent: #EEFF00;
+            --infobox-accent-shadow: 0px 0px 4px 2px rgba(238, 255, 0, 0.61);
+        }
+
+        .infobox.error {
+            --infobox-bg: linear-gradient(97.75deg, rgba(47, 47, 47, 0.1911) -3.82%, rgba(255, 0, 0, 0.1407) 104.72%);
+            --infobox-border: rgba(255, 0, 0, 0.61);
+            --infobox-shadow: 0px 0px 4px 2px rgba(255, 0, 0, 0.25);
+            --infobox-accent: #FF0000;
+            --infobox-accent-shadow: 0px 0px 4px 2px rgba(255, 0, 0, 0.25);
+        }
+
+        /* Animação de entrada */
+        .infobox-enter {
+            animation: infobox-slide-in 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes infobox-slide-in {
+            0% {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+            100% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* Animação de saída */
+        .infobox-exit {
+            animation: infobox-slide-out 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes infobox-slide-out {
+            0% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+        }
+
+        /* Debug indicator */
+        #debug-indicator {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: rgba(0, 255, 0, 0.8);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            z-index: 99999;
+        }
     </style>
 </head>
 <body>
     <div id="app">
+        <div id="debug-indicator">MiauAPI Loaded ✓</div>
         <div id="modules-container"></div>
     </div>
 
     <script>
+        console.log('[MiauAPI] Iniciando sistema...');
+
         // ==========================================
-        // MiauAPI - Sistema Modular Central
+        // MiauAPI Infobox Module (Integrado)
+        // ==========================================
+        
+        class InfoboxModule {
+            constructor() {
+                this.containers = new Map();
+                this.infoboxes = [];
+                this.defaultDuration = 5000;
+                console.log('[InfoboxModule] Construtor chamado');
+            }
+
+            init() {
+                console.log('[MiauAPI] Módulo Infobox inicializado!');
+            }
+
+            getContainer(x, y) {
+                const key = `${x},${y}`;
+                console.log('[InfoboxModule] Buscando container:', key);
+                
+                if (!this.containers.has(key)) {
+                    const container = document.createElement('div');
+                    container.className = 'infobox-container';
+                    container.style.left = `${x}px`;
+                    container.style.top = `${y}px`;
+                    
+                    const modulesContainer = document.getElementById('modules-container');
+                    if (modulesContainer) {
+                        modulesContainer.appendChild(container);
+                        this.containers.set(key, container);
+                        console.log('[InfoboxModule] Container criado em:', x, y);
+                    } else {
+                        console.error('[InfoboxModule] modules-container não encontrado!');
+                    }
+                }
+                
+                return this.containers.get(key);
+            }
+
+            show(message, position, size, level) {
+                console.log('[InfoboxModule] Show chamado:', { message, position, size, level });
+                
+                const [x, y] = position ? position.split(',').map(v => parseInt(v.trim())) : [20, 20];
+                const [height, width] = size ? size.split(',').map(v => parseInt(v.trim())) : [58, 248];
+                const normalizedLevel = this.normalizeLevel(level);
+                
+                console.log('[InfoboxModule] Valores processados:', { x, y, height, width, normalizedLevel });
+                
+                const id = Date.now() + Math.random();
+                const container = this.getContainer(x, y);
+                
+                if (!container) {
+                    console.error('[InfoboxModule] Falha ao criar container!');
+                    return;
+                }
+                
+                const infobox = this.createInfobox(id, message, normalizedLevel, width, height);
+                container.appendChild(infobox);
+                
+                this.infoboxes.push({
+                    id,
+                    element: infobox,
+                    container,
+                    position: `${x},${y}`
+                });
+                
+                console.log('[InfoboxModule] Infobox criado com ID:', id);
+                
+                setTimeout(() => {
+                    infobox.classList.add('infobox-enter');
+                }, 10);
+                
+                setTimeout(() => {
+                    this.remove(id);
+                }, this.defaultDuration);
+                
+                return id;
+            }
+
+            createInfobox(id, message, level, width, height) {
+                const infobox = document.createElement('div');
+                infobox.className = `infobox ${level}`;
+                infobox.dataset.id = id;
+                infobox.style.width = `${width}px`;
+                infobox.style.height = `${height}px`;
+                
+                infobox.innerHTML = `
+                    <div class="infobox-accent"></div>
+                    <div class="infobox-content">
+                        <div class="infobox-message">${message}</div>
+                    </div>
+                `;
+                
+                return infobox;
+            }
+
+            normalizeLevel(level) {
+                const levelMap = {
+                    'sucesso': 'success',
+                    'erro': 'error',
+                    'aviso': 'warning',
+                    'informacao': 'info',
+                    'info': 'info'
+                };
+                
+                const normalized = (level || 'info').toLowerCase();
+                return levelMap[normalized] || normalized;
+            }
+
+            remove(id) {
+                const index = this.infoboxes.findIndex(ib => ib.id === id);
+                
+                if (index !== -1) {
+                    const { element, container } = this.infoboxes[index];
+                    
+                    element.classList.add('infobox-exit');
+                    
+                    setTimeout(() => {
+                        if (element.parentNode) {
+                            element.parentNode.removeChild(element);
+                        }
+                        
+                        this.infoboxes.splice(index, 1);
+                        
+                        if (container.children.length === 0) {
+                            const key = Array.from(this.containers.entries())
+                                .find(([, v]) => v === container)?.[0];
+                            
+                            if (key) {
+                                container.remove();
+                                this.containers.delete(key);
+                            }
+                        }
+                    }, 300);
+                }
+            }
+
+            clear() {
+                this.infoboxes.forEach(({ id }) => this.remove(id));
+            }
+        }
+
+        // ==========================================
+        // MiauAPI - Sistema Principal
         // ==========================================
         
         class MiauAPI {
@@ -51,24 +337,22 @@
                 this.modules = {};
                 this.container = document.getElementById('modules-container');
                 this.initialized = false;
+                console.log('[MiauAPI] Construtor chamado');
             }
 
-            // Registrar um novo módulo
             registerModule(name, module) {
                 this.modules[name] = module;
-                console.log(`[MiauAPI] Módulo '${name}' registrado com sucesso!`);
+                console.log(`[MiauAPI] Módulo '${name}' registrado!`);
             }
 
-            // Inicializar a API
             init() {
                 if (this.initialized) {
-                    console.warn('[MiauAPI] API já está inicializada!');
+                    console.warn('[MiauAPI] API já inicializada!');
                     return;
                 }
                 
-                console.log('[MiauAPI] Inicializando sistema...');
+                console.log('[MiauAPI] Inicializando...');
                 
-                // Inicializar todos os módulos registrados
                 Object.keys(this.modules).forEach(name => {
                     if (typeof this.modules[name].init === 'function') {
                         this.modules[name].init();
@@ -76,34 +360,45 @@
                 });
                 
                 this.initialized = true;
-                console.log('[MiauAPI] Sistema inicializado com sucesso!');
+                console.log('[MiauAPI] Sistema inicializado!');
             }
 
-            // Método de conveniência para chamar o infobox
             infobox(message, position, size, level) {
+                console.log('[MiauAPI] infobox chamado:', { message, position, size, level });
+                
                 if (!this.modules.infobox) {
-                    console.error('[MiauAPI] Módulo infobox não está registrado!');
+                    console.error('[MiauAPI] Módulo infobox não registrado!');
                     return;
                 }
                 this.modules.infobox.show(message, position, size, level);
             }
         }
 
-        // Criar instância global da API
+        // Criar instância global
         window.MiauAPI = new MiauAPI();
 
+        // Registrar e inicializar módulo infobox
+        const infoboxModule = new InfoboxModule();
+        window.MiauAPI.registerModule('infobox', infoboxModule);
+        window.MiauAPI.init();
+
         // ==========================================
-        // Sistema de Mensagens NUI (FiveM)
+        // Sistema de Mensagens NUI
         // ==========================================
         
         window.addEventListener('message', (event) => {
+            console.log('[MiauAPI] Mensagem recebida:', event.data);
+            
             const data = event.data;
             
-            if (!data || !data.action) return;
+            if (!data || !data.action) {
+                console.warn('[MiauAPI] Mensagem sem action');
+                return;
+            }
 
-            // Rotear mensagens para os módulos apropriados
             switch(data.action) {
                 case 'infobox':
+                    console.log('[MiauAPI] Processando infobox:', data);
                     if (window.MiauAPI.modules.infobox) {
                         window.MiauAPI.modules.infobox.show(
                             data.message,
@@ -114,19 +409,17 @@
                     }
                     break;
                 
-                // Adicione outros casos para futuros módulos aqui
-                
                 default:
                     console.warn(`[MiauAPI] Ação desconhecida: ${data.action}`);
             }
         });
 
-        // Carregar módulo infobox
-        const script = document.createElement('script');
-        script.src = 'infobox/infobox.html';
-        script.type = 'module';
-        document.head.appendChild(script);
-        
+        // Teste automático após 2 segundos
+        setTimeout(() => {
+            console.log('[MiauAPI] Executando teste automático...');
+            window.MiauAPI.infobox('Teste de infobox - Sistema carregado!', '20,20', '58,248', 'success');
+        }, 2000);
+
         console.log('[MiauAPI] Sistema principal carregado!');
     </script>
 </body>
