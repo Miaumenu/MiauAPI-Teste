@@ -1,1 +1,133 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MiauAPI - Sistema Modular</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
+        html, body {
+            height: 100%;
+            overflow: hidden;
+            background: transparent;
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        #app {
+            width: 100vw;
+            height: 100vh;
+            background: transparent;
+            position: relative;
+        }
+
+        /* Container para módulos */
+        #modules-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div id="modules-container"></div>
+    </div>
+
+    <script>
+        // ==========================================
+        // MiauAPI - Sistema Modular Central
+        // ==========================================
+        
+        class MiauAPI {
+            constructor() {
+                this.modules = {};
+                this.container = document.getElementById('modules-container');
+                this.initialized = false;
+            }
+
+            // Registrar um novo módulo
+            registerModule(name, module) {
+                this.modules[name] = module;
+                console.log(`[MiauAPI] Módulo '${name}' registrado com sucesso!`);
+            }
+
+            // Inicializar a API
+            init() {
+                if (this.initialized) {
+                    console.warn('[MiauAPI] API já está inicializada!');
+                    return;
+                }
+                
+                console.log('[MiauAPI] Inicializando sistema...');
+                
+                // Inicializar todos os módulos registrados
+                Object.keys(this.modules).forEach(name => {
+                    if (typeof this.modules[name].init === 'function') {
+                        this.modules[name].init();
+                    }
+                });
+                
+                this.initialized = true;
+                console.log('[MiauAPI] Sistema inicializado com sucesso!');
+            }
+
+            // Método de conveniência para chamar o infobox
+            infobox(message, position, size, level) {
+                if (!this.modules.infobox) {
+                    console.error('[MiauAPI] Módulo infobox não está registrado!');
+                    return;
+                }
+                this.modules.infobox.show(message, position, size, level);
+            }
+        }
+
+        // Criar instância global da API
+        window.MiauAPI = new MiauAPI();
+
+        // ==========================================
+        // Sistema de Mensagens NUI (FiveM)
+        // ==========================================
+        
+        window.addEventListener('message', (event) => {
+            const data = event.data;
+            
+            if (!data || !data.action) return;
+
+            // Rotear mensagens para os módulos apropriados
+            switch(data.action) {
+                case 'infobox':
+                    if (window.MiauAPI.modules.infobox) {
+                        window.MiauAPI.modules.infobox.show(
+                            data.message,
+                            data.position,
+                            data.size,
+                            data.level
+                        );
+                    }
+                    break;
+                
+                // Adicione outros casos para futuros módulos aqui
+                
+                default:
+                    console.warn(`[MiauAPI] Ação desconhecida: ${data.action}`);
+            }
+        });
+
+        // Carregar módulo infobox
+        const script = document.createElement('script');
+        script.src = 'infobox/infobox.html';
+        script.type = 'module';
+        document.head.appendChild(script);
+        
+        console.log('[MiauAPI] Sistema principal carregado!');
+    </script>
+</body>
+</html>
