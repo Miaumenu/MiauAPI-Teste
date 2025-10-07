@@ -50,8 +50,8 @@
             padding-left: 6px;
             border-radius: 7px;
             
-            /* Background com blur e opacity */
-            background: linear-gradient(0deg, rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.85));
+            /* Background com blur - SEM FUNDO PRETO */
+            background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
             
@@ -92,6 +92,7 @@
             color: #FFFFFF;
             word-wrap: break-word;
             max-width: 201px;
+            text-shadow: 0px 0px 4px rgba(0, 0, 0, 0.8);
         }
 
         /* ==========================================
@@ -166,32 +167,41 @@
     </style>
 </head>
 <body>
-    <!-- REMOVIDO: Debug Indicator -->
-    <!-- <div id="debug-indicator">🐱 MiauAPI Ativo</div> -->
-
     <script>
         console.log('[MiauAPI] Sistema iniciando...');
 
         // ==========================================
-        // SISTEMA DE CONTAINERS
+        // SISTEMA DE POSIÇÕES PRÉ-DEFINIDAS
         // ==========================================
         
+        const positionPresets = {
+            'superior-esquerdo': '20,20',
+            'superior-direito': '1648,20', // 1920 - 252 - 20
+            'inferior-esquerdo': '20,1002', // 1080 - 58 - 20
+            'inferior-direito': '1648,1002',
+            'centro-superior': '834,20', // (1920 - 252) / 2
+            'centro-inferior': '834,1002',
+            'centro': '834,511' // (1080 - 58) / 2
+        };
+
         const containers = {};
 
-        function getContainer(x, y) {
-            const key = `${x},${y}`;
-            
-            if (!containers[key]) {
+        function getContainer(positionKey) {
+            if (!containers[positionKey]) {
                 const container = document.createElement('div');
                 container.className = 'infobox-container';
+                
+                // Aplicar posição baseada no preset
+                const [x, y] = positionPresets[positionKey].split(',').map(v => parseInt(v));
                 container.style.left = x + 'px';
                 container.style.top = y + 'px';
+                
                 document.body.appendChild(container);
-                containers[key] = container;
-                console.log('[MiauAPI] Container criado:', { x, y });
+                containers[positionKey] = container;
+                console.log('[MiauAPI] Container criado:', positionKey, { x, y });
             }
             
-            return containers[key];
+            return containers[positionKey];
         }
 
         // ==========================================
@@ -201,10 +211,25 @@
         function showInfobox(message, position, size, level) {
             console.log('[MiauAPI] showInfobox:', { message, position, size, level });
 
-            // Parse posição (x,y)
-            const [x, y] = position ? position.split(',').map(v => parseInt(v.trim())) : [20, 20];
-            
-            // Parse tamanho (altura,largura) - mas mantém design fixo 252x58
+            // Determinar a posição (preset ou custom)
+            let positionKey;
+            let finalPosition;
+
+            if (positionPresets[position]) {
+                // Usar preset de posição
+                positionKey = position;
+                finalPosition = positionPresets[position];
+            } else if (position && position.includes(',')) {
+                // Usar posição customizada
+                positionKey = `custom-${position}`;
+                finalPosition = position;
+            } else {
+                // Default: superior-esquerdo
+                positionKey = 'superior-esquerdo';
+                finalPosition = positionPresets['superior-esquerdo'];
+            }
+
+            // Parse tamanho (altura,largura)
             const [height, width] = size ? size.split(',').map(v => parseInt(v.trim())) : [58, 252];
 
             // Normalizar level
@@ -217,7 +242,7 @@
             const normalizedLevel = levelMap[level?.toLowerCase()] || level || 'info';
 
             // Criar infobox
-            const container = getContainer(x, y);
+            const container = getContainer(positionKey);
             const infobox = document.createElement('div');
             infobox.className = `infobox ${normalizedLevel}`;
             
@@ -243,7 +268,7 @@
                 infobox.classList.add('infobox-enter');
             }, 10);
 
-            console.log('[MiauAPI] Infobox criado com sucesso!');
+            console.log('[MiauAPI] Infobox criado com sucesso!', { position: positionKey });
 
             // Auto-remover após 5 segundos
             setTimeout(() => {
@@ -255,7 +280,7 @@
                     // Limpar container vazio
                     if (container.children.length === 0) {
                         container.remove();
-                        delete containers[`${x},${y}`];
+                        delete containers[positionKey];
                     }
                 }, 300);
             }, 5000);
@@ -266,7 +291,9 @@
         // ==========================================
         
         window.MiauAPI = {
-            infobox: showInfobox
+            infobox: showInfobox,
+            // Expor os presets para uso externo se necessário
+            positions: positionPresets
         };
 
         // ==========================================
@@ -286,6 +313,7 @@
         });
 
         console.log('[MiauAPI] Sistema pronto! ✓');
+        console.log('[MiauAPI] Posições disponíveis:', Object.keys(positionPresets));
     </script>
 </body>
 </html>
