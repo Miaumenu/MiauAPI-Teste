@@ -50,8 +50,8 @@
             gap: 9px;
             padding-left: 6px;
             
-            /* EXATAMENTE como no exemplo */
-            background: linear-gradient(0deg, #000000, #000000);
+            /* Fundo preto com 70% de opacidade */
+            background: rgba(0, 0, 0, 0.7);
             border-radius: 7px;
             
             /* Border e shadow dinâmicos */
@@ -80,6 +80,8 @@
 
         /* Message text - EXATAMENTE como no exemplo */
         .infobox-message {
+            display: flex;
+            align-items: center;
             font-family: 'Inter';
             font-style: normal;
             font-weight: 600;
@@ -89,6 +91,15 @@
             color: #FFFFFF;
             word-wrap: break-word;
             max-width: 201px;
+        }
+
+        .infobox-prefix {
+            opacity: 1;
+            white-space: nowrap;
+        }
+
+        .infobox-content-text {
+            opacity: 0.67;
         }
 
         /* ==========================================
@@ -222,6 +233,18 @@
             };
             const normalizedLevel = levelMap[level?.toLowerCase()] || level || 'info';
 
+            // Definir prefixo baseado no level
+            let prefix = '';
+            if (normalizedLevel === 'info') {
+                prefix = 'Info: ';
+            } else if (normalizedLevel === 'success') {
+                prefix = 'Success: ';
+            } else if (normalizedLevel === 'warning') {
+                prefix = 'Warning: ';
+            } else if (normalizedLevel === 'error') {
+                prefix = 'Error: ';
+            }
+
             // Criar infobox
             const container = getContainer(positionKey);
             const infobox = document.createElement('div');
@@ -235,7 +258,10 @@
             infobox.innerHTML = `
                 <div class="infobox-accent"></div>
                 <div class="infobox-content">
-                    <div class="infobox-message">${message}</div>
+                    <div class="infobox-message">
+                        <span class="infobox-prefix">${prefix}</span>
+                        <span class="infobox-content-text">${message}</span>
+                    </div>
                 </div>
             `;
 
