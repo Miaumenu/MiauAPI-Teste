@@ -29,44 +29,46 @@
         }
 
         /* ==========================================
-           MÓDULO: INFOBOX - EXATAMENTE COMO O EXEMPLO
+           MÓDULO: INFOBOX - AUMENTADO
            ========================================== */
         
         .infobox-container {
             position: fixed;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 15px;
             z-index: 9999;
         }
 
         .infobox {
             box-sizing: border-box;
             position: relative;
-            width: 300px;
-            height: 70px;
+            /* 🎯 AQUI VOCÊ AJUSTA O TAMANHO DA INFOBOX */
+            width: 400px;  /* LARGURA - Aumentei de 252px para 400px */
+            height: 90px;  /* ALTURA - Aumentei de 58px para 90px */
             display: flex;
             align-items: center;
-            gap: 12px;
-            padding-left: 8px;
+            gap: 15px;    /* ESPAÇO ENTRE BARRA E TEXTO */
+            padding-left: 10px;
             
-            /* Fundo preto com 70% de opacidade */
-            background: rgba(0, 0, 0, 0.7);
-            border-radius: 7px;
+            /* Fundo preto como no exemplo */
+            background: linear-gradient(0deg, #000000, #000000);
+            border-radius: 10px;
             
             /* Border e shadow dinâmicos */
             border: 1px solid var(--infobox-border);
             box-shadow: var(--infobox-shadow);
         }
 
-        /* Accent bar (Rectangle 683) - EXATAMENTE como no exemplo */
+        /* Accent bar (Rectangle 683) - AUMENTADO */
         .infobox-accent {
             position: relative;
-            width: 4px;
-            height: 56px;
+            /* 🎯 AQUI VOCÊ AJUSTA A BARRA LATERAL */
+            width: 6px;    /* LARGURA DA BARRA - Aumentei de 3px para 6px */
+            height: 70px;  /* ALTURA DA BARRA - Aumentei de 46px para 70px */
             background: var(--infobox-accent);
             box-shadow: var(--infobox-accent-shadow);
-            border-radius: 7px;
+            border-radius: 10px;
             flex-shrink: 0;
         }
 
@@ -75,77 +77,62 @@
             flex: 1;
             display: flex;
             align-items: center;
-            padding-right: 18px;
+            padding-right: 20px;
         }
 
-        /* Message text - EXATAMENTE como no exemplo */
+        /* Message text - AUMENTADO */
         .infobox-message {
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
             font-family: 'Inter';
             font-style: normal;
             font-weight: 600;
-            font-size: 12px;
-            line-height: 15px;
+            /* 🎯 AQUI VOCÊ AJUSTA O TEXTO */
+            font-size: 14px;       /* TAMANHO DA FONTE - Aumentei de 10px para 14px */
+            line-height: 18px;     /* ESPAÇAMENTO - Aumentei de 12px para 18px */
             letter-spacing: -0.02em;
             color: #FFFFFF;
             word-wrap: break-word;
-            max-width: 240px;
-        }
-
-        .infobox-prefix {
-            opacity: 1;
-            white-space: nowrap;
-        }
-
-        .normal-text {
-            opacity: 0.67;
-        }
-
-        .highlight {
-            opacity: 1;
-            font-weight: bold;
+            /* 🎯 AQUI VOCÊ AJUSTA A LARGURA MÁXIMA DO TEXTO */
+            max-width: 340px;      /* Aumentei de 201px para 340px */
         }
 
         /* ==========================================
-           NÍVEIS DE INFOBOX (Cores específicas)
+           NÍVEIS DE INFOBOX
            ========================================== */
 
         /* INFO - Azul */
         .infobox.info {
             --infobox-border: rgba(0, 170, 255, 0.71);
-            --infobox-shadow: 0px 0px 18px 2px rgba(0, 170, 255, 0.25);
+            --infobox-shadow: 0px 0px 25px 3px rgba(0, 170, 255, 0.35);
             --infobox-accent: #00AAFF;
-            --infobox-accent-shadow: 0px 0px 4px 2px rgba(0, 170, 255, 0.61);
+            --infobox-accent-shadow: 0px 0px 6px 3px rgba(0, 170, 255, 0.71);
         }
 
         /* SUCCESS - Verde */
         .infobox.success {
             --infobox-border: rgba(17, 255, 0, 0.71);
-            --infobox-shadow: 0px 0px 18px 2px rgba(17, 255, 0, 0.25);
+            --infobox-shadow: 0px 0px 25px 3px rgba(17, 255, 0, 0.35);
             --infobox-accent: #11FF00;
-            --infobox-accent-shadow: 0px 0px 4px 2px rgba(17, 255, 0, 0.61);
+            --infobox-accent-shadow: 0px 0px 6px 3px rgba(17, 255, 0, 0.71);
         }
 
-        /* WARNING - Amarelo (EXATAMENTE como no exemplo) */
+        /* WARNING - Amarelo */
         .infobox.warning {
             --infobox-border: rgba(238, 255, 0, 0.71);
-            --infobox-shadow: 0px 0px 18px 2px rgba(238, 255, 0, 0.25);
+            --infobox-shadow: 0px 0px 25px 3px rgba(238, 255, 0, 0.35);
             --infobox-accent: #EEFF00;
-            --infobox-accent-shadow: 0px 0px 4px 2px rgba(238, 255, 0, 0.61);
+            --infobox-accent-shadow: 0px 0px 6px 3px rgba(238, 255, 0, 0.71);
         }
 
         /* ERROR - Vermelho */
         .infobox.error {
             --infobox-border: rgba(255, 0, 0, 0.71);
-            --infobox-shadow: 0px 0px 18px 2px rgba(255, 0, 0, 0.25);
+            --infobox-shadow: 0px 0px 25px 3px rgba(255, 0, 0, 0.35);
             --infobox-accent: #FF0000;
-            --infobox-accent-shadow: 0px 0px 4px 2px rgba(255, 0, 0, 0.61);
+            --infobox-accent-shadow: 0px 0px 6px 3px rgba(255, 0, 0, 0.71);
         }
 
         /* ==========================================
-           ANIMAÇÕES - INSTANTÂNEO
+           ANIMAÇÕES
            ========================================== */
 
         @keyframes slideIn {
@@ -184,17 +171,17 @@
         console.log('[MiauAPI] Sistema iniciando...');
 
         // ==========================================
-        // SISTEMA DE POSIÇÕES PRÉ-DEFINIDAS
+        // SISTEMA DE POSIÇÕES PRÉ-DEFINIDAS - ATUALIZADO
         // ==========================================
         
         const positionPresets = {
             'superior-esquerdo': '20,20',
-            'superior-direito': '1600,20', // 1920 - 300 - 20
-            'inferior-esquerdo': '20,990', // 1080 - 70 - 20
-            'inferior-direito': '1600,990',
-            'centro-superior': '810,20', // (1920 - 300) / 2
-            'centro-inferior': '810,990',
-            'centro': '810,505' // (1080 - 70) / 2
+            'superior-direito': '1500,20',    // 1920 - 400 - 20
+            'inferior-esquerdo': '20,970',    // 1080 - 90 - 20
+            'inferior-direito': '1500,970',
+            'centro-superior': '760,20',      // (1920 - 400) / 2
+            'centro-inferior': '760,970',
+            'centro': '760,495'               // (1080 - 90) / 2
         };
 
         const containers = {};
@@ -216,27 +203,6 @@
         }
 
         // ==========================================
-        // FUNÇÃO PARA PARSEAR MENSAGEM COM DESTAQUES
-        // ==========================================
-        
-        function parseMessage(text, parentElement) {
-            const fragments = text.split(/(\*\*.*?\*\*)/g);
-            fragments.forEach(frag => {
-                if (frag.startsWith('**') && frag.endsWith('**') && frag.length > 4) {
-                    const span = document.createElement('span');
-                    span.className = 'highlight';
-                    span.textContent = frag.slice(2, -2);
-                    parentElement.appendChild(span);
-                } else if (frag) {
-                    const span = document.createElement('span');
-                    span.className = 'normal-text';
-                    span.textContent = frag;
-                    parentElement.appendChild(span);
-                }
-            });
-        }
-
-        // ==========================================
         // FUNÇÃO PRINCIPAL: showInfobox
         // ==========================================
         
@@ -249,7 +215,8 @@
             }
 
             const positionKey = position;
-            const [height, width] = size ? size.split(',').map(v => parseInt(v.trim())) : [70, 300];
+            // 🎯 AQUI VOCÊ PODE MUDAR O TAMANHO PADRÃO
+            const [height, width] = size ? size.split(',').map(v => parseInt(v.trim())) : [90, 400];
 
             // Normalizar level
             const levelMap = {
@@ -259,18 +226,6 @@
                 'informacao': 'info'
             };
             const normalizedLevel = levelMap[level?.toLowerCase()] || level || 'info';
-
-            // Definir prefixo baseado no level
-            let prefix = '';
-            if (normalizedLevel === 'info') {
-                prefix = 'Info: ';
-            } else if (normalizedLevel === 'success') {
-                prefix = 'Success: ';
-            } else if (normalizedLevel === 'warning') {
-                prefix = 'Warning: ';
-            } else if (normalizedLevel === 'error') {
-                prefix = 'Error: ';
-            }
 
             // Criar infobox
             const container = getContainer(positionKey);
@@ -285,20 +240,11 @@
             infobox.innerHTML = `
                 <div class="infobox-accent"></div>
                 <div class="infobox-content">
-                    <div class="infobox-message"></div>
+                    <div class="infobox-message">${message}</div>
                 </div>
             `;
 
             container.appendChild(infobox);
-
-            // Adicionar prefixo e mensagem parseada
-            const messageDiv = infobox.querySelector('.infobox-message');
-            const prefixSpan = document.createElement('span');
-            prefixSpan.className = 'infobox-prefix';
-            prefixSpan.textContent = prefix;
-            messageDiv.appendChild(prefixSpan);
-
-            parseMessage(message, messageDiv);
 
             // Auto-remover após 5 segundos
             setTimeout(() => {
