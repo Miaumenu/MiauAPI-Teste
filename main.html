@@ -1,9 +1,7 @@
-<!-- ==========================================
-     MiauAPI Infobox Module
-     Arquivo: infobox/infobox.html
-     ========================================== -->
-
-     <style>
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
         /* Container de infoboxes */
         .infobox-container {
             position: absolute;
@@ -13,7 +11,7 @@
             z-index: 9999;
             pointer-events: none;
         }
-    
+
         /* Estilo dos infoboxes */
         .infobox {
             background: var(--infobox-bg);
@@ -34,7 +32,7 @@
             gap: 0;
             padding: 0;
         }
-    
+
         .infobox-accent {
             display: flex;
             align-items: center;
@@ -47,7 +45,7 @@
             margin-left: 6px;
             height: calc(100% - 12px);
         }
-    
+
         .infobox-content {
             padding: 10px 15px;
             position: relative;
@@ -56,7 +54,7 @@
             display: flex;
             align-items: center;
         }
-    
+
         .infobox-message {
             font-size: 10px;
             font-weight: 600;
@@ -65,7 +63,7 @@
             color: #FFFFFF;
             word-wrap: break-word;
         }
-    
+
         /* Níveis de infobox */
         .infobox.info {
             --infobox-bg: linear-gradient(97.75deg, rgba(47, 47, 47, 0.1911) -3.82%, rgba(0, 170, 255, 0.1407) 104.72%);
@@ -74,7 +72,7 @@
             --infobox-accent: #00AAFF;
             --infobox-accent-shadow: 0px 0px 4px 2px rgba(0, 170, 255, 0.61);
         }
-    
+
         .infobox.success {
             --infobox-bg: linear-gradient(97.75deg, rgba(47, 47, 47, 0.1911) -3.82%, rgba(17, 255, 0, 0.1407) 104.72%);
             --infobox-border: rgba(17, 255, 0, 0.61);
@@ -82,7 +80,7 @@
             --infobox-accent: #11FF00;
             --infobox-accent-shadow: 0px 0px 4px 2px rgba(17, 255, 0, 0.25);
         }
-    
+
         .infobox.warning {
             --infobox-bg: linear-gradient(97.75deg, rgba(47, 47, 47, 0.1911) -3.82%, rgba(238, 255, 0, 0.1407) 104.72%);
             --infobox-border: rgba(238, 255, 0, 0.61);
@@ -90,7 +88,7 @@
             --infobox-accent: #EEFF00;
             --infobox-accent-shadow: 0px 0px 4px 2px rgba(238, 255, 0, 0.61);
         }
-    
+
         .infobox.error {
             --infobox-bg: linear-gradient(97.75deg, rgba(47, 47, 47, 0.1911) -3.82%, rgba(255, 0, 0, 0.1407) 104.72%);
             --infobox-border: rgba(255, 0, 0, 0.61);
@@ -98,12 +96,12 @@
             --infobox-accent: #FF0000;
             --infobox-accent-shadow: 0px 0px 4px 2px rgba(255, 0, 0, 0.25);
         }
-    
+
         /* Animação de entrada */
         .infobox-enter {
             animation: infobox-slide-in 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
-    
+
         @keyframes infobox-slide-in {
             0% {
                 transform: translateY(-20px);
@@ -114,12 +112,12 @@
                 opacity: 1;
             }
         }
-    
+
         /* Animação de saída */
         .infobox-exit {
             animation: infobox-slide-out 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
-    
+
         @keyframes infobox-slide-out {
             0% {
                 transform: translateY(0);
@@ -131,7 +129,8 @@
             }
         }
     </style>
-    
+</head>
+<body>
     <script>
         // ==========================================
         // MiauAPI Infobox Module
@@ -143,11 +142,11 @@
                 this.infoboxes = [];
                 this.defaultDuration = 5000;
             }
-    
+
             init() {
                 console.log('[MiauAPI] Módulo Infobox inicializado!');
             }
-    
+
             // Obter ou criar container para uma posição específica
             getContainer(x, y) {
                 const key = `${x},${y}`;
@@ -164,7 +163,7 @@
                 
                 return this.containers.get(key);
             }
-    
+
             // Mostrar infobox
             show(message, position, size, level) {
                 // Parse da posição (formato: "x,y")
@@ -204,7 +203,7 @@
                 
                 return id;
             }
-    
+
             // Criar elemento infobox
             createInfobox(id, message, level, width, height) {
                 const infobox = document.createElement('div');
@@ -222,7 +221,7 @@
                 
                 return infobox;
             }
-    
+
             // Normalizar o nível
             normalizeLevel(level) {
                 const levelMap = {
@@ -236,7 +235,7 @@
                 const normalized = (level || 'info').toLowerCase();
                 return levelMap[normalized] || normalized;
             }
-    
+
             // Remover infobox
             remove(id) {
                 const index = this.infoboxes.findIndex(ib => ib.id === id);
@@ -267,13 +266,13 @@
                     }, 300);
                 }
             }
-    
+
             // Limpar todos os infoboxes
             clear() {
                 this.infoboxes.forEach(({ id }) => this.remove(id));
             }
         }
-    
+
         // Registrar módulo na API global
         if (window.MiauAPI) {
             const infoboxModule = new InfoboxModule();
@@ -283,3 +282,5 @@
             console.error('[Infobox] MiauAPI não está disponível!');
         }
     </script>
+</body>
+</html>
