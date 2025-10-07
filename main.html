@@ -1,399 +1,235 @@
+```html
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MiauAPI - Sistema Modular (Corrigido)</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MiauAPI – Sistema Modular Ajustado</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    * {
+      margin: 0; padding: 0; box-sizing: border-box;
+    }
+    html, body {
+      width: 100%; height: 100%; overflow: hidden;
+      background: transparent; font-family: 'Inter', sans-serif;
+    }
+    body {
+      width: 1920px; height: 1080px; background: transparent;
+    }
 
-        html, body {
-            height: 100%;
-            overflow: hidden;
-            background: transparent;
-            font-family: 'Inter', sans-serif;
-        }
+    /* ==========================================
+       MÓDULO: INFOBOX – TAMANHO DINÂMICO
+       ========================================== */
+    .infobox-container {
+      position: fixed;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      z-index: 9999;
+    }
+    .infobox {
+      position: relative;
+      max-width: 1200px;
+      width: 100%;
+      display: flex;
+      align-items: stretch;
+      padding: 20px 30px;
+      background: rgba(0,0,0,0.7);
+      border-radius: 18px;
+      border: 2px solid var(--infobox-border);
+      box-shadow: var(--infobox-shadow);
+    }
+    .infobox-accent {
+      width: 10px;
+      background: var(--infobox-accent);
+      box-shadow: var(--infobox-accent-shadow);
+      border-radius: 18px;
+      margin-right: 30px;
+      flex-shrink: 0;
+    }
+    .infobox-content {
+      flex: 1;
+      display: flex;
+      align-items: center;
+    }
+    .infobox-message {
+      font-weight: 600;
+      font-size: 27px;
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+      color: #FFFFFF;
+      word-wrap: break-word;
+    }
+    .infobox-prefix {
+      margin-right: 8px;
+      font-weight: 700;
+    }
 
-        body {
-            width: 1920px;
-            height: 1080px;
-            background: transparent;
-        }
+    /* Níveis de INFOBOX */
+    .infobox.info {
+      --infobox-border: rgba(0,170,255,0.71);
+      --infobox-shadow: 0px 0px 27px 3px rgba(0,170,255,0.25);
+      --infobox-accent: #00AAFF;
+      --infobox-accent-shadow: 0px 0px 6px 3px rgba(0,170,255,0.61);
+    }
+    .infobox.success {
+      --infobox-border: rgba(17,255,0,0.71);
+      --infobox-shadow: 0px 0px 27px 3px rgba(17,255,0,0.25);
+      --infobox-accent: #11FF00;
+      --infobox-accent-shadow: 0px 0px 6px 3px rgba(17,255,0,0.61);
+    }
+    .infobox.warning {
+      --infobox-border: rgba(238,255,0,0.71);
+      --infobox-shadow: 0px 0px 27px 3px rgba(238,255,0,0.25);
+      --infobox-accent: #EEFF00;
+      --infobox-accent-shadow: 0px 0px 6px 3px rgba(238,255,0,0.61);
+    }
+    .infobox.error {
+      --infobox-border: rgba(255,0,0,0.71);
+      --infobox-shadow: 0px 0px 27px 3px rgba(255,0,0,0.25);
+      --infobox-accent: #FF0000;
+      --infobox-accent-shadow: 0px 0px 6px 3px rgba(255,0,0,0.61);
+    }
 
-        /* ==========================================
-           MÓDULO: INFOBOX - CORRIGIDO E ALINHADO
-           ========================================== */
-        
-        .infobox-container {
-            position: fixed;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            z-index: 9999;
-        }
+    /* Animações */
+    @keyframes slideIn {
+      from { transform: translateY(-30px); opacity: 0; }
+      to   { transform: translateY(0);     opacity: 1; }
+    }
+    @keyframes slideOut {
+      from { transform: translateY(0);     opacity: 1; }
+      to   { transform: translateY(-30px); opacity: 0; }
+    }
+    .infobox-enter {
+      animation: slideIn 0.3s cubic-bezier(0.4,0,0.2,1) forwards;
+    }
+    .infobox-exit {
+      animation: slideOut 0.3s cubic-bezier(0.4,0,0.2,1) forwards;
+    }
 
-        .infobox {
-            box-sizing: border-box;
-            position: relative;
-            width: 1200px;
-            height: 180px;
-            display: flex;
-            align-items: center;
-            padding: 0 30px;
-            
-            /* Fundo preto com 70% de opacidade */
-            background: rgba(0, 0, 0, 0.7);
-            border-radius: 18px;
-            
-            /* Border e shadow dinâmicos */
-            border: 2px solid var(--infobox-border);
-            box-shadow: var(--infobox-shadow);
-        }
-
-        /* Accent bar - CORRIGIDO O ALINHAMENTO */
-        .infobox-accent {
-            width: 10px;
-            height: 140px; /* Reduzido para caber dentro da altura com padding */
-            background: var(--infobox-accent);
-            box-shadow: var(--infobox-accent-shadow);
-            border-radius: 18px;
-            flex-shrink: 0;
-            margin-right: 30px; /* Substitui o gap do flex para melhor controle */
-        }
-
-        /* Content area - CORRIGIDO O ALINHAMENTO */
-        .infobox-content {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            height: 100%;
-        }
-
-        /* Message text - CORRIGIDO O ALINHAMENTO */
-        .infobox-message {
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            font-family: 'Inter';
-            font-style: normal;
-            font-weight: 600;
-            font-size: 27px;
-            line-height: 33px;
-            letter-spacing: -0.02em;
-            color: #FFFFFF;
-            word-wrap: break-word;
-            max-width: 100%;
-            height: 100%;
-            padding: 20px 0;
-        }
-
-        .infobox-prefix {
-            opacity: 1;
-            white-space: nowrap;
-            margin-right: 8px;
-        }
-
-        .normal-text {
-            opacity: 0.67;
-        }
-
-        .highlight {
-            opacity: 1;
-            font-weight: 700;
-        }
-
-        /* ==========================================
-           NÍVEIS DE INFOBOX (Cores específicas)
-           ========================================== */
-
-        /* INFO - Azul */
-        .infobox.info {
-            --infobox-border: rgba(0, 170, 255, 0.71);
-            --infobox-shadow: 0px 0px 27px 3px rgba(0, 170, 255, 0.25);
-            --infobox-accent: #00AAFF;
-            --infobox-accent-shadow: 0px 0px 6px 3px rgba(0, 170, 255, 0.61);
-        }
-
-        /* SUCCESS - Verde */
-        .infobox.success {
-            --infobox-border: rgba(17, 255, 0, 0.71);
-            --infobox-shadow: 0px 0px 27px 3px rgba(17, 255, 0, 0.25);
-            --infobox-accent: #11FF00;
-            --infobox-accent-shadow: 0px 0px 6px 3px rgba(17, 255, 0, 0.61);
-        }
-
-        /* WARNING - Amarelo */
-        .infobox.warning {
-            --infobox-border: rgba(238, 255, 0, 0.71);
-            --infobox-shadow: 0px 0px 27px 3px rgba(238, 255, 0, 0.25);
-            --infobox-accent: #EEFF00;
-            --infobox-accent-shadow: 0px 0px 6px 3px rgba(238, 255, 0, 0.61);
-        }
-
-        /* ERROR - Vermelho */
-        .infobox.error {
-            --infobox-border: rgba(255, 0, 0, 0.71);
-            --infobox-shadow: 0px 0px 27px 3px rgba(255, 0, 0, 0.25);
-            --infobox-accent: #FF0000;
-            --infobox-accent-shadow: 0px 0px 6px 3px rgba(255, 0, 0, 0.61);
-        }
-
-        /* ==========================================
-           ANIMAÇÕES - CORRIGIDAS
-           ========================================== */
-
-        @keyframes slideIn {
-            from {
-                transform: translateY(-30px);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
-
-        @keyframes slideOut {
-            from {
-                transform: translateY(0);
-                opacity: 1;
-            }
-            to {
-                transform: translateY(-30px);
-                opacity: 0;
-            }
-        }
-
-        .infobox-enter {
-            animation: slideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-        }
-
-        .infobox-exit {
-            animation: slideOut 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-        }
-
-        /* ==========================================
-           BOTÕES DE TESTE (APENAS PARA DEMONSTRAÇÃO)
-           ========================================== */
-        .test-buttons {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            z-index: 10000;
-        }
-        
-        .test-button {
-            padding: 10px 15px;
-            background: #333;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-family: 'Inter';
-            font-size: 14px;
-        }
-        
-        .test-button:hover {
-            background: #555;
-        }
-    </style>
+    /* Botões de teste */
+    .test-buttons {
+      position: fixed; top: 20px; right: 20px;
+      display: flex; flex-direction: column; gap: 10px;
+      z-index: 10000;
+    }
+    .test-button {
+      padding: 10px 15px; background: #333; color: #FFF;
+      border: none; border-radius: 5px; cursor: pointer;
+      font-size: 14px; font-family: 'Inter', sans-serif;
+    }
+    .test-button:hover { background: #555; }
+  </style>
 </head>
 <body>
-    <!-- Botões de teste para demonstrar o alinhamento correto -->
-    <div class="test-buttons">
-        <button class="test-button" onclick="testInfobox('info')">Testar Info</button>
-        <button class="test-button" onclick="testInfobox('success')">Testar Success</button>
-        <button class="test-button" onclick="testInfobox('warning')">Testar Warning</button>
-        <button class="test-button" onclick="testInfobox('error')">Testar Error</button>
-    </div>
+  <div class="test-buttons">
+    <button class="test-button" onclick="testInfobox('info')">Testar Info</button>
+    <button class="test-button" onclick="testInfobox('success')">Testar Success</button>
+    <button class="test-button" onclick="testInfobox('warning')">Testar Warning</button>
+    <button class="test-button" onclick="testInfobox('error')">Testar Error</button>
+  </div>
 
-    <script>
-        console.log('[MiauAPI] Sistema iniciando...');
+  <script>
+    console.log('[MiauAPI] Sistema iniciando...');
 
-        // ==========================================
-        // SISTEMA DE POSIÇÕES PRÉ-DEFINIDAS - CORRIGIDAS
-        // ==========================================
-        
-        const positionPresets = {
-            'superior-esquerdo': { x: 20, y: 20 },
-            'superior-direito': { x: 1920 - 1200 - 20, y: 20 },
-            'inferior-esquerdo': { x: 20, y: 1080 - 180 - 20 },
-            'inferior-direito': { x: 1920 - 1200 - 20, y: 1080 - 180 - 20 },
-            'centro-superior': { x: (1920 - 1200) / 2, y: 20 },
-            'centro-inferior': { x: (1920 - 1200) / 2, y: 1080 - 180 - 20 },
-            'centro': { x: (1920 - 1200) / 2, y: (1080 - 180) / 2 }
-        };
+    const positionPresets = {
+      'superior-esquerdo':  { x:20,  y:20 },
+      'superior-direito':   { x:1920-1200-20, y:20 },
+      'inferior-esquerdo':  { x:20, y:1080-180-20 },
+      'inferior-direito':   { x:1920-1200-20, y:1080-180-20 },
+      'centro-superior':    { x:(1920-1200)/2, y:20 },
+      'centro-inferior':    { x:(1920-1200)/2, y:1080-180-20 },
+      'centro':             { x:(1920-1200)/2, y:(1080-180)/2 }
+    };
+    const containers = {};
+    function getContainer(key) {
+      if (!containers[key]) {
+        const c = document.createElement('div');
+        c.className = 'infobox-container';
+        c.style.left = positionPresets[key].x + 'px';
+        c.style.top  = positionPresets[key].y + 'px';
+        document.body.appendChild(c);
+        containers[key] = c;
+      }
+      return containers[key];
+    }
 
-        const containers = {};
-
-        function getContainer(positionKey) {
-            if (!containers[positionKey]) {
-                const container = document.createElement('div');
-                container.className = 'infobox-container';
-                
-                const position = positionPresets[positionKey];
-                container.style.left = position.x + 'px';
-                container.style.top = position.y + 'px';
-                
-                document.body.appendChild(container);
-                containers[positionKey] = container;
-            }
-            
-            return containers[positionKey];
+    function parseMessage(text, parent) {
+      const parts = text.split(/(\*\*.*?\*\*)/g);
+      parts.forEach(p => {
+        if (p.startsWith('**') && p.endsWith('**') && p.length>4) {
+          const span = document.createElement('span');
+          span.className = 'highlight';
+          span.textContent = p.slice(2,-2);
+          parent.appendChild(span);
+        } else if (p) {
+          const span = document.createElement('span');
+          span.className = 'normal-text';
+          span.textContent = p;
+          parent.appendChild(span);
         }
+      });
+    }
 
-        // ==========================================
-        // FUNÇÃO PARA PARSEAR MENSAGEM COM DESTAQUES
-        // ==========================================
-        
-        function parseMessage(text, parentElement) {
-            const fragments = text.split(/(\*\*.*?\*\*)/g);
-            fragments.forEach(frag => {
-                if (frag.startsWith('**') && frag.endsWith('**') && frag.length > 4) {
-                    const span = document.createElement('span');
-                    span.className = 'highlight';
-                    span.textContent = frag.slice(2, -2);
-                    parentElement.appendChild(span);
-                } else if (frag) {
-                    const span = document.createElement('span');
-                    span.className = 'normal-text';
-                    span.textContent = frag;
-                    parentElement.appendChild(span);
-                }
-            });
-        }
+    function showInfobox(message, position, size, level) {
+      if (!positionPresets[position]) return console.error('[MiauAPI] Posição inválida:', position);
+      const levelMap = { 'sucesso':'success','erro':'error','aviso':'warning','informacao':'info' };
+      const lvl = levelMap[level?.toLowerCase()]||level||'info';
+      let prefix = lvl==='info'?'Info: ':lvl==='success'?'Success: ':lvl==='warning'?'Warning: ':'Error: ';
+      const container = getContainer(position);
+      const box = document.createElement('div');
+      box.className = `infobox ${lvl} infobox-enter`;
 
-        // ==========================================
-        // FUNÇÃO PRINCIPAL: showInfobox - CORRIGIDA
-        // ==========================================
-        
-        function showInfobox(message, position, size, level) {
-            // Verificar se a posição é válida
-            if (!positionPresets[position]) {
-                console.error('[MiauAPI] Posição inválida:', position);
-                console.log('[MiauAPI] Posições válidas:', Object.keys(positionPresets));
-                return;
-            }
+      box.innerHTML = `
+        <div class="infobox-accent"></div>
+        <div class="infobox-content">
+          <div class="infobox-message"></div>
+        </div>
+      `;
+      container.appendChild(box);
 
-            const positionKey = position;
-            const [height, width] = size ? size.split(',').map(v => parseInt(v.trim())) : [180, 1200];
+      const msgDiv = box.querySelector('.infobox-message');
+      const pre = document.createElement('span');
+      pre.className = 'infobox-prefix';
+      pre.textContent = prefix;
+      msgDiv.appendChild(pre);
+      parseMessage(message, msgDiv);
 
-            // Normalizar level
-            const levelMap = {
-                'sucesso': 'success',
-                'erro': 'error',
-                'aviso': 'warning',
-                'informacao': 'info'
-            };
-            const normalizedLevel = levelMap[level?.toLowerCase()] || level || 'info';
+      setTimeout(() => {
+        box.classList.add('infobox-exit');
+        setTimeout(() => {
+          if (box.parentNode) box.parentNode.removeChild(box);
+          if (container.children.length===0) {
+            container.remove();
+            delete containers[position];
+          }
+        },300);
+      },5000);
+    }
 
-            // Definir prefixo baseado no level
-            let prefix = '';
-            if (normalizedLevel === 'info') {
-                prefix = 'Info: ';
-            } else if (normalizedLevel === 'success') {
-                prefix = 'Success: ';
-            } else if (normalizedLevel === 'warning') {
-                prefix = 'Warning: ';
-            } else if (normalizedLevel === 'error') {
-                prefix = 'Error: ';
-            }
+    function testInfobox(level) {
+      const msgs = {
+        info:    "Esta é uma mensagem de **informação** importante para o usuário.",
+        success: "Operação concluída com **sucesso**! Todos os dados foram salvos.",
+        warning: "**Atenção**: Esta ação não pode ser desfeita. Confirme se deseja continuar.",
+        error:   "**Erro crítico**: Falha ao conectar com o servidor. Tente novamente."
+      };
+      const poss = ['superior-esquerdo','superior-direito','centro-superior'];
+      const pos = poss[Math.floor(Math.random()*poss.length)];
+      showInfobox(msgs[level], pos, null, level);
+    }
 
-            // Criar infobox
-            const container = getContainer(positionKey);
-            const infobox = document.createElement('div');
-            infobox.className = `infobox ${normalizedLevel} infobox-enter`;
-            
-            if (size) {
-                infobox.style.width = width + 'px';
-                infobox.style.height = height + 'px';
-            }
+    window.MiauAPI = { infobox: showInfobox };
+    window.addEventListener('message', e => {
+      const d = e.data;
+      if (d?.action==='infobox') showInfobox(d.message, d.position, d.size, d.level);
+    });
 
-            infobox.innerHTML = `
-                <div class="infobox-accent"></div>
-                <div class="infobox-content">
-                    <div class="infobox-message"></div>
-                </div>
-            `;
-
-            container.appendChild(infobox);
-
-            // Adicionar prefixo e mensagem parseada
-            const messageDiv = infobox.querySelector('.infobox-message');
-            const prefixSpan = document.createElement('span');
-            prefixSpan.className = 'infobox-prefix';
-            prefixSpan.textContent = prefix;
-            messageDiv.appendChild(prefixSpan);
-
-            parseMessage(message, messageDiv);
-
-            // Auto-remover após 5 segundos
-            setTimeout(() => {
-                infobox.classList.add('infobox-exit');
-                setTimeout(() => {
-                    if (infobox.parentNode) {
-                        infobox.parentNode.removeChild(infobox);
-                    }
-                    if (container.children.length === 0) {
-                        container.remove();
-                        delete containers[positionKey];
-                    }
-                }, 300);
-            }, 5000);
-        }
-
-        // ==========================================
-        // FUNÇÃO DE TESTE (APENAS PARA DEMONSTRAÇÃO)
-        // ==========================================
-        
-        function testInfobox(level) {
-            const messages = {
-                info: "Esta é uma mensagem de **informação** importante para o usuário.",
-                success: "Operação concluída com **sucesso**! Todos os dados foram salvos.",
-                warning: "**Atenção**: Esta ação não pode ser desfeita. Confirme se deseja continuar.",
-                error: "**Erro crítico**: Falha ao conectar com o servidor. Tente novamente."
-            };
-            
-            const positions = ['superior-esquerdo', 'superior-direito', 'centro-superior'];
-            const randomPosition = positions[Math.floor(Math.random() * positions.length)];
-            
-            showInfobox(messages[level], randomPosition, null, level);
-        }
-
-        // ==========================================
-        // API GLOBAL
-        // ==========================================
-        
-        window.MiauAPI = {
-            infobox: showInfobox
-        };
-
-        // ==========================================
-        // LISTENER NUI (FiveM)
-        // ==========================================
-        
-        window.addEventListener('message', (event) => {
-            const data = event.data;
-            
-            if (!data || !data.action) return;
-
-            if (data.action === 'infobox') {
-                showInfobox(data.message, data.position, data.size, data.level);
-            }
-        });
-
-        console.log('[MiauAPI] Sistema pronto! ✓');
-    </script>
+    console.log('[MiauAPI] Sistema pronto! ✓');
+  </script>
 </body>
 </html>
+```
