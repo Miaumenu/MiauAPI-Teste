@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MiauAPI - Desenhar Círculos</title>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    * { 
+      box-sizing: border-box; 
+      margin: 0; 
+      padding: 0; 
+      font-family: "Inter", sans-serif; 
+    }
+    
+    body { 
+      background: linear-gradient(135deg, #1e1e2e, #2d2d44); 
+      color: #ffffff; 
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1000px;
+      width: 100%;
+    }
+
+    h1 {
+      color: #00AAFF;
+      text-align: center;
+      margin-bottom: 30px;
+      font-size: 2.5em;
+    }
+
+    .controls {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .control-group {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .control-group label {
+      color: #ffffff;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .control-btn {
+      padding: 12px 24px;
+      background: rgba(0, 170, 255, 0.2);
+      border: 2px solid #00AAFF;
+      border-radius: 8px;
+      color: #ffffff;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: 600;
+    }
+
+    .control-btn:hover {
+      background: rgba(0, 170, 255, 0.4);
+      transform: translateY(-2px);
+    }
+
+    .control-btn.active {
+      background: #00AAFF;
+      box-shadow: 0 0 20px rgba(0, 170, 255, 0.5);
+    }
+
+    .control-btn.danger {
+      background: rgba(255, 0, 0, 0.2);
+      border-color: #FF0000;
+    }
+
+    .control-btn.danger:hover {
+      background: rgba(255, 0, 0, 0.4);
+    }
+
+    .control-btn.success {
+      background: rgba(17, 255, 0, 0.2);
+      border-color: #11FF00;
+    }
+
+    .control-btn.success:hover {
+      background: rgba(17, 255, 0, 0.4);
+    }
+
+    input[type="color"] {
+      width: 50px;
+      height: 40px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    input[type="range"] {
+      width: 150px;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 3px;
+      outline: none;
+      cursor: pointer;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      background: #00AAFF;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+
+    .canvas-container {
+      display: flex;
+      justify-content: center;
+      margin: 20px 0;
+    }
+
+    .drawing-canvas {
+      border: 3px solid #00AAFF;
+      border-radius: 12px;
+      background: #ffffff;
+      cursor: crosshair;
+      box-shadow: 0 0 30px rgba(0, 170, 255, 0.3);
+    }
+
+    .info-panel {
+      background: rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 20px;
+      margin-top: 20px;
+    }
+
+    .info-panel h3 {
+      color: #00AAFF;
+      margin-bottom: 15px;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+    }
+
+    .info-item {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 15px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .info-item strong {
+      color: #00AAFF;
+    }
+
+    .coordinates {
+      font-family: 'Courier New', monospace;
+      background: rgba(0, 0, 0, 0.5);
+      padding: 10px;
+      border-radius: 6px;
+      margin-top: 10px;
+    }
+
+    .circle-types {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .circle-type-btn {
+      padding: 8px 16px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 6px;
+      color: #ffffff;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .circle-type-btn.active {
+      background: rgba(0, 170, 255, 0.3);
+      border-color: #00AAFF;
+    }
+
+    .preview-circle {
+      position: absolute;
+      pointer-events: none;
+      border: 2px dashed #00AAFF;
+      border-radius: 50%;
+      opacity: 0.7;
+    }
+
+    @media (max-width: 768px) {
+      .controls {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      
+      .control-group {
+        align-items: center;
+      }
+      
+      .drawing-canvas {
+        max-width: 100%;
+        height: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <div class="container">
+      <h1>⭕ Desenhar Círculos</h1>
+      
+      <div class="controls">
+        <div class="control-group">
+          <label>Modo de Desenho:</label>
+          <button class="control-btn" :class="{ active: drawingMode === 'circle' }" @click="setDrawingMode('circle')">
+            ⭕ Círculo
+          </button>
+          <button class="control-btn" :class="{ active: drawingMode === 'ellipse' }" @click="setDrawingMode('ellipse')">
+            🥚 Elipse
+          </button>
+        </div>
+        
+        <div class="control-group">
+          <label>Cor:</label>
+          <input type="color" v-model="strokeColor" />
+        </div>
+        
+        <div class="control-group">
+          <label>Espessura: {{ lineWidth }}px</label>
+          <input type="range" v-model="lineWidth" min="1" max="20" />
+        </div>
+        
+        <div class="control-group">
+          <label>Tipo:</label>
+          <div class="circle-types">
+            <button class="circle-type-btn" :class="{ active: circleType === 'outline' }" @click="setCircleType('outline')">
+              ⚪ Contorno
+            </button>
+            <button class="circle-type-btn" :class="{ active: circleType === 'filled' }" @click="setCircleType('filled')">
+              🔵 Preenchido
+            </button>
+            <button class="circle-type-btn" :class="{ active: circleType === 'both' }" @click="setCircleType('both')">
+              🎯 Ambos
+            </button>
+          </div>
+        </div>
+        
+        <div class="control-group">
+          <label>Ações:</label>
+          <button class="control-btn danger" @click="clearCanvas">🗑️ Limpar</button>
+          <button class="control-btn success" @click="downloadCanvas">💾 Download</button>
+          <button class="control-btn" @click="undoLastCircle">↶ Desfazer</button>
+        </div>
+      </div>
+
+      <div class="canvas-container">
+        <canvas 
+          ref="drawingCanvas"
+          class="drawing-canvas"
+          width="800" 
+          height="500"
+          @mousedown="startDrawing"
+          @mousemove="draw"
+          @mouseup="stopDrawing"
+          @mouseleave="stopDrawing">
+        </canvas>
+      </div>
+
+      <div class="info-panel">
+        <h3>📊 Informações do Desenho</h3>
+        <div class="info-grid">
+          <div class="info-item">
+            <strong>Círculos Desenhados:</strong> {{ circles.length }}
+          </div>
+          <div class="info-item">
+            <strong>Modo Atual:</strong> {{ drawingMode === 'circle' ? 'Círculo' : 'Elipse' }}
+          </div>
+          <div class="info-item">
+            <strong>Cor Atual:</strong> 
+            <span :style="{ color: strokeColor }">●</span> {{ strokeColor }}
+          </div>
+          <div class="info-item">
+            <strong>Espessura:</strong> {{ lineWidth }}px
+          </div>
+          <div class="info-item">
+            <strong>Tipo:</strong> {{ circleType === 'outline' ? 'Contorno' : circleType === 'filled' ? 'Preenchido' : 'Ambos' }}
+          </div>
+          <div class="info-item">
+            <strong>Área Total:</strong> {{ totalArea.toFixed(2) }}px²
+          </div>
+        </div>
+        
+        <div class="coordinates" v-if="currentCircle">
+          <strong>Círculo Atual:</strong><br>
+          Centro: ({{ currentCircle.x }}, {{ currentCircle.y }})<br>
+          Raio: {{ currentCircle.radius.toFixed(2) }}px<br>
+          <span v-if="drawingMode === 'ellipse'">
+            Raio X: {{ currentCircle.radiusX.toFixed(2) }}px<br>
+            Raio Y: {{ currentCircle.radiusY.toFixed(2) }}px
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const { createApp, ref, computed } = Vue;
+
+    createApp({
+      setup() {
+        // Estado da aplicação
+        const drawingMode = ref('circle');
+        const strokeColor = ref('#00AAFF');
+        const lineWidth = ref(3);
+        const circleType = ref('outline');
+        const isDrawing = ref(false);
+        const circles = ref([]);
+        const currentCircle = ref(null);
+        const startX = ref(0);
+        const startY = ref(0);
+        const drawingCanvas = ref(null);
+
+        // Computed
+        const totalArea = computed(() => {
+          return circles.value.reduce((total, circle) => {
+            if (drawingMode.value === 'circle') {
+              return total + Math.PI * circle.radius * circle.radius;
+            } else {
+              return total + Math.PI * circle.radiusX * circle.radiusY;
+            }
+          }, 0);
+        });
+
+        // Funções de controle
+        const setDrawingMode = (mode) => {
+          drawingMode.value = mode;
+        };
+
+        const setCircleType = (type) => {
+          circleType.value = type;
+        };
+
+        // Funções de desenho
+        const startDrawing = (event) => {
+          isDrawing.value = true;
+          const rect = drawingCanvas.value.getBoundingClientRect();
+          startX.value = event.clientX - rect.left;
+          startY.value = event.clientY - rect.top;
+          
+          currentCircle.value = {
+            x: startX.value,
+            y: startY.value,
+            radius: 0,
+            radiusX: 0,
+            radiusY: 0
+          };
+        };
+
+        const draw = (event) => {
+          if (!isDrawing.value) return;
+          
+          const rect = drawingCanvas.value.getBoundingClientRect();
+          const currentX = event.clientX - rect.left;
+          const currentY = event.clientY - rect.top;
+          
+          if (drawingMode.value === 'circle') {
+            const radius = Math.sqrt(
+              Math.pow(currentX - startX.value, 2) + 
+              Math.pow(currentY - startY.value, 2)
+            );
+            currentCircle.value = {
+              x: startX.value,
+              y: startY.value,
+              radius: radius,
+              radiusX: radius,
+              radiusY: radius
+            };
+          } else if (drawingMode.value === 'ellipse') {
+            const radiusX = Math.abs(currentX - startX.value);
+            const radiusY = Math.abs(currentY - startY.value);
+            currentCircle.value = {
+              x: startX.value,
+              y: startY.value,
+              radius: Math.max(radiusX, radiusY),
+              radiusX: radiusX,
+              radiusY: radiusY
+            };
+          }
+          
+          // Redesenha o canvas
+          redrawCanvas();
+        };
+
+        const stopDrawing = () => {
+          if (!isDrawing.value) return;
+          
+          isDrawing.value = false;
+          
+          // Adiciona o círculo à lista se tiver raio mínimo
+          if (currentCircle.value && currentCircle.value.radius > 5) {
+            circles.value.push({
+              ...currentCircle.value,
+              color: strokeColor.value,
+              lineWidth: lineWidth.value,
+              type: circleType.value,
+              mode: drawingMode.value
+            });
+          }
+          
+          currentCircle.value = null;
+        };
+
+        const redrawCanvas = () => {
+          const ctx = drawingCanvas.value.getContext('2d');
+          ctx.clearRect(0, 0, drawingCanvas.value.width, drawingCanvas.value.height);
+          
+          // Desenha todos os círculos salvos
+          circles.value.forEach(circle => {
+            drawCircle(ctx, circle);
+          });
+          
+          // Desenha o círculo atual (se estiver desenhando)
+          if (currentCircle.value && isDrawing.value) {
+            const tempCircle = {
+              ...currentCircle.value,
+              color: strokeColor.value,
+              lineWidth: lineWidth.value,
+              type: circleType.value,
+              mode: drawingMode.value
+            };
+            drawCircle(ctx, tempCircle);
+          }
+        };
+
+        const drawCircle = (ctx, circle) => {
+          ctx.strokeStyle = circle.color;
+          ctx.lineWidth = circle.lineWidth;
+          ctx.lineCap = 'round';
+          
+          ctx.beginPath();
+          
+          if (circle.mode === 'circle') {
+            ctx.arc(circle.x, circle.y, circle.radius, 0, 2 * Math.PI);
+          } else if (circle.mode === 'ellipse') {
+            ctx.ellipse(circle.x, circle.y, circle.radiusX, circle.radiusY, 0, 0, 2 * Math.PI);
+          }
+          
+          if (circle.type === 'filled' || circle.type === 'both') {
+            ctx.fillStyle = circle.color;
+            ctx.fill();
+          }
+          
+          if (circle.type === 'outline' || circle.type === 'both') {
+            ctx.stroke();
+          }
+        };
+
+        const clearCanvas = () => {
+          const ctx = drawingCanvas.value.getContext('2d');
+          ctx.clearRect(0, 0, drawingCanvas.value.width, drawingCanvas.value.height);
+          circles.value = [];
+          currentCircle.value = null;
+        };
+
+        const undoLastCircle = () => {
+          if (circles.value.length > 0) {
+            circles.value.pop();
+            redrawCanvas();
+          }
+        };
+
+        const downloadCanvas = () => {
+          const link = document.createElement('a');
+          link.download = `circulos_${new Date().getTime()}.png`;
+          link.href = drawingCanvas.value.toDataURL();
+          link.click();
+        };
+
+        // API Global para integração
+        window.MiauAPI = window.MiauAPI || {};
+        window.MiauAPI.drawing = window.MiauAPI.drawing || {};
+        
+        window.MiauAPI.drawing.drawCircle = (x, y, radius, color = '#00AAFF', lineWidth = 3, type = 'outline') => {
+          const circle = {
+            x, y, radius,
+            radiusX: radius,
+            radiusY: radius,
+            color,
+            lineWidth,
+            type,
+            mode: 'circle'
+          };
+          circles.value.push(circle);
+          redrawCanvas();
+        };
+
+        window.MiauAPI.drawing.drawEllipse = (x, y, radiusX, radiusY, color = '#00AAFF', lineWidth = 3, type = 'outline') => {
+          const circle = {
+            x, y, radius: Math.max(radiusX, radiusY),
+            radiusX, radiusY,
+            color,
+            lineWidth,
+            type,
+            mode: 'ellipse'
+          };
+          circles.value.push(circle);
+          redrawCanvas();
+        };
+
+        window.MiauAPI.drawing.clearCircles = () => {
+          clearCanvas();
+        };
+
+        window.MiauAPI.drawing.getCircles = () => {
+          return circles.value;
+        };
+
+        return {
+          drawingMode,
+          strokeColor,
+          lineWidth,
+          circleType,
+          isDrawing,
+          circles,
+          currentCircle,
+          drawingCanvas,
+          totalArea,
+          setDrawingMode,
+          setCircleType,
+          startDrawing,
+          draw,
+          stopDrawing,
+          clearCanvas,
+          undoLastCircle,
+          downloadCanvas
+        };
+      }
+    }).mount("#app");
+  </script>
+</body>
+</html>
