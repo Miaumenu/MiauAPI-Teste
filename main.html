@@ -1,341 +1,285 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MiauAPI - Vue.js</title>
-    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+<!-- ==========================================
+     MiauAPI Infobox Module
+     Arquivo: infobox/infobox.html
+     ========================================== -->
 
-        body {
-            width: 1920px;
-            height: 1080px;
-            overflow: hidden;
-            background: transparent;
-            font-family: Arial, sans-serif;
-        }
-
-        /* Indicador de Debug - MUITO VISÍVEL */
-        .debug-indicator {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: #ff0000;
-            color: white;
-            padding: 30px 50px;
-            border-radius: 15px;
-            font-size: 32px;
-            font-weight: bold;
-            z-index: 999999;
-            border: 5px solid white;
-            box-shadow: 0 0 30px rgba(255, 0, 0, 0.8);
-            text-align: center;
-        }
-
-        .debug-small {
-            position: fixed;
-            top: 10px;
-            right: 10px;
-            background: rgba(0, 255, 0, 0.9);
-            color: white;
-            padding: 10px 20px;
-            border-radius: 8px;
-            font-size: 14px;
-            z-index: 999998;
-        }
-
+     <style>
+        /* Container de infoboxes */
         .infobox-container {
-            position: fixed;
+            position: absolute;
             display: flex;
             flex-direction: column;
             gap: 10px;
             z-index: 9999;
+            pointer-events: none;
         }
-
+    
+        /* Estilo dos infoboxes */
         .infobox {
-            background: var(--bg);
+            background: var(--infobox-bg);
             color: #fff;
             border-radius: 7px;
-            box-shadow: var(--shadow);
-            border: 1px solid var(--border);
+            font-family: 'Inter', sans-serif;
+            box-shadow: var(--infobox-shadow);
+            text-align: left;
+            pointer-events: auto;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid var(--infobox-border);
+            position: relative;
+            overflow: hidden;
+            transform: translateZ(0);
+            will-change: transform, opacity;
             display: flex;
             align-items: center;
+            gap: 0;
             padding: 0;
-            transition: all 0.3s ease;
         }
-
+    
         .infobox-accent {
+            display: flex;
+            align-items: center;
+            justify-content: center;
             width: 3px;
-            background: var(--accent);
+            background: var(--infobox-accent);
+            box-shadow: var(--infobox-accent-shadow);
             border-radius: 7px;
+            flex-shrink: 0;
             margin-left: 6px;
             height: calc(100% - 12px);
         }
-
+    
         .infobox-content {
             padding: 10px 15px;
+            position: relative;
+            z-index: 2;
             flex: 1;
+            display: flex;
+            align-items: center;
         }
-
+    
         .infobox-message {
-            font-size: 12px;
+            font-size: 10px;
             font-weight: 600;
+            line-height: 12px;
+            letter-spacing: -0.02em;
             color: #FFFFFF;
+            word-wrap: break-word;
         }
-
-        /* Níveis */
+    
+        /* Níveis de infobox */
         .infobox.info {
-            --bg: linear-gradient(97.75deg, rgba(47, 47, 47, 0.9) -3.82%, rgba(0, 170, 255, 0.3) 104.72%);
-            --border: rgba(0, 170, 255, 0.8);
-            --shadow: 0px 0px 10px 2px rgba(0, 170, 255, 0.5);
-            --accent: #00AAFF;
+            --infobox-bg: linear-gradient(97.75deg, rgba(47, 47, 47, 0.1911) -3.82%, rgba(0, 170, 255, 0.1407) 104.72%);
+            --infobox-border: rgba(0, 170, 255, 0.61);
+            --infobox-shadow: 0px 0px 4px 2px rgba(0, 170, 255, 0.25);
+            --infobox-accent: #00AAFF;
+            --infobox-accent-shadow: 0px 0px 4px 2px rgba(0, 170, 255, 0.61);
         }
-
+    
         .infobox.success {
-            --bg: linear-gradient(97.75deg, rgba(47, 47, 47, 0.9) -3.82%, rgba(17, 255, 0, 0.3) 104.72%);
-            --border: rgba(17, 255, 0, 0.8);
-            --shadow: 0px 0px 10px 2px rgba(17, 255, 0, 0.5);
-            --accent: #11FF00;
+            --infobox-bg: linear-gradient(97.75deg, rgba(47, 47, 47, 0.1911) -3.82%, rgba(17, 255, 0, 0.1407) 104.72%);
+            --infobox-border: rgba(17, 255, 0, 0.61);
+            --infobox-shadow: 0px 0px 4px rgba(17, 255, 0, 0.25);
+            --infobox-accent: #11FF00;
+            --infobox-accent-shadow: 0px 0px 4px 2px rgba(17, 255, 0, 0.25);
         }
-
+    
         .infobox.warning {
-            --bg: linear-gradient(97.75deg, rgba(47, 47, 47, 0.9) -3.82%, rgba(238, 255, 0, 0.3) 104.72%);
-            --border: rgba(238, 255, 0, 0.8);
-            --shadow: 0px 0px 10px 2px rgba(238, 255, 0, 0.5);
-            --accent: #EEFF00;
+            --infobox-bg: linear-gradient(97.75deg, rgba(47, 47, 47, 0.1911) -3.82%, rgba(238, 255, 0, 0.1407) 104.72%);
+            --infobox-border: rgba(238, 255, 0, 0.61);
+            --infobox-shadow: 0px 0px 4px 2px rgba(238, 255, 0, 0.25);
+            --infobox-accent: #EEFF00;
+            --infobox-accent-shadow: 0px 0px 4px 2px rgba(238, 255, 0, 0.61);
         }
-
+    
         .infobox.error {
-            --bg: linear-gradient(97.75deg, rgba(47, 47, 47, 0.9) -3.82%, rgba(255, 0, 0, 0.3) 104.72%);
-            --border: rgba(255, 0, 0, 0.8);
-            --shadow: 0px 0px 10px 2px rgba(255, 0, 0, 0.5);
-            --accent: #FF0000;
+            --infobox-bg: linear-gradient(97.75deg, rgba(47, 47, 47, 0.1911) -3.82%, rgba(255, 0, 0, 0.1407) 104.72%);
+            --infobox-border: rgba(255, 0, 0, 0.61);
+            --infobox-shadow: 0px 0px 4px 2px rgba(255, 0, 0, 0.25);
+            --infobox-accent: #FF0000;
+            --infobox-accent-shadow: 0px 0px 4px 2px rgba(255, 0, 0, 0.25);
         }
-
-        /* Animações Vue */
-        .slide-enter-active {
-            animation: slideIn 0.3s ease-out;
+    
+        /* Animação de entrada */
+        .infobox-enter {
+            animation: infobox-slide-in 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
-
-        .slide-leave-active {
-            animation: slideOut 0.3s ease-in;
-        }
-
-        @keyframes slideIn {
-            from {
+    
+        @keyframes infobox-slide-in {
+            0% {
                 transform: translateY(-20px);
                 opacity: 0;
             }
-            to {
+            100% {
                 transform: translateY(0);
                 opacity: 1;
             }
         }
-
-        @keyframes slideOut {
-            from {
+    
+        /* Animação de saída */
+        .infobox-exit {
+            animation: infobox-slide-out 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+    
+        @keyframes infobox-slide-out {
+            0% {
                 transform: translateY(0);
                 opacity: 1;
             }
-            to {
+            100% {
                 transform: translateY(-20px);
                 opacity: 0;
             }
         }
     </style>
-</head>
-<body>
-    <div id="app">
-        <!-- Debug Indicator -->
-        <div v-if="showDebug" class="debug-indicator">
-            🐱 MiauAPI Vue.js<br>
-            CARREGADO!<br>
-            <small style="font-size: 16px;">Aguarde testes...</small>
-        </div>
-
-        <div v-if="!showDebug" class="debug-small">
-            Vue Ativo ✓ | Infoboxes: {{ totalInfoboxes }}
-        </div>
-
-        <!-- Containers de Infobox -->
-        <div 
-            v-for="(container, key) in containers" 
-            :key="key"
-            class="infobox-container"
-            :style="{ left: container.x + 'px', top: container.y + 'px' }"
-        >
-            <transition-group name="slide">
-                <div 
-                    v-for="infobox in container.items"
-                    :key="infobox.id"
-                    :class="['infobox', infobox.level]"
-                    :style="{ width: infobox.width + 'px', height: infobox.height + 'px' }"
-                >
+    
+    <script>
+        // ==========================================
+        // MiauAPI Infobox Module
+        // ==========================================
+        
+        class InfoboxModule {
+            constructor() {
+                this.containers = new Map();
+                this.infoboxes = [];
+                this.defaultDuration = 5000;
+            }
+    
+            init() {
+                console.log('[MiauAPI] Módulo Infobox inicializado!');
+            }
+    
+            // Obter ou criar container para uma posição específica
+            getContainer(x, y) {
+                const key = `${x},${y}`;
+                
+                if (!this.containers.has(key)) {
+                    const container = document.createElement('div');
+                    container.className = 'infobox-container';
+                    container.style.left = `${x}px`;
+                    container.style.top = `${y}px`;
+                    
+                    document.getElementById('modules-container').appendChild(container);
+                    this.containers.set(key, container);
+                }
+                
+                return this.containers.get(key);
+            }
+    
+            // Mostrar infobox
+            show(message, position, size, level) {
+                // Parse da posição (formato: "x,y")
+                const [x, y] = position ? position.split(',').map(v => parseInt(v.trim())) : [20, 20];
+                
+                // Parse do tamanho (formato: "altura,largura")
+                const [height, width] = size ? size.split(',').map(v => parseInt(v.trim())) : [58, 248];
+                
+                // Normalizar o level
+                const normalizedLevel = this.normalizeLevel(level);
+                
+                // Criar o infobox
+                const id = Date.now() + Math.random();
+                const container = this.getContainer(x, y);
+                const infobox = this.createInfobox(id, message, normalizedLevel, width, height);
+                
+                // Adicionar ao container
+                container.appendChild(infobox);
+                
+                // Guardar referência
+                this.infoboxes.push({
+                    id,
+                    element: infobox,
+                    container,
+                    position: `${x},${y}`
+                });
+                
+                // Adicionar animação de entrada
+                setTimeout(() => {
+                    infobox.classList.add('infobox-enter');
+                }, 10);
+                
+                // Auto-remover após a duração
+                setTimeout(() => {
+                    this.remove(id);
+                }, this.defaultDuration);
+                
+                return id;
+            }
+    
+            // Criar elemento infobox
+            createInfobox(id, message, level, width, height) {
+                const infobox = document.createElement('div');
+                infobox.className = `infobox ${level}`;
+                infobox.dataset.id = id;
+                infobox.style.width = `${width}px`;
+                infobox.style.height = `${height}px`;
+                
+                infobox.innerHTML = `
                     <div class="infobox-accent"></div>
                     <div class="infobox-content">
-                        <div class="infobox-message">{{ infobox.message }}</div>
+                        <div class="infobox-message">${message}</div>
                     </div>
-                </div>
-            </transition-group>
-        </div>
-    </div>
-
-    <script>
-        const { createApp } = Vue;
-
-        const app = createApp({
-            data() {
-                return {
-                    containers: {},
-                    showDebug: true,
-                    totalInfoboxes: 0
-                }
-            },
-            mounted() {
-                console.log('[MiauAPI Vue] Aplicação montada!');
+                `;
                 
-                // Esconder debug após 3 segundos
-                setTimeout(() => {
-                    this.showDebug = false;
-                }, 3000);
-
-                // Iniciar testes automáticos
-                this.startAutoTests();
-
-                // Listener para mensagens NUI do FiveM
-                window.addEventListener('message', (event) => {
-                    console.log('[MiauAPI Vue] Mensagem recebida:', event.data);
-                    
-                    if (event.data && event.data.action === 'infobox') {
-                        this.showInfobox(
-                            event.data.message,
-                            event.data.position,
-                            event.data.size,
-                            event.data.level
-                        );
-                    }
-                });
-
-                // Expor API global
-                window.MiauAPI = {
-                    infobox: (message, position, size, level) => {
-                        this.showInfobox(message, position, size, level);
-                    }
+                return infobox;
+            }
+    
+            // Normalizar o nível
+            normalizeLevel(level) {
+                const levelMap = {
+                    'sucesso': 'success',
+                    'erro': 'error',
+                    'aviso': 'warning',
+                    'informacao': 'info',
+                    'info': 'info'
                 };
-
-                console.log('[MiauAPI Vue] Sistema pronto!');
-            },
-            methods: {
-                showInfobox(message, position = '20,20', size = '58,248', level = 'info') {
-                    console.log('[MiauAPI Vue] showInfobox chamado:', { message, position, size, level });
-
-                    // Parse posição
-                    const [x, y] = position.split(',').map(v => parseInt(v.trim()));
+                
+                const normalized = (level || 'info').toLowerCase();
+                return levelMap[normalized] || normalized;
+            }
+    
+            // Remover infobox
+            remove(id) {
+                const index = this.infoboxes.findIndex(ib => ib.id === id);
+                
+                if (index !== -1) {
+                    const { element, container } = this.infoboxes[index];
                     
-                    // Parse tamanho
-                    const [height, width] = size.split(',').map(v => parseInt(v.trim()));
-
-                    // Normalizar level
-                    const levelMap = {
-                        'sucesso': 'success',
-                        'erro': 'error',
-                        'aviso': 'warning',
-                        'informacao': 'info'
-                    };
-                    const normalizedLevel = levelMap[level?.toLowerCase()] || level || 'info';
-
-                    // Criar chave do container
-                    const containerKey = `${x},${y}`;
-
-                    // Criar container se não existir
-                    if (!this.containers[containerKey]) {
-                        this.containers[containerKey] = {
-                            x,
-                            y,
-                            items: []
-                        };
-                    }
-
-                    // Criar infobox
-                    const infobox = {
-                        id: Date.now() + Math.random(),
-                        message,
-                        level: normalizedLevel,
-                        width,
-                        height
-                    };
-
-                    // Adicionar ao container
-                    this.containers[containerKey].items.push(infobox);
-                    this.totalInfoboxes++;
-
-                    console.log('[MiauAPI Vue] Infobox criado:', infobox.id);
-
-                    // Remover após 5 segundos
+                    element.classList.add('infobox-exit');
+                    
                     setTimeout(() => {
-                        this.removeInfobox(containerKey, infobox.id);
-                    }, 5000);
-                },
-
-                removeInfobox(containerKey, id) {
-                    const container = this.containers[containerKey];
-                    if (container) {
-                        const index = container.items.findIndex(item => item.id === id);
-                        if (index !== -1) {
-                            container.items.splice(index, 1);
-                            this.totalInfoboxes--;
-
-                            // Limpar container vazio
-                            if (container.items.length === 0) {
-                                delete this.containers[containerKey];
-                            }
-
-                            console.log('[MiauAPI Vue] Infobox removido:', id);
+                        if (element.parentNode) {
+                            element.parentNode.removeChild(element);
                         }
-                    }
-                },
-
-                startAutoTests() {
-                    console.log('[MiauAPI Vue] Iniciando testes automáticos...');
-
-                    setTimeout(() => {
-                        console.log('[MiauAPI Vue] Teste 1 - SUCCESS');
-                        this.showInfobox('✓ Sistema Iniciado!', '20,20', '70,300', 'success');
-                    }, 3500);
-
-                    setTimeout(() => {
-                        console.log('[MiauAPI Vue] Teste 2 - INFO');
-                        this.showInfobox('ℹ Teste de Informação', '20,20', '58,248', 'info');
-                    }, 5000);
-
-                    setTimeout(() => {
-                        console.log('[MiauAPI Vue] Teste 3 - WARNING');
-                        this.showInfobox('⚠ Teste de Aviso', '20,20', '58,248', 'warning');
-                    }, 6500);
-
-                    setTimeout(() => {
-                        console.log('[MiauAPI Vue] Teste 4 - ERROR');
-                        this.showInfobox('✖ Teste de Erro', '20,20', '58,248', 'error');
-                    }, 8000);
-
-                    setTimeout(() => {
-                        console.log('[MiauAPI Vue] Teste 5 - MÚLTIPLAS');
-                        this.showInfobox('Notificação 1', '400,300', '58,248', 'info');
-                        setTimeout(() => this.showInfobox('Notificação 2', '400,300', '58,248', 'success'), 500);
-                        setTimeout(() => this.showInfobox('Notificação 3', '400,300', '58,248', 'warning'), 1000);
-                    }, 10000);
+                        
+                        // Remover da lista
+                        this.infoboxes.splice(index, 1);
+                        
+                        // Limpar container vazio
+                        if (container.children.length === 0) {
+                            const key = Array.from(this.containers.entries())
+                                .find(([, v]) => v === container)?.[0];
+                            
+                            if (key) {
+                                container.remove();
+                                this.containers.delete(key);
+                            }
+                        }
+                    }, 300);
                 }
             }
-        });
-
-        app.mount('#app');
-        console.log('[MiauAPI Vue] App montado com sucesso!');
+    
+            // Limpar todos os infoboxes
+            clear() {
+                this.infoboxes.forEach(({ id }) => this.remove(id));
+            }
+        }
+    
+        // Registrar módulo na API global
+        if (window.MiauAPI) {
+            const infoboxModule = new InfoboxModule();
+            window.MiauAPI.registerModule('infobox', infoboxModule);
+            infoboxModule.init();
+        } else {
+            console.error('[Infobox] MiauAPI não está disponível!');
+        }
     </script>
-</body>
-</html>
