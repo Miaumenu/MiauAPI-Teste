@@ -163,28 +163,11 @@
         .infobox-exit {
             animation: slideOut 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
-
-        /* ==========================================
-           DEBUG (Remover em produção)
-           ========================================== */
-        
-        #debug-indicator {
-            position: fixed;
-            top: 10px;
-            right: 10px;
-            background: rgba(0, 255, 0, 0.9);
-            color: white;
-            padding: 10px 20px;
-            border-radius: 8px;
-            font-size: 12px;
-            font-weight: bold;
-            z-index: 999999;
-        }
     </style>
 </head>
 <body>
-    <!-- Debug Indicator -->
-    <div id="debug-indicator">🐱 MiauAPI Ativo</div>
+    <!-- REMOVIDO: Debug Indicator -->
+    <!-- <div id="debug-indicator">🐱 MiauAPI Ativo</div> -->
 
     <script>
         console.log('[MiauAPI] Sistema iniciando...');
@@ -302,10 +285,7 @@
             }
         });
 
-     
-
         console.log('[MiauAPI] Sistema pronto! ✓');
     </script>
 </body>
 </html>
-
