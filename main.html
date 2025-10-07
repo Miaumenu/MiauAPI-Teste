@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MiauAPI - Sistema Modular</title>
+    <title>MiauAPI - Sistema Modular (Corrigido)</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -29,56 +29,55 @@
         }
 
         /* ==========================================
-           MÓDULO: INFOBOX - AUMENTADO SIGNIFICATIVAMENTE
+           MÓDULO: INFOBOX - CORRIGIDO E ALINHADO
            ========================================== */
         
         .infobox-container {
             position: fixed;
             display: flex;
             flex-direction: column;
-            gap: 30px; /* Aumentado de 20px */
+            gap: 20px;
             z-index: 9999;
         }
 
         .infobox {
             box-sizing: border-box;
             position: relative;
-            width: 1200px; /* Aumentado de 800px */
-            height: 180px; /* Aumentado de 120px */
+            width: 1200px;
+            height: 180px;
             display: flex;
             align-items: center;
-            gap: 35px; /* Aumentado de 25px */
-            padding-left: 30px; /* Aumentado de 20px */
+            padding: 0 30px;
             
             /* Fundo preto com 70% de opacidade */
             background: rgba(0, 0, 0, 0.7);
-            border-radius: 18px; /* Aumentado de 12px */
+            border-radius: 18px;
             
             /* Border e shadow dinâmicos */
-            border: 2px solid var(--infobox-border); /* Aumentado de 1px */
+            border: 2px solid var(--infobox-border);
             box-shadow: var(--infobox-shadow);
         }
 
-        /* Accent bar (Rectangle 683) - AUMENTADO */
+        /* Accent bar - CORRIGIDO O ALINHAMENTO */
         .infobox-accent {
-            position: relative;
-            width: 10px; /* Aumentado de 6px */
-            height: 144px; /* Aumentado de 96px */
+            width: 10px;
+            height: 140px; /* Reduzido para caber dentro da altura com padding */
             background: var(--infobox-accent);
             box-shadow: var(--infobox-accent-shadow);
-            border-radius: 18px; /* Aumentado de 12px */
+            border-radius: 18px;
             flex-shrink: 0;
+            margin-right: 30px; /* Substitui o gap do flex para melhor controle */
         }
 
-        /* Content area */
+        /* Content area - CORRIGIDO O ALINHAMENTO */
         .infobox-content {
             flex: 1;
             display: flex;
             align-items: center;
-            padding-right: 45px; /* Aumentado de 30px */
+            height: 100%;
         }
 
-        /* Message text - AUMENTADO */
+        /* Message text - CORRIGIDO O ALINHAMENTO */
         .infobox-message {
             display: flex;
             flex-wrap: wrap;
@@ -86,17 +85,20 @@
             font-family: 'Inter';
             font-style: normal;
             font-weight: 600;
-            font-size: 27px; /* Aumentado de 18px */
-            line-height: 33px; /* Aumentado de 22px */
+            font-size: 27px;
+            line-height: 33px;
             letter-spacing: -0.02em;
             color: #FFFFFF;
             word-wrap: break-word;
-            max-width: 1020px; /* Aumentado de 680px */
+            max-width: 100%;
+            height: 100%;
+            padding: 20px 0;
         }
 
         .infobox-prefix {
             opacity: 1;
             white-space: nowrap;
+            margin-right: 8px;
         }
 
         .normal-text {
@@ -105,7 +107,7 @@
 
         .highlight {
             opacity: 1;
-            font-weight: bold;
+            font-weight: 700;
         }
 
         /* ==========================================
@@ -115,42 +117,42 @@
         /* INFO - Azul */
         .infobox.info {
             --infobox-border: rgba(0, 170, 255, 0.71);
-            --infobox-shadow: 0px 0px 27px 3px rgba(0, 170, 255, 0.25); /* Aumentado */
+            --infobox-shadow: 0px 0px 27px 3px rgba(0, 170, 255, 0.25);
             --infobox-accent: #00AAFF;
-            --infobox-accent-shadow: 0px 0px 6px 3px rgba(0, 170, 255, 0.61); /* Aumentado */
+            --infobox-accent-shadow: 0px 0px 6px 3px rgba(0, 170, 255, 0.61);
         }
 
         /* SUCCESS - Verde */
         .infobox.success {
             --infobox-border: rgba(17, 255, 0, 0.71);
-            --infobox-shadow: 0px 0px 27px 3px rgba(17, 255, 0, 0.25); /* Aumentado */
+            --infobox-shadow: 0px 0px 27px 3px rgba(17, 255, 0, 0.25);
             --infobox-accent: #11FF00;
-            --infobox-accent-shadow: 0px 0px 6px 3px rgba(17, 255, 0, 0.61); /* Aumentado */
+            --infobox-accent-shadow: 0px 0px 6px 3px rgba(17, 255, 0, 0.61);
         }
 
         /* WARNING - Amarelo */
         .infobox.warning {
             --infobox-border: rgba(238, 255, 0, 0.71);
-            --infobox-shadow: 0px 0px 27px 3px rgba(238, 255, 0, 0.25); /* Aumentado */
+            --infobox-shadow: 0px 0px 27px 3px rgba(238, 255, 0, 0.25);
             --infobox-accent: #EEFF00;
-            --infobox-accent-shadow: 0px 0px 6px 3px rgba(238, 255, 0, 0.61); /* Aumentado */
+            --infobox-accent-shadow: 0px 0px 6px 3px rgba(238, 255, 0, 0.61);
         }
 
         /* ERROR - Vermelho */
         .infobox.error {
             --infobox-border: rgba(255, 0, 0, 0.71);
-            --infobox-shadow: 0px 0px 27px 3px rgba(255, 0, 0, 0.25); /* Aumentado */
+            --infobox-shadow: 0px 0px 27px 3px rgba(255, 0, 0, 0.25);
             --infobox-accent: #FF0000;
-            --infobox-accent-shadow: 0px 0px 6px 3px rgba(255, 0, 0, 0.61); /* Aumentado */
+            --infobox-accent-shadow: 0px 0px 6px 3px rgba(255, 0, 0, 0.61);
         }
 
         /* ==========================================
-           ANIMAÇÕES - INSTANTÂNEO
+           ANIMAÇÕES - CORRIGIDAS
            ========================================== */
 
         @keyframes slideIn {
             from {
-                transform: translateY(-30px); /* Aumentado de -20px */
+                transform: translateY(-30px);
                 opacity: 0;
             }
             to {
@@ -165,7 +167,7 @@
                 opacity: 1;
             }
             to {
-                transform: translateY(-30px); /* Aumentado de -20px */
+                transform: translateY(-30px);
                 opacity: 0;
             }
         }
@@ -177,24 +179,60 @@
         .infobox-exit {
             animation: slideOut 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
         }
+
+        /* ==========================================
+           BOTÕES DE TESTE (APENAS PARA DEMONSTRAÇÃO)
+           ========================================== */
+        .test-buttons {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 10000;
+        }
+        
+        .test-button {
+            padding: 10px 15px;
+            background: #333;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Inter';
+            font-size: 14px;
+        }
+        
+        .test-button:hover {
+            background: #555;
+        }
     </style>
 </head>
 <body>
+    <!-- Botões de teste para demonstrar o alinhamento correto -->
+    <div class="test-buttons">
+        <button class="test-button" onclick="testInfobox('info')">Testar Info</button>
+        <button class="test-button" onclick="testInfobox('success')">Testar Success</button>
+        <button class="test-button" onclick="testInfobox('warning')">Testar Warning</button>
+        <button class="test-button" onclick="testInfobox('error')">Testar Error</button>
+    </div>
+
     <script>
         console.log('[MiauAPI] Sistema iniciando...');
 
         // ==========================================
-        // SISTEMA DE POSIÇÕES PRÉ-DEFINIDAS
+        // SISTEMA DE POSIÇÕES PRÉ-DEFINIDAS - CORRIGIDAS
         // ==========================================
         
         const positionPresets = {
-            'superior-esquerdo': '20,20',
-            'superior-direito': '700,20', // Ajustado para 1920 - 1200 - 20
-            'inferior-esquerdo': '20,880', // Ajustado para 1080 - 180 - 20
-            'inferior-direito': '700,880', // Ajustado
-            'centro-superior': '360,20', // Ajustado para (1920 - 1200) / 2
-            'centro-inferior': '360,880', // Ajustado
-            'centro': '360,450' // Ajustado para (1080 - 180) / 2
+            'superior-esquerdo': { x: 20, y: 20 },
+            'superior-direito': { x: 1920 - 1200 - 20, y: 20 },
+            'inferior-esquerdo': { x: 20, y: 1080 - 180 - 20 },
+            'inferior-direito': { x: 1920 - 1200 - 20, y: 1080 - 180 - 20 },
+            'centro-superior': { x: (1920 - 1200) / 2, y: 20 },
+            'centro-inferior': { x: (1920 - 1200) / 2, y: 1080 - 180 - 20 },
+            'centro': { x: (1920 - 1200) / 2, y: (1080 - 180) / 2 }
         };
 
         const containers = {};
@@ -204,9 +242,9 @@
                 const container = document.createElement('div');
                 container.className = 'infobox-container';
                 
-                const [x, y] = positionPresets[positionKey].split(',').map(v => parseInt(v));
-                container.style.left = x + 'px';
-                container.style.top = y + 'px';
+                const position = positionPresets[positionKey];
+                container.style.left = position.x + 'px';
+                container.style.top = position.y + 'px';
                 
                 document.body.appendChild(container);
                 containers[positionKey] = container;
@@ -237,7 +275,7 @@
         }
 
         // ==========================================
-        // FUNÇÃO PRINCIPAL: showInfobox
+        // FUNÇÃO PRINCIPAL: showInfobox - CORRIGIDA
         // ==========================================
         
         function showInfobox(message, position, size, level) {
@@ -313,6 +351,24 @@
                     }
                 }, 300);
             }, 5000);
+        }
+
+        // ==========================================
+        // FUNÇÃO DE TESTE (APENAS PARA DEMONSTRAÇÃO)
+        // ==========================================
+        
+        function testInfobox(level) {
+            const messages = {
+                info: "Esta é uma mensagem de **informação** importante para o usuário.",
+                success: "Operação concluída com **sucesso**! Todos os dados foram salvos.",
+                warning: "**Atenção**: Esta ação não pode ser desfeita. Confirme se deseja continuar.",
+                error: "**Erro crítico**: Falha ao conectar com o servidor. Tente novamente."
+            };
+            
+            const positions = ['superior-esquerdo', 'superior-direito', 'centro-superior'];
+            const randomPosition = positions[Math.floor(Math.random() * positions.length)];
+            
+            showInfobox(messages[level], randomPosition, null, level);
         }
 
         // ==========================================
