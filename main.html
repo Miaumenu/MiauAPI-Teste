@@ -29,44 +29,44 @@
         }
 
         /* ==========================================
-           MÓDULO: INFOBOX - EXATAMENTE COMO O EXEMPLO
+           MÓDULO: INFOBOX - AUMENTADO SIGNIFICATIVAMENTE
            ========================================== */
         
         .infobox-container {
             position: fixed;
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 30px; /* Aumentado de 20px */
             z-index: 9999;
         }
 
         .infobox {
             box-sizing: border-box;
             position: relative;
-            width: 800px;
-            height: 120px;
+            width: 1200px; /* Aumentado de 800px */
+            height: 180px; /* Aumentado de 120px */
             display: flex;
             align-items: center;
-            gap: 25px;
-            padding-left: 20px;
+            gap: 35px; /* Aumentado de 25px */
+            padding-left: 30px; /* Aumentado de 20px */
             
             /* Fundo preto com 70% de opacidade */
             background: rgba(0, 0, 0, 0.7);
-            border-radius: 12px;
+            border-radius: 18px; /* Aumentado de 12px */
             
             /* Border e shadow dinâmicos */
-            border: 1px solid var(--infobox-border);
+            border: 2px solid var(--infobox-border); /* Aumentado de 1px */
             box-shadow: var(--infobox-shadow);
         }
 
-        /* Accent bar (Rectangle 683) - EXATAMENTE como no exemplo */
+        /* Accent bar (Rectangle 683) - AUMENTADO */
         .infobox-accent {
             position: relative;
-            width: 6px;
-            height: 96px;
+            width: 10px; /* Aumentado de 6px */
+            height: 144px; /* Aumentado de 96px */
             background: var(--infobox-accent);
             box-shadow: var(--infobox-accent-shadow);
-            border-radius: 12px;
+            border-radius: 18px; /* Aumentado de 12px */
             flex-shrink: 0;
         }
 
@@ -75,10 +75,10 @@
             flex: 1;
             display: flex;
             align-items: center;
-            padding-right: 30px;
+            padding-right: 45px; /* Aumentado de 30px */
         }
 
-        /* Message text - EXATAMENTE como no exemplo */
+        /* Message text - AUMENTADO */
         .infobox-message {
             display: flex;
             flex-wrap: wrap;
@@ -86,12 +86,12 @@
             font-family: 'Inter';
             font-style: normal;
             font-weight: 600;
-            font-size: 18px;
-            line-height: 22px;
+            font-size: 27px; /* Aumentado de 18px */
+            line-height: 33px; /* Aumentado de 22px */
             letter-spacing: -0.02em;
             color: #FFFFFF;
             word-wrap: break-word;
-            max-width: 680px;
+            max-width: 1020px; /* Aumentado de 680px */
         }
 
         .infobox-prefix {
@@ -115,33 +115,33 @@
         /* INFO - Azul */
         .infobox.info {
             --infobox-border: rgba(0, 170, 255, 0.71);
-            --infobox-shadow: 0px 0px 18px 2px rgba(0, 170, 255, 0.25);
+            --infobox-shadow: 0px 0px 27px 3px rgba(0, 170, 255, 0.25); /* Aumentado */
             --infobox-accent: #00AAFF;
-            --infobox-accent-shadow: 0px 0px 4px 2px rgba(0, 170, 255, 0.61);
+            --infobox-accent-shadow: 0px 0px 6px 3px rgba(0, 170, 255, 0.61); /* Aumentado */
         }
 
         /* SUCCESS - Verde */
         .infobox.success {
             --infobox-border: rgba(17, 255, 0, 0.71);
-            --infobox-shadow: 0px 0px 18px 2px rgba(17, 255, 0, 0.25);
+            --infobox-shadow: 0px 0px 27px 3px rgba(17, 255, 0, 0.25); /* Aumentado */
             --infobox-accent: #11FF00;
-            --infobox-accent-shadow: 0px 0px 4px 2px rgba(17, 255, 0, 0.61);
+            --infobox-accent-shadow: 0px 0px 6px 3px rgba(17, 255, 0, 0.61); /* Aumentado */
         }
 
-        /* WARNING - Amarelo (EXATAMENTE como no exemplo) */
+        /* WARNING - Amarelo */
         .infobox.warning {
             --infobox-border: rgba(238, 255, 0, 0.71);
-            --infobox-shadow: 0px 0px 18px 2px rgba(238, 255, 0, 0.25);
+            --infobox-shadow: 0px 0px 27px 3px rgba(238, 255, 0, 0.25); /* Aumentado */
             --infobox-accent: #EEFF00;
-            --infobox-accent-shadow: 0px 0px 4px 2px rgba(238, 255, 0, 0.61);
+            --infobox-accent-shadow: 0px 0px 6px 3px rgba(238, 255, 0, 0.61); /* Aumentado */
         }
 
         /* ERROR - Vermelho */
         .infobox.error {
             --infobox-border: rgba(255, 0, 0, 0.71);
-            --infobox-shadow: 0px 0px 18px 2px rgba(255, 0, 0, 0.25);
+            --infobox-shadow: 0px 0px 27px 3px rgba(255, 0, 0, 0.25); /* Aumentado */
             --infobox-accent: #FF0000;
-            --infobox-accent-shadow: 0px 0px 4px 2px rgba(255, 0, 0, 0.61);
+            --infobox-accent-shadow: 0px 0px 6px 3px rgba(255, 0, 0, 0.61); /* Aumentado */
         }
 
         /* ==========================================
@@ -150,7 +150,7 @@
 
         @keyframes slideIn {
             from {
-                transform: translateY(-20px);
+                transform: translateY(-30px); /* Aumentado de -20px */
                 opacity: 0;
             }
             to {
@@ -165,7 +165,7 @@
                 opacity: 1;
             }
             to {
-                transform: translateY(-20px);
+                transform: translateY(-30px); /* Aumentado de -20px */
                 opacity: 0;
             }
         }
@@ -189,12 +189,12 @@
         
         const positionPresets = {
             'superior-esquerdo': '20,20',
-            'superior-direito': '1100,20', // 1920 - 800 - 20
-            'inferior-esquerdo': '20,940', // 1080 - 120 - 20
-            'inferior-direito': '1100,940',
-            'centro-superior': '560,20', // (1920 - 800) / 2
-            'centro-inferior': '560,940',
-            'centro': '560,480' // (1080 - 120) / 2
+            'superior-direito': '700,20', // Ajustado para 1920 - 1200 - 20
+            'inferior-esquerdo': '20,880', // Ajustado para 1080 - 180 - 20
+            'inferior-direito': '700,880', // Ajustado
+            'centro-superior': '360,20', // Ajustado para (1920 - 1200) / 2
+            'centro-inferior': '360,880', // Ajustado
+            'centro': '360,450' // Ajustado para (1080 - 180) / 2
         };
 
         const containers = {};
@@ -249,7 +249,7 @@
             }
 
             const positionKey = position;
-            const [height, width] = size ? size.split(',').map(v => parseInt(v.trim())) : [120, 800];
+            const [height, width] = size ? size.split(',').map(v => parseInt(v.trim())) : [180, 1200];
 
             // Normalizar level
             const levelMap = {
