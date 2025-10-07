@@ -43,12 +43,12 @@
         .infobox {
             box-sizing: border-box;
             position: relative;
-            width: 252px;
-            height: 58px;
+            width: 300px;
+            height: 70px;
             display: flex;
             align-items: center;
-            gap: 9px;
-            padding-left: 6px;
+            gap: 12px;
+            padding-left: 8px;
             
             /* Fundo preto com 70% de opacidade */
             background: rgba(0, 0, 0, 0.7);
@@ -62,8 +62,8 @@
         /* Accent bar (Rectangle 683) - EXATAMENTE como no exemplo */
         .infobox-accent {
             position: relative;
-            width: 3px;
-            height: 46px;
+            width: 4px;
+            height: 56px;
             background: var(--infobox-accent);
             box-shadow: var(--infobox-accent-shadow);
             border-radius: 7px;
@@ -75,22 +75,23 @@
             flex: 1;
             display: flex;
             align-items: center;
-            padding-right: 15px;
+            padding-right: 18px;
         }
 
         /* Message text - EXATAMENTE como no exemplo */
         .infobox-message {
             display: flex;
+            flex-wrap: wrap;
             align-items: center;
             font-family: 'Inter';
             font-style: normal;
             font-weight: 600;
-            font-size: 10px;
-            line-height: 12px;
+            font-size: 12px;
+            line-height: 15px;
             letter-spacing: -0.02em;
             color: #FFFFFF;
             word-wrap: break-word;
-            max-width: 201px;
+            max-width: 240px;
         }
 
         .infobox-prefix {
@@ -98,8 +99,13 @@
             white-space: nowrap;
         }
 
-        .infobox-content-text {
+        .normal-text {
             opacity: 0.67;
+        }
+
+        .highlight {
+            opacity: 1;
+            font-weight: bold;
         }
 
         /* ==========================================
@@ -183,12 +189,12 @@
         
         const positionPresets = {
             'superior-esquerdo': '20,20',
-            'superior-direito': '1648,20', // 1920 - 252 - 20
-            'inferior-esquerdo': '20,1002', // 1080 - 58 - 20
-            'inferior-direito': '1648,1002',
-            'centro-superior': '834,20', // (1920 - 252) / 2
-            'centro-inferior': '834,1002',
-            'centro': '834,511' // (1080 - 58) / 2
+            'superior-direito': '1600,20', // 1920 - 300 - 20
+            'inferior-esquerdo': '20,990', // 1080 - 70 - 20
+            'inferior-direito': '1600,990',
+            'centro-superior': '810,20', // (1920 - 300) / 2
+            'centro-inferior': '810,990',
+            'centro': '810,505' // (1080 - 70) / 2
         };
 
         const containers = {};
@@ -210,6 +216,27 @@
         }
 
         // ==========================================
+        // FUNÇÃO PARA PARSEAR MENSAGEM COM DESTAQUES
+        // ==========================================
+        
+        function parseMessage(text, parentElement) {
+            const fragments = text.split(/(\*\*.*?\*\*)/g);
+            fragments.forEach(frag => {
+                if (frag.startsWith('**') && frag.endsWith('**') && frag.length > 4) {
+                    const span = document.createElement('span');
+                    span.className = 'highlight';
+                    span.textContent = frag.slice(2, -2);
+                    parentElement.appendChild(span);
+                } else if (frag) {
+                    const span = document.createElement('span');
+                    span.className = 'normal-text';
+                    span.textContent = frag;
+                    parentElement.appendChild(span);
+                }
+            });
+        }
+
+        // ==========================================
         // FUNÇÃO PRINCIPAL: showInfobox
         // ==========================================
         
@@ -222,7 +249,7 @@
             }
 
             const positionKey = position;
-            const [height, width] = size ? size.split(',').map(v => parseInt(v.trim())) : [58, 252];
+            const [height, width] = size ? size.split(',').map(v => parseInt(v.trim())) : [70, 300];
 
             // Normalizar level
             const levelMap = {
@@ -258,14 +285,20 @@
             infobox.innerHTML = `
                 <div class="infobox-accent"></div>
                 <div class="infobox-content">
-                    <div class="infobox-message">
-                        <span class="infobox-prefix">${prefix}</span>
-                        <span class="infobox-content-text">${message}</span>
-                    </div>
+                    <div class="infobox-message"></div>
                 </div>
             `;
 
             container.appendChild(infobox);
+
+            // Adicionar prefixo e mensagem parseada
+            const messageDiv = infobox.querySelector('.infobox-message');
+            const prefixSpan = document.createElement('span');
+            prefixSpan.className = 'infobox-prefix';
+            prefixSpan.textContent = prefix;
+            messageDiv.appendChild(prefixSpan);
+
+            parseMessage(message, messageDiv);
 
             // Auto-remover após 5 segundos
             setTimeout(() => {
