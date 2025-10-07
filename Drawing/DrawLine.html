@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MiauAPI - Desenhar Linhas</title>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    * { 
+      box-sizing: border-box; 
+      margin: 0; 
+      padding: 0; 
+      font-family: "Inter", sans-serif; 
+    }
+    
+    body { 
+      background: linear-gradient(135deg, #1e1e2e, #2d2d44); 
+      color: #ffffff; 
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1000px;
+      width: 100%;
+    }
+
+    h1 {
+      color: #00AAFF;
+      text-align: center;
+      margin-bottom: 30px;
+      font-size: 2.5em;
+    }
+
+    .controls {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .control-group {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .control-group label {
+      color: #ffffff;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .control-btn {
+      padding: 12px 24px;
+      background: rgba(0, 170, 255, 0.2);
+      border: 2px solid #00AAFF;
+      border-radius: 8px;
+      color: #ffffff;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: 600;
+    }
+
+    .control-btn:hover {
+      background: rgba(0, 170, 255, 0.4);
+      transform: translateY(-2px);
+    }
+
+    .control-btn.active {
+      background: #00AAFF;
+      box-shadow: 0 0 20px rgba(0, 170, 255, 0.5);
+    }
+
+    .control-btn.danger {
+      background: rgba(255, 0, 0, 0.2);
+      border-color: #FF0000;
+    }
+
+    .control-btn.danger:hover {
+      background: rgba(255, 0, 0, 0.4);
+    }
+
+    .control-btn.success {
+      background: rgba(17, 255, 0, 0.2);
+      border-color: #11FF00;
+    }
+
+    .control-btn.success:hover {
+      background: rgba(17, 255, 0, 0.4);
+    }
+
+    input[type="color"] {
+      width: 50px;
+      height: 40px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    input[type="range"] {
+      width: 150px;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 3px;
+      outline: none;
+      cursor: pointer;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      background: #00AAFF;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+
+    .canvas-container {
+      display: flex;
+      justify-content: center;
+      margin: 20px 0;
+    }
+
+    .drawing-canvas {
+      border: 3px solid #00AAFF;
+      border-radius: 12px;
+      background: #ffffff;
+      cursor: crosshair;
+      box-shadow: 0 0 30px rgba(0, 170, 255, 0.3);
+    }
+
+    .info-panel {
+      background: rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 20px;
+      margin-top: 20px;
+    }
+
+    .info-panel h3 {
+      color: #00AAFF;
+      margin-bottom: 15px;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+    }
+
+    .info-item {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 15px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .info-item strong {
+      color: #00AAFF;
+    }
+
+    .coordinates {
+      font-family: 'Courier New', monospace;
+      background: rgba(0, 0, 0, 0.5);
+      padding: 10px;
+      border-radius: 6px;
+      margin-top: 10px;
+    }
+
+    .line-styles {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .line-style-btn {
+      padding: 8px 16px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 6px;
+      color: #ffffff;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .line-style-btn.active {
+      background: rgba(0, 170, 255, 0.3);
+      border-color: #00AAFF;
+    }
+
+    @media (max-width: 768px) {
+      .controls {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      
+      .control-group {
+        align-items: center;
+      }
+      
+      .drawing-canvas {
+        max-width: 100%;
+        height: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <div class="container">
+      <h1>📏 Desenhar Linhas</h1>
+      
+      <div class="controls">
+        <div class="control-group">
+          <label>Modo de Desenho:</label>
+          <button class="control-btn" :class="{ active: drawingMode === 'freehand' }" @click="setDrawingMode('freehand')">
+            ✏️ Livre
+          </button>
+          <button class="control-btn" :class="{ active: drawingMode === 'straight' }" @click="setDrawingMode('straight')">
+            📐 Reta
+          </button>
+        </div>
+        
+        <div class="control-group">
+          <label>Cor:</label>
+          <input type="color" v-model="strokeColor" />
+        </div>
+        
+        <div class="control-group">
+          <label>Espessura: {{ lineWidth }}px</label>
+          <input type="range" v-model="lineWidth" min="1" max="20" />
+        </div>
+        
+        <div class="control-group">
+          <label>Estilo da Linha:</label>
+          <div class="line-styles">
+            <button class="line-style-btn" :class="{ active: lineCap === 'round' }" @click="setLineCap('round')">
+              ● Redondo
+            </button>
+            <button class="line-style-btn" :class="{ active: lineCap === 'square' }" @click="setLineCap('square')">
+              ■ Quadrado
+            </button>
+            <button class="line-style-btn" :class="{ active: lineCap === 'butt' }" @click="setLineCap('butt')">
+              ▬ Reto
+            </button>
+          </div>
+        </div>
+        
+        <div class="control-group">
+          <label>Ações:</label>
+          <button class="control-btn danger" @click="clearCanvas">🗑️ Limpar</button>
+          <button class="control-btn success" @click="downloadCanvas">💾 Download</button>
+          <button class="control-btn" @click="undoLastLine">↶ Desfazer</button>
+        </div>
+      </div>
+
+      <div class="canvas-container">
+        <canvas 
+          ref="drawingCanvas"
+          class="drawing-canvas"
+          width="800" 
+          height="500"
+          @mousedown="startDrawing"
+          @mousemove="draw"
+          @mouseup="stopDrawing"
+          @mouseleave="stopDrawing">
+        </canvas>
+      </div>
+
+      <div class="info-panel">
+        <h3>📊 Informações do Desenho</h3>
+        <div class="info-grid">
+          <div class="info-item">
+            <strong>Linhas Desenhadas:</strong> {{ lines.length }}
+          </div>
+          <div class="info-item">
+            <strong>Modo Atual:</strong> {{ drawingMode === 'freehand' ? 'Livre' : 'Reta' }}
+          </div>
+          <div class="info-item">
+            <strong>Cor Atual:</strong> 
+            <span :style="{ color: strokeColor }">●</span> {{ strokeColor }}
+          </div>
+          <div class="info-item">
+            <strong>Espessura:</strong> {{ lineWidth }}px
+          </div>
+          <div class="info-item">
+            <strong>Estilo:</strong> {{ lineCap }}
+          </div>
+          <div class="info-item">
+            <strong>Pontos Totais:</strong> {{ totalPoints }}
+          </div>
+        </div>
+        
+        <div class="coordinates" v-if="currentLine && currentLine.length > 0">
+          <strong>Linha Atual:</strong><br>
+          Pontos: {{ currentLine.length }}<br>
+          <span v-if="currentLine.length >= 2">
+            Início: ({{ currentLine[0].x }}, {{ currentLine[0].y }})<br>
+            Fim: ({{ currentLine[currentLine.length - 1].x }}, {{ currentLine[currentLine.length - 1].y }})
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const { createApp, ref, computed } = Vue;
+
+    createApp({
+      setup() {
+        // Estado da aplicação
+        const drawingMode = ref('freehand');
+        const strokeColor = ref('#00AAFF');
+        const lineWidth = ref(3);
+        const lineCap = ref('round');
+        const isDrawing = ref(false);
+        const lines = ref([]);
+        const currentLine = ref([]);
+        const drawingCanvas = ref(null);
+
+        // Computed
+        const totalPoints = computed(() => {
+          return lines.value.reduce((total, line) => total + line.points.length, 0);
+        });
+
+        // Funções de controle
+        const setDrawingMode = (mode) => {
+          drawingMode.value = mode;
+        };
+
+        const setLineCap = (cap) => {
+          lineCap.value = cap;
+        };
+
+        // Funções de desenho
+        const startDrawing = (event) => {
+          isDrawing.value = true;
+          const rect = drawingCanvas.value.getBoundingClientRect();
+          const point = {
+            x: event.clientX - rect.left,
+            y: event.clientY - rect.top
+          };
+          
+          currentLine.value = [point];
+        };
+
+        const draw = (event) => {
+          if (!isDrawing.value) return;
+          
+          const rect = drawingCanvas.value.getBoundingClientRect();
+          const point = {
+            x: event.clientX - rect.left,
+            y: event.clientY - rect.top
+          };
+          
+          if (drawingMode.value === 'freehand') {
+            currentLine.value.push(point);
+          } else if (drawingMode.value === 'straight' && currentLine.value.length === 1) {
+            currentLine.value = [currentLine.value[0], point];
+          }
+          
+          // Redesenha o canvas
+          redrawCanvas();
+        };
+
+        const stopDrawing = () => {
+          if (!isDrawing.value) return;
+          
+          isDrawing.value = false;
+          
+          // Adiciona a linha à lista se tiver pontos suficientes
+          if (currentLine.value.length > 0) {
+            lines.value.push({
+              points: [...currentLine.value],
+              color: strokeColor.value,
+              lineWidth: lineWidth.value,
+              lineCap: lineCap.value,
+              mode: drawingMode.value
+            });
+          }
+          
+          currentLine.value = [];
+        };
+
+        const redrawCanvas = () => {
+          const ctx = drawingCanvas.value.getContext('2d');
+          ctx.clearRect(0, 0, drawingCanvas.value.width, drawingCanvas.value.height);
+          
+          // Desenha todas as linhas salvas
+          lines.value.forEach(line => {
+            drawLine(ctx, line);
+          });
+          
+          // Desenha a linha atual (se estiver desenhando)
+          if (currentLine.value.length > 0 && isDrawing.value) {
+            const tempLine = {
+              points: currentLine.value,
+              color: strokeColor.value,
+              lineWidth: lineWidth.value,
+              lineCap: lineCap.value,
+              mode: drawingMode.value
+            };
+            drawLine(ctx, tempLine);
+          }
+        };
+
+        const drawLine = (ctx, line) => {
+          if (line.points.length < 2) return;
+          
+          ctx.strokeStyle = line.color;
+          ctx.lineWidth = line.lineWidth;
+          ctx.lineCap = line.lineCap;
+          ctx.lineJoin = 'round';
+          
+          ctx.beginPath();
+          ctx.moveTo(line.points[0].x, line.points[0].y);
+          
+          if (line.mode === 'freehand') {
+            // Desenha linha livre conectando todos os pontos
+            for (let i = 1; i < line.points.length; i++) {
+              ctx.lineTo(line.points[i].x, line.points[i].y);
+            }
+          } else if (line.mode === 'straight') {
+            // Desenha linha reta do primeiro ao último ponto
+            ctx.lineTo(line.points[line.points.length - 1].x, line.points[line.points.length - 1].y);
+          }
+          
+          ctx.stroke();
+        };
+
+        const clearCanvas = () => {
+          const ctx = drawingCanvas.value.getContext('2d');
+          ctx.clearRect(0, 0, drawingCanvas.value.width, drawingCanvas.value.height);
+          lines.value = [];
+          currentLine.value = [];
+        };
+
+        const undoLastLine = () => {
+          if (lines.value.length > 0) {
+            lines.value.pop();
+            redrawCanvas();
+          }
+        };
+
+        const downloadCanvas = () => {
+          const link = document.createElement('a');
+          link.download = `linhas_${new Date().getTime()}.png`;
+          link.href = drawingCanvas.value.toDataURL();
+          link.click();
+        };
+
+        // API Global para integração
+        window.MiauAPI = window.MiauAPI || {};
+        window.MiauAPI.drawing = window.MiauAPI.drawing || {};
+        
+        window.MiauAPI.drawing.drawLine = (x1, y1, x2, y2, color = '#00AAFF', lineWidth = 3, lineCap = 'round') => {
+          const line = {
+            points: [{ x: x1, y: y1 }, { x: x2, y: y2 }],
+            color,
+            lineWidth,
+            lineCap,
+            mode: 'straight'
+          };
+          lines.value.push(line);
+          redrawCanvas();
+        };
+
+        window.MiauAPI.drawing.drawFreehandLine = (points, color = '#00AAFF', lineWidth = 3, lineCap = 'round') => {
+          const line = {
+            points: points,
+            color,
+            lineWidth,
+            lineCap,
+            mode: 'freehand'
+          };
+          lines.value.push(line);
+          redrawCanvas();
+        };
+
+        window.MiauAPI.drawing.clearLines = () => {
+          clearCanvas();
+        };
+
+        window.MiauAPI.drawing.getLines = () => {
+          return lines.value;
+        };
+
+        return {
+          drawingMode,
+          strokeColor,
+          lineWidth,
+          lineCap,
+          isDrawing,
+          lines,
+          currentLine,
+          drawingCanvas,
+          totalPoints,
+          setDrawingMode,
+          setLineCap,
+          startDrawing,
+          draw,
+          stopDrawing,
+          clearCanvas,
+          undoLastLine,
+          downloadCanvas
+        };
+      }
+    }).mount("#app");
+  </script>
+</body>
+</html>
