@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MiauAPI - Desenhar Retângulo</title>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    * { 
+      box-sizing: border-box; 
+      margin: 0; 
+      padding: 0; 
+      font-family: "Inter", sans-serif; 
+    }
+    
+    body { 
+      background: linear-gradient(135deg, #1e1e2e, #2d2d44); 
+      color: #ffffff; 
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1000px;
+      width: 100%;
+    }
+
+    h1 {
+      color: #00AAFF;
+      text-align: center;
+      margin-bottom: 30px;
+      font-size: 2.5em;
+    }
+
+    .controls {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .control-group {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .control-group label {
+      color: #ffffff;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .control-btn {
+      padding: 12px 24px;
+      background: rgba(0, 170, 255, 0.2);
+      border: 2px solid #00AAFF;
+      border-radius: 8px;
+      color: #ffffff;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: 600;
+    }
+
+    .control-btn:hover {
+      background: rgba(0, 170, 255, 0.4);
+      transform: translateY(-2px);
+    }
+
+    .control-btn.active {
+      background: #00AAFF;
+      box-shadow: 0 0 20px rgba(0, 170, 255, 0.5);
+    }
+
+    .control-btn.danger {
+      background: rgba(255, 0, 0, 0.2);
+      border-color: #FF0000;
+    }
+
+    .control-btn.danger:hover {
+      background: rgba(255, 0, 0, 0.4);
+    }
+
+    .control-btn.success {
+      background: rgba(17, 255, 0, 0.2);
+      border-color: #11FF00;
+    }
+
+    .control-btn.success:hover {
+      background: rgba(17, 255, 0, 0.4);
+    }
+
+    input[type="color"] {
+      width: 50px;
+      height: 40px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    input[type="range"] {
+      width: 150px;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 3px;
+      outline: none;
+      cursor: pointer;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      background: #00AAFF;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+
+    .canvas-container {
+      display: flex;
+      justify-content: center;
+      margin: 20px 0;
+    }
+
+    .drawing-canvas {
+      border: 3px solid #00AAFF;
+      border-radius: 12px;
+      background: #ffffff;
+      cursor: crosshair;
+      box-shadow: 0 0 30px rgba(0, 170, 255, 0.3);
+    }
+
+    .info-panel {
+      background: rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 20px;
+      margin-top: 20px;
+    }
+
+    .info-panel h3 {
+      color: #00AAFF;
+      margin-bottom: 15px;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+    }
+
+    .info-item {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 15px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .info-item strong {
+      color: #00AAFF;
+    }
+
+    .coordinates {
+      font-family: 'Courier New', monospace;
+      background: rgba(0, 0, 0, 0.5);
+      padding: 10px;
+      border-radius: 6px;
+      margin-top: 10px;
+    }
+
+    @media (max-width: 768px) {
+      .controls {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      
+      .control-group {
+        align-items: center;
+      }
+      
+      .drawing-canvas {
+        max-width: 100%;
+        height: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <div class="container">
+      <h1>🎨 Desenhar Retângulos</h1>
+      
+      <div class="controls">
+        <div class="control-group">
+          <label>Modo de Desenho:</label>
+          <button class="control-btn" :class="{ active: drawingMode === 'rectangle' }" @click="setDrawingMode('rectangle')">
+            📐 Retângulo
+          </button>
+        </div>
+        
+        <div class="control-group">
+          <label>Cor:</label>
+          <input type="color" v-model="strokeColor" />
+        </div>
+        
+        <div class="control-group">
+          <label>Espessura: {{ lineWidth }}px</label>
+          <input type="range" v-model="lineWidth" min="1" max="20" />
+        </div>
+        
+        <div class="control-group">
+          <label>Preenchimento:</label>
+          <button class="control-btn" :class="{ active: fillMode }" @click="toggleFillMode">
+            {{ fillMode ? '🎨 Preenchido' : '⚪ Vazio' }}
+          </button>
+        </div>
+        
+        <div class="control-group">
+          <label>Ações:</label>
+          <button class="control-btn danger" @click="clearCanvas">🗑️ Limpar</button>
+          <button class="control-btn success" @click="downloadCanvas">💾 Download</button>
+        </div>
+      </div>
+
+      <div class="canvas-container">
+        <canvas 
+          ref="drawingCanvas"
+          class="drawing-canvas"
+          width="800" 
+          height="500"
+          @mousedown="startDrawing"
+          @mousemove="draw"
+          @mouseup="stopDrawing"
+          @mouseleave="stopDrawing">
+        </canvas>
+      </div>
+
+      <div class="info-panel">
+        <h3>📊 Informações do Desenho</h3>
+        <div class="info-grid">
+          <div class="info-item">
+            <strong>Retângulos Desenhados:</strong> {{ rectangles.length }}
+          </div>
+          <div class="info-item">
+            <strong>Modo Atual:</strong> {{ drawingMode === 'rectangle' ? 'Retângulo' : 'Seleção' }}
+          </div>
+          <div class="info-item">
+            <strong>Cor Atual:</strong> 
+            <span :style="{ color: strokeColor }">●</span> {{ strokeColor }}
+          </div>
+          <div class="info-item">
+            <strong>Espessura:</strong> {{ lineWidth }}px
+          </div>
+        </div>
+        
+        <div class="coordinates" v-if="currentRect">
+          <strong>Retângulo Atual:</strong><br>
+          X: {{ currentRect.x }}, Y: {{ currentRect.y }}<br>
+          Largura: {{ currentRect.width }}, Altura: {{ currentRect.height }}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const { createApp, ref } = Vue;
+
+    createApp({
+      setup() {
+        // Estado da aplicação
+        const drawingMode = ref('rectangle');
+        const strokeColor = ref('#00AAFF');
+        const lineWidth = ref(3);
+        const fillMode = ref(false);
+        const isDrawing = ref(false);
+        const startX = ref(0);
+        const startY = ref(0);
+        const currentRect = ref(null);
+        const rectangles = ref([]);
+        const drawingCanvas = ref(null);
+
+        // Funções de controle
+        const setDrawingMode = (mode) => {
+          drawingMode.value = mode;
+        };
+
+        const toggleFillMode = () => {
+          fillMode.value = !fillMode.value;
+        };
+
+        // Funções de desenho
+        const startDrawing = (event) => {
+          if (drawingMode.value !== 'rectangle') return;
+          
+          isDrawing.value = true;
+          const rect = drawingCanvas.value.getBoundingClientRect();
+          startX.value = event.clientX - rect.left;
+          startY.value = event.clientY - rect.top;
+          
+          currentRect.value = {
+            x: startX.value,
+            y: startY.value,
+            width: 0,
+            height: 0
+          };
+        };
+
+        const draw = (event) => {
+          if (!isDrawing.value || drawingMode.value !== 'rectangle') return;
+          
+          const rect = drawingCanvas.value.getBoundingClientRect();
+          const currentX = event.clientX - rect.left;
+          const currentY = event.clientY - rect.top;
+          
+          // Atualiza o retângulo atual
+          currentRect.value = {
+            x: Math.min(startX.value, currentX),
+            y: Math.min(startY.value, currentY),
+            width: Math.abs(currentX - startX.value),
+            height: Math.abs(currentY - startY.value)
+          };
+          
+          // Redesenha o canvas
+          redrawCanvas();
+        };
+
+        const stopDrawing = () => {
+          if (!isDrawing.value) return;
+          
+          isDrawing.value = false;
+          
+          // Adiciona o retângulo à lista se tiver tamanho mínimo
+          if (currentRect.value && currentRect.value.width > 5 && currentRect.value.height > 5) {
+            rectangles.value.push({
+              ...currentRect.value,
+              color: strokeColor.value,
+              lineWidth: lineWidth.value,
+              filled: fillMode.value
+            });
+          }
+          
+          currentRect.value = null;
+        };
+
+        const redrawCanvas = () => {
+          const ctx = drawingCanvas.value.getContext('2d');
+          ctx.clearRect(0, 0, drawingCanvas.value.width, drawingCanvas.value.height);
+          
+          // Desenha todos os retângulos salvos
+          rectangles.value.forEach(rect => {
+            drawRectangle(ctx, rect);
+          });
+          
+          // Desenha o retângulo atual (se estiver desenhando)
+          if (currentRect.value && isDrawing.value) {
+            const tempRect = {
+              ...currentRect.value,
+              color: strokeColor.value,
+              lineWidth: lineWidth.value,
+              filled: fillMode.value
+            };
+            drawRectangle(ctx, tempRect);
+          }
+        };
+
+        const drawRectangle = (ctx, rect) => {
+          ctx.strokeStyle = rect.color;
+          ctx.lineWidth = rect.lineWidth;
+          ctx.lineCap = 'round';
+          ctx.lineJoin = 'round';
+          
+          if (rect.filled) {
+            ctx.fillStyle = rect.color;
+            ctx.fillRect(rect.x, rect.y, rect.width, rect.height);
+          } else {
+            ctx.strokeRect(rect.x, rect.y, rect.width, rect.height);
+          }
+        };
+
+        const clearCanvas = () => {
+          const ctx = drawingCanvas.value.getContext('2d');
+          ctx.clearRect(0, 0, drawingCanvas.value.width, drawingCanvas.value.height);
+          rectangles.value = [];
+          currentRect.value = null;
+        };
+
+        const downloadCanvas = () => {
+          const link = document.createElement('a');
+          link.download = `retangulos_${new Date().getTime()}.png`;
+          link.href = drawingCanvas.value.toDataURL();
+          link.click();
+        };
+
+        // API Global para integração
+        window.MiauAPI = window.MiauAPI || {};
+        window.MiauAPI.drawing = window.MiauAPI.drawing || {};
+        
+        window.MiauAPI.drawing.drawRectangle = (x, y, width, height, color = '#00AAFF', lineWidth = 3, filled = false) => {
+          const rect = { x, y, width, height, color, lineWidth, filled };
+          rectangles.value.push(rect);
+          redrawCanvas();
+        };
+
+        window.MiauAPI.drawing.clearRectangles = () => {
+          clearCanvas();
+        };
+
+        window.MiauAPI.drawing.getRectangles = () => {
+          return rectangles.value;
+        };
+
+        return {
+          drawingMode,
+          strokeColor,
+          lineWidth,
+          fillMode,
+          isDrawing,
+          currentRect,
+          rectangles,
+          drawingCanvas,
+          setDrawingMode,
+          toggleFillMode,
+          startDrawing,
+          draw,
+          stopDrawing,
+          clearCanvas,
+          downloadCanvas
+        };
+      }
+    }).mount("#app");
+  </script>
+</body>
+</html>
