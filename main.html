@@ -109,40 +109,20 @@
     .infobox-exit {
       animation: slideOut 0.3s cubic-bezier(0.4,0,0.2,1) forwards;
     }
-
-    /* Botões de teste */
-    .test-buttons {
-      position: fixed; top: 20px; right: 20px;
-      display: flex; flex-direction: column; gap: 10px;
-      z-index: 10000;
-    }
-    .test-button {
-      padding: 10px 15px; background: #333; color: #FFF;
-      border: none; border-radius: 5px; cursor: pointer;
-      font-size: 14px; font-family: 'Inter', sans-serif;
-    }
-    .test-button:hover { background: #555; }
   </style>
 </head>
 <body>
-  <div class="test-buttons">
-    <button class="test-button" onclick="testInfobox('info')">Testar Info</button>
-    <button class="test-button" onclick="testInfobox('success')">Testar Success</button>
-    <button class="test-button" onclick="testInfobox('warning')">Testar Warning</button>
-    <button class="test-button" onclick="testInfobox('error')">Testar Error</button>
-  </div>
-
   <script>
     console.log('[MiauAPI] Sistema iniciando...');
 
     const positionPresets = {
       'superior-esquerdo':  { x:20,  y:20 },
       'superior-direito':   { x:1920-1200-20, y:20 },
-      'inferior-esquerdo':  { x:20, y:1080-180-20 },
-      'inferior-direito':   { x:1920-1200-20, y:1080-180-20 },
+      'inferior-esquerdo':  { x:20, y:1080-20 },
+      'inferior-direito':   { x:1920-1200-20, y:1080-20 },
       'centro-superior':    { x:(1920-1200)/2, y:20 },
-      'centro-inferior':    { x:(1920-1200)/2, y:1080-180-20 },
-      'centro':             { x:(1920-1200)/2, y:(1080-180)/2 }
+      'centro-inferior':    { x:(1920-1200)/2, y:1080-20 },
+      'centro':             { x:(1920-1200)/2, y:(1080)/2 }
     };
     const containers = {};
     function getContainer(key) {
@@ -208,18 +188,6 @@
           }
         },300);
       },5000);
-    }
-
-    function testInfobox(level) {
-      const msgs = {
-        info:    "Esta é uma mensagem de **informação** importante para o usuário.",
-        success: "Operação concluída com **sucesso**! Todos os dados foram salvos.",
-        warning: "**Atenção**: Esta ação não pode ser desfeita. Confirme se deseja continuar.",
-        error:   "**Erro crítico**: Falha ao conectar com o servidor. Tente novamente."
-      };
-      const poss = ['superior-esquerdo','superior-direito','centro-superior'];
-      const pos = poss[Math.floor(Math.random()*poss.length)];
-      showInfobox(msgs[level], pos, null, level);
     }
 
     window.MiauAPI = { infobox: showInfobox };
