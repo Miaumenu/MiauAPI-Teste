@@ -7,97 +7,52 @@
         body {
             margin: 0;
             padding: 0;
-            background: rgba(0, 0, 0, 0.1);
-            overflow: visible;
+            background: transparent;
+            overflow: hidden;
             width: 100%;
             height: 100%;
         }
-        #container {
-            width: 500px;
-            height: 150px;
-            background: rgba(0, 0, 0, 0.8);
-            color: white;
-            font-family: Arial, sans-serif;
-            user-select: none;
-            border: 2px solid #007bff;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-        }
-        #title {
-            height: 30px;
-            background: linear-gradient(135deg, #007bff, #0056b3);
-            text-align: center;
-            line-height: 30px;
-            cursor: move;
-            font-weight: bold;
-            border-radius: 6px 6px 0 0;
-        }
         #slider-container {
-            padding: 20px;
-            text-align: center;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.7);
         }
         input[type="range"] {
             width: 80%;
+            height: 20px;
+            background: transparent;
+            outline: none;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+        input[type="range"]::-webkit-slider-track {
+            background: #333;
+            height: 8px;
+            border-radius: 4px;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            background: #007bff;
+            border-radius: 50%;
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
-    <div id="container">
-        <div id="title">Slider Draggable</div>
-        <div id="slider-container">
-            <input type="range" id="slider" min="0" max="100" value="50">
-            <div id="slider-value" style="color: #00ff00; font-weight: bold; margin: 5px 0;">Valor: 50</div>
-            <div style="margin-top: 10px; display: flex; gap: 10px; justify-content: center;">
-                <button id="resetBtn" style="background: #28a745; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-weight: bold;">
-                    🔄 Resetar
-                </button>
-                <button id="debugBtn" style="background: #ffc107; color: black; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-weight: bold;">
-                    🐛 Debug
-                </button>
-            </div>
-        </div>
+    <div id="slider-container">
+        <input type="range" id="slider" min="0" max="100" value="50">
     </div>
 
     <script>
-        const title = document.getElementById('title');
-        let dragging = false;
-        let lastX, lastY;
-
-        title.addEventListener('mousedown', (e) => {
-            e.preventDefault();
-            dragging = true;
-            lastX = e.clientX;
-            lastY = e.clientY;
-        });
-
-        document.addEventListener('mousemove', (e) => {
-            if (dragging) {
-                const dx = e.clientX - lastX;
-                const dy = e.clientY - lastY;
-                lastX = e.clientX;
-                lastY = e.clientY;
-
-                // Envia delta para Lua
-                fetch(`https://${GetParentResourceName()}/dragDelta`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json; charset=UTF-8' },
-                    body: JSON.stringify({ dx: dx, dy: dy })
-                });
-            }
-        });
-
-        document.addEventListener('mouseup', () => {
-            dragging = false;
-        });
-
         const slider = document.getElementById('slider');
-        const sliderValue = document.getElementById('slider-value');
         
+        // Envia valor do slider para Lua quando mudado
         slider.addEventListener('input', (e) => {
-            // Atualiza display do valor
-            sliderValue.textContent = 'Valor: ' + e.target.value;
-            
-            // Envia valor do slider para Lua
             fetch(`https://${GetParentResourceName()}/sliderValue`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json; charset=UTF-8' },
@@ -110,37 +65,8 @@
             const data = event.data;
             if (data.type === 'updateSlider') {
                 slider.value = data.value;
-                sliderValue.textContent = 'Valor: ' + data.value;
                 console.log('Slider atualizado para:', data.value);
             }
-        });
-
-        // Botão de reset
-        const resetBtn = document.getElementById('resetBtn');
-        resetBtn.addEventListener('click', () => {
-            // Envia comando de reset para Lua
-            fetch(`https://${GetParentResourceName()}/resetPosition`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json; charset=UTF-8' },
-                body: JSON.stringify({})
-            });
-        });
-
-        // Botão de debug
-        const debugBtn = document.getElementById('debugBtn');
-        debugBtn.addEventListener('click', () => {
-            // Mostra informações de debug
-            const debugInfo = {
-                sliderValue: slider.value,
-                position: { x: window.screenX, y: window.screenY },
-                timestamp: new Date().toLocaleTimeString()
-            };
-            
-            console.log('🐛 DEBUG INFO:', debugInfo);
-            alert('🐛 DEBUG INFO:\n' + 
-                  'Valor do Slider: ' + debugInfo.sliderValue + '\n' +
-                  'Posição: ' + debugInfo.position.x + ', ' + debugInfo.position.y + '\n' +
-                  'Timestamp: ' + debugInfo.timestamp);
         });
     </script>
 </body>
