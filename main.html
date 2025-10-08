@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -167,14 +168,22 @@
       });
     }
 
-    function showInfobox(message, position, size, level) {
+    /**
+     * Exibe uma infobox personalizada.
+     *
+     * @param {string} message      Texto da mensagem (suporta **destaque**).
+     * @param {string} position     Uma das chaves de positionPresets.
+     * @param {number} displayTime  Tempo de exibição em milissegundos.
+     * @param {string} level        'informacao'|'sucesso'|'aviso'|'erro' ou equivalente.
+     */
+    function showInfobox(message, position, displayTime, level) {
       if (!positionPresets[position]) return console.error('[MiauAPI] Posição inválida:', position);
-      const levelMap = { 'sucesso':'success', 'erro':'error', 'aviso':'warning', 'informacao':'info' };
-      const lvl = levelMap[level?.toLowerCase()] || level || 'info';
-      const prefixMap = { info:'Info:', success:'Success:', warning:'Warning:', error:'Error:' };
+      const levelMap   = { 'sucesso':'success', 'erro':'error', 'aviso':'warning', 'informacao':'info' };
+      const lvl        = levelMap[level?.toLowerCase()] || level || 'info';
+      const prefixMap  = { info:'Info:', success:'Success:', warning:'Warning:', error:'Error:' };
       const prefixText = prefixMap[lvl];
+      const container  = getContainer(position);
 
-      const container = getContainer(position);
       const box = document.createElement('div');
       box.className = `infobox ${lvl} infobox-enter`;
       box.innerHTML = `
@@ -182,14 +191,14 @@
         <div class="infobox-content">
           <div class="infobox-message"></div>
         </div>`;
+
       container.appendChild(box);
 
-      const msgDiv = box.querySelector('.infobox-message');
+      const msgDiv     = box.querySelector('.infobox-message');
       const prefixSpan = document.createElement('span');
       prefixSpan.className = 'infobox-prefix';
       prefixSpan.textContent = prefixText;
       msgDiv.appendChild(prefixSpan);
-
       parseMessage(message, msgDiv);
 
       setTimeout(() => {
@@ -201,16 +210,13 @@
             delete containers[position];
           }
         }, 150);
-      }, 4000);
+      }, displayTime);
     }
 
     window.MiauAPI = { infobox: showInfobox };
-    window.addEventListener('message', e => {
-      const d = e.data;
-      if (d?.action === 'infobox') showInfobox(d.message, d.position, d.size, d.level);
-    });
 
     console.log('[MiauAPI] Sistema pronto! ✓');
   </script>
 </body>
 </html>
+```
