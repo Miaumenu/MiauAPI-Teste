@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Slider Arrastável - MiauAPI</title>
+    <title>Slider com Detecção - MiauAPI</title>
     <style>
         * { 
             margin: 0; 
@@ -17,7 +17,6 @@
             overflow: hidden;
             background: transparent; 
             font-family: 'Inter', sans-serif;
-            cursor: none; /* Esconde cursor padrão */
         }
         
         body { 
@@ -29,7 +28,6 @@
             background: transparent;
         }
 
-        /* Container do Slider */
         .slider-container {
             position: absolute;
             top: 50%;
@@ -54,7 +52,6 @@
             pointer-events: none;
         }
 
-        /* Título */
         .slider-title {
             color: #ffffff;
             font-size: 34px;
@@ -62,18 +59,15 @@
             text-align: center;
             margin-bottom: 35px;
             text-shadow: 0 0 20px rgba(0, 170, 255, 1);
-            letter-spacing: -0.5px;
+            transition: all 0.3s ease;
         }
 
-        /* Área do Slider */
         .slider-area {
             width: 100%;
             margin: 45px 0;
             position: relative;
-            cursor: pointer;
         }
 
-        /* Track do Slider */
         .slider-track {
             width: 100%;
             height: 18px;
@@ -85,17 +79,19 @@
             transition: all 0.3s ease;
         }
 
-        .slider-track:hover {
+        /* Estados do slider */
+        .slider-track.hover {
             background: rgba(255, 255, 255, 0.15);
             border-color: rgba(0, 170, 255, 0.5);
+            transform: scale(1.02);
         }
 
-        .slider-track.active {
+        .slider-track.dragging {
             background: rgba(255, 255, 255, 0.2);
             border-color: rgba(0, 170, 255, 0.8);
+            transform: scale(1.05);
         }
 
-        /* Fill do Slider */
         .slider-fill {
             height: 100%;
             background: linear-gradient(90deg, 
@@ -108,10 +104,8 @@
             box-shadow: 
                 0 0 25px rgba(0, 170, 255, 0.8),
                 inset 0 0 15px rgba(255, 255, 255, 0.4);
-            position: relative;
         }
 
-        /* Thumb do Slider */
         .slider-thumb {
             width: 45px;
             height: 45px;
@@ -124,29 +118,25 @@
             border: 5px solid #00AAFF;
             box-shadow: 
                 0 0 30px rgba(0, 170, 255, 1),
-                0 0 60px rgba(0, 170, 255, 0.6),
-                inset 0 0 10px rgba(255, 255, 255, 0.8);
-            cursor: grab;
+                0 0 60px rgba(0, 170, 255, 0.6);
             transition: all 0.2s ease;
             z-index: 10;
         }
 
-        .slider-thumb:hover {
+        .slider-thumb.hover {
             transform: translate(-50%, -50%) scale(1.15);
             box-shadow: 
                 0 0 40px rgba(0, 170, 255, 1.2),
                 0 0 80px rgba(0, 170, 255, 0.8);
         }
 
-        .slider-thumb:active {
+        .slider-thumb.dragging {
             transform: translate(-50%, -50%) scale(1.2);
-            cursor: grabbing;
             box-shadow: 
                 0 0 50px rgba(0, 170, 255, 1.5),
                 0 0 100px rgba(0, 170, 255, 1);
         }
 
-        /* Display do Valor */
         .value-display {
             text-align: center;
             margin: 35px 0;
@@ -180,7 +170,6 @@
             transition: all 0.2s ease;
         }
 
-        /* Instruções */
         .instructions {
             text-align: center;
             margin-top: 30px;
@@ -195,100 +184,59 @@
             background: rgba(255, 255, 255, 0.08);
             border-radius: 10px;
             border-left: 4px solid rgba(0, 170, 255, 0.6);
+            transition: all 0.3s ease;
         }
 
-        /* Indicador de Valor */
-        .value-indicators {
-            display: flex;
-            justify-content: space-between;
+        .instruction-item.active {
+            background: rgba(0, 170, 255, 0.2);
+            border-left-color: rgba(0, 255, 204, 0.8);
+            color: #ffffff;
+        }
+
+        .cursor-status {
+            text-align: center;
             margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .cursor-status.active {
+            background: rgba(0, 255, 0, 0.1);
+            border: 1px solid rgba(0, 255, 0, 0.3);
+        }
+
+        .status-text {
             color: rgba(255, 255, 255, 0.7);
-            font-size: 16px;
+            font-size: 18px;
             font-weight: 600;
         }
 
-        /* Cursor Personalizado */
-        .custom-cursor {
-            position: absolute;
-            width: 8px;
-            height: 8px;
-            background: #00FFCC;
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 10001;
-            box-shadow: 0 0 15px rgba(0, 255, 204, 0.8);
-            transition: transform 0.1s ease;
+        .status-text.active {
+            color: #00FF00;
+            text-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
         }
 
-        .custom-cursor::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 20px;
-            height: 20px;
-            border: 2px solid rgba(0, 255, 204, 0.6);
-            border-radius: 50%;
+        @keyframes pulseGlow {
+            0% { box-shadow: 0 0 20px rgba(0, 170, 255, 0.5); }
+            50% { box-shadow: 0 0 30px rgba(0, 170, 255, 0.8); }
+            100% { box-shadow: 0 0 20px rgba(0, 170, 255, 0.5); }
         }
 
-        /* Animações */
-        @keyframes glowPulse {
-            0% { 
-                box-shadow: 
-                    0 0 80px rgba(0, 170, 255, 0.5),
-                    inset 0 0 40px rgba(0, 170, 255, 0.1);
-            }
-            50% { 
-                box-shadow: 
-                    0 0 100px rgba(0, 170, 255, 0.7),
-                    inset 0 0 50px rgba(0, 170, 255, 0.2);
-            }
-            100% { 
-                box-shadow: 
-                    0 0 80px rgba(0, 170, 255, 0.5),
-                    inset 0 0 40px rgba(0, 170, 255, 0.1);
-            }
-        }
-
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translate(-50%, -60%) scale(0.9);
-            }
-            to {
-                opacity: 1;
-                transform: translate(-50%, -50%) scale(1);
-            }
-        }
-
-        .slider-container {
-            animation: 
-                slideIn 0.5s ease-out forwards,
-                glowPulse 4s ease-in-out infinite;
+        .pulse {
+            animation: pulseGlow 2s ease-in-out infinite;
         }
     </style>
 </head>
 <body>
-    <!-- Cursor Personalizado -->
-    <div class="custom-cursor" id="customCursor"></div>
-
-    <!-- Container do Slider -->
     <div class="slider-container" id="sliderContainer">
-        <div class="slider-title">🎛️ SLIDER ARRASTÁVEL</div>
+        <div class="slider-title">🎛️ SLIDER COM DETECÇÃO</div>
         
         <div class="slider-area">
             <div class="slider-track" id="sliderTrack">
                 <div class="slider-fill" id="sliderFill"></div>
                 <div class="slider-thumb" id="sliderThumb"></div>
-            </div>
-            
-            <div class="value-indicators">
-                <span>0%</span>
-                <span>25%</span>
-                <span>50%</span>
-                <span>75%</span>
-                <span>100%</span>
             </div>
         </div>
         
@@ -296,160 +244,126 @@
             <span class="value-text">VALOR ATUAL</span>
             <span class="value-number" id="valueNumber">50%</span>
         </div>
+
+        <div class="cursor-status" id="cursorStatus">
+            <div class="status-text" id="statusText">🖱️ Mova o cursor sobre a barra</div>
+        </div>
         
         <div class="instructions">
-            <div class="instruction-item">🖱️ Clique e arraste o slider para ajustar</div>
-            <div class="instruction-item">💡 O valor é atualizado em tempo real</div>
+            <div class="instruction-item" id="instructionDrag">📌 Clique e arraste para ajustar</div>
+            <div class="instruction-item" id="instructionKeys">⌨️ Ou use ← → para ajustes finos</div>
             <div class="instruction-item">ESC para fechar</div>
         </div>
     </div>
 
     <script>
         let currentValue = 50;
+        let isHovering = false;
         let isDragging = false;
-        let mouseX = 0;
-        let mouseY = 0;
 
-        const sliderContainer = document.getElementById('sliderContainer');
-        const sliderTrack = document.getElementById('sliderTrack');
-        const sliderFill = document.getElementById('sliderFill');
-        const sliderThumb = document.getElementById('sliderThumb');
-        const valueDisplay = document.getElementById('valueDisplay');
-        const valueNumber = document.getElementById('valueNumber');
-        const customCursor = document.getElementById('customCursor');
+        const elements = {
+            container: document.getElementById('sliderContainer'),
+            track: document.getElementById('sliderTrack'),
+            fill: document.getElementById('sliderFill'),
+            thumb: document.getElementById('sliderThumb'),
+            valueNumber: document.getElementById('valueNumber'),
+            valueDisplay: document.getElementById('valueDisplay'),
+            cursorStatus: document.getElementById('cursorStatus'),
+            statusText: document.getElementById('statusText'),
+            instructionDrag: document.getElementById('instructionDrag'),
+            instructionKeys: document.getElementById('instructionKeys')
+        };
 
-        // Atualiza slider visualmente
         function updateSlider(value) {
             currentValue = Math.max(0, Math.min(100, value));
-            
-            sliderFill.style.width = currentValue + '%';
-            sliderThumb.style.left = currentValue + '%';
-            valueNumber.textContent = currentValue + '%';
-            
+            elements.fill.style.width = currentValue + '%';
+            elements.thumb.style.left = currentValue + '%';
+            elements.valueNumber.textContent = currentValue + '%';
             updateSliderColor(currentValue);
-            updateValueDisplay();
         }
 
-        // Atualiza cor dinamicamente
         function updateSliderColor(value) {
             const hue = 180 + (value * 1.2);
-            sliderFill.style.background = `linear-gradient(90deg, 
+            elements.fill.style.background = `linear-gradient(90deg, 
                 hsl(${Math.min(hue, 240)}, 100%, 50%) 0%,
                 hsl(${Math.min(hue + 20, 260)}, 100%, 50%) 50%,
                 hsl(${Math.min(hue + 40, 280)}, 100%, 50%) 100%)`;
         }
 
-        // Feedback visual no display
-        function updateValueDisplay() {
-            if (isDragging) {
-                valueDisplay.classList.add('changing');
-                valueNumber.style.transform = 'scale(1.1)';
+        function setHoverState(hovering) {
+            isHovering = hovering;
+            
+            if (hovering) {
+                elements.track.classList.add('hover');
+                elements.thumb.classList.add('hover');
+                elements.cursorStatus.classList.add('active');
+                elements.statusText.classList.add('active');
+                elements.statusText.textContent = '✅ Cursor sobre a barra - Pronto para ajustar!';
+                elements.instructionDrag.classList.add('active');
             } else {
-                valueDisplay.classList.remove('changing');
-                valueNumber.style.transform = 'scale(1)';
+                elements.track.classList.remove('hover');
+                elements.thumb.classList.remove('hover');
+                elements.cursorStatus.classList.remove('active');
+                elements.statusText.classList.remove('active');
+                elements.statusText.textContent = '🖱️ Mova o cursor sobre a barra';
+                elements.instructionDrag.classList.remove('active');
             }
         }
 
-        // Calcula valor baseado na posição X do mouse
-        function getValueFromMouseX(clientX) {
-            const trackRect = sliderTrack.getBoundingClientRect();
-            const relativeX = clientX - trackRect.left;
-            const percentage = (relativeX / trackRect.width) * 100;
-            return Math.max(0, Math.min(100, Math.round(percentage)));
-        }
-
-        // Eventos de Mouse
-        function handleMouseDown(event) {
-            isDragging = true;
-            sliderTrack.classList.add('active');
-            updateValueDisplay();
+        function setDragState(dragging) {
+            isDragging = dragging;
             
-            // Notifica Lua que começou o arrasto
-            if (window.invokeNative) {
-                window.invokeNative('sendDuiMessage', JSON.stringify({
-                    action: 'sliderDragStart',
-                    value: currentValue
-                }));
-            }
-            
-            updateSlider(getValueFromMouseX(event.clientX || mouseX));
-        }
-
-        function handleMouseMove(event) {
-            // Atualiza posição do cursor personalizado
-            if (event.clientX && event.clientY) {
-                mouseX = event.clientX;
-                mouseY = event.clientY;
-                customCursor.style.left = (mouseX - 4) + 'px';
-                customCursor.style.top = (mouseY - 4) + 'px';
-            }
-            
-            if (isDragging) {
-                updateSlider(getValueFromMouseX(event.clientX || mouseX));
-                
-                // Notifica Lua da mudança
-                if (window.invokeNative) {
-                    window.invokeNative('sendDuiMessage', JSON.stringify({
-                        action: 'sliderChange',
-                        value: currentValue
-                    }));
-                }
+            if (dragging) {
+                elements.track.classList.add('dragging');
+                elements.thumb.classList.add('dragging');
+                elements.valueDisplay.classList.add('changing');
+                elements.valueNumber.style.transform = 'scale(1.1)';
+                elements.instructionDrag.classList.add('active');
+                elements.instructionDrag.textContent = '🎯 Solte para confirmar o valor';
+            } else {
+                elements.track.classList.remove('dragging');
+                elements.thumb.classList.remove('dragging');
+                elements.valueDisplay.classList.remove('changing');
+                elements.valueNumber.style.transform = 'scale(1)';
+                elements.instructionDrag.textContent = '📌 Clique e arraste para ajustar';
             }
         }
-
-        function handleMouseUp() {
-            if (isDragging) {
-                isDragging = false;
-                sliderTrack.classList.remove('active');
-                updateValueDisplay();
-                
-                // Notifica Lua que terminou o arrasto
-                if (window.invokeNative) {
-                    window.invokeNative('sendDuiMessage', JSON.stringify({
-                        action: 'sliderDragEnd',
-                        value: currentValue
-                    }));
-                }
-            }
-        }
-
-        // Event Listeners
-        sliderTrack.addEventListener('mousedown', handleMouseDown);
-        document.addEventListener('mousemove', handleMouseMove);
-        document.addEventListener('mouseup', handleMouseUp);
-
-        // Prevenir comportamento padrão de arrastar
-        document.addEventListener('dragstart', (e) => e.preventDefault());
 
         // Comunicação com Lua
         window.addEventListener('message', function(event) {
             const data = event.data;
             
             if (data.action === 'showSlider') {
-                sliderContainer.classList.remove('hidden');
-                if (data.value) {
-                    updateSlider(data.value);
-                }
+                elements.container.classList.remove('hidden');
+                if (data.value) updateSlider(data.value);
             }
             else if (data.action === 'updateSlider') {
                 updateSlider(data.value);
             }
             else if (data.action === 'hideSlider') {
-                sliderContainer.classList.add('hidden');
+                elements.container.classList.add('hidden');
             }
-            else if (data.action === 'mouseMove') {
-                // Atualiza posição do mouse vinda do Lua
-                mouseX = data.x * window.innerWidth;
-                mouseY = data.y * window.innerHeight;
-                customCursor.style.left = (mouseX - 4) + 'px';
-                customCursor.style.top = (mouseY - 4) + 'px';
+            else if (data.action === 'cursorEnterSlider') {
+                setHoverState(true);
+            }
+            else if (data.action === 'cursorLeaveSlider') {
+                setHoverState(false);
+                setDragState(false);
+            }
+            else if (data.action === 'dragStart') {
+                setDragState(true);
+            }
+            else if (data.action === 'dragEnd') {
+                setDragState(false);
+                // Feedback visual de confirmação
+                elements.thumb.classList.add('pulse');
+                setTimeout(() => elements.thumb.classList.remove('pulse'), 1000);
             }
         });
 
         // Inicialização
         updateSlider(50);
-        
-        console.log('[SliderUI] Slider arrastável carregado e pronto!');
+        console.log('[SliderUI] Sistema de detecção carregado!');
     </script>
 </body>
 </html>
