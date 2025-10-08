@@ -1,87 +1,89 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>MiauHUD – Drag & Drop</title>
-<style>
-html, body { width:100%; height:100%; margin:0; padding:0; overflow:hidden; background:transparent; font-family: 'Inter', sans-serif; }
-.leader-box {
-  position: absolute;
-  width: 250px;
-  padding: 10px 15px;
-  background: rgba(0,0,0,0.7);
-  color: white;
-  border-radius: 10px;
-  cursor: grab;
-  user-select: none;
-  transition: transform 0.2s;
-}
-</style>
+    <meta charset="UTF-8">
+    <title>MiauAPI Slider</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: transparent;
+            overflow: hidden;
+        }
+        #container {
+            width: 400px;
+            height: 100px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            font-family: Arial, sans-serif;
+            user-select: none;
+            border: 1px solid white;
+        }
+        #title {
+            height: 20px;
+            background: #007bff;
+            text-align: center;
+            line-height: 20px;
+            cursor: move;
+        }
+        #slider-container {
+            padding: 20px;
+            text-align: center;
+        }
+        input[type="range"] {
+            width: 80%;
+        }
+    </style>
 </head>
 <body>
-<script>
-const leaders = {}; // armazena elementos pelo ID
+    <div id="container">
+        <div id="title">Slider Draggable</div>
+        <div id="slider-container">
+            <input type="range" id="slider" min="0" max="100" value="50">
+        </div>
+    </div>
 
-// Cria um líder na tela
-function createLeader(id, name, x=100, y=100) {
-  if(leaders[id]) return;
+    <script>
+        const title = document.getElementById('title');
+        let dragging = false;
+        let lastX, lastY;
 
-  const el = document.createElement('div');
-  el.className = 'leader-box';
-  el.dataset.id = id;
-  el.style.left = x + 'px';
-  el.style.top  = y + 'px';
-  el.textContent = name;
+        title.addEventListener('mousedown', (e) => {
+            e.preventDefault();
+            dragging = true;
+            lastX = e.clientX;
+            lastY = e.clientY;
+        });
 
-  document.body.appendChild(el);
-  leaders[id] = el;
+        document.addEventListener('mousemove', (e) => {
+            if (dragging) {
+                const dx = e.clientX - lastX;
+                const dy = e.clientY - lastY;
+                lastX = e.clientX;
+                lastY = e.clientY;
 
-  makeDraggable(el);
-}
+                // Envia delta para Lua
+                fetch(`https://${GetParentResourceName()}/dragDelta`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json; charset=UTF-8' },
+                    body: JSON.stringify({ dx: dx, dy: dy })
+                });
+            }
+        });
 
-// Drag & Drop
-function makeDraggable(el) {
-  let offsetX = 0, offsetY = 0, dragging = false;
+        document.addEventListener('mouseup', () => {
+            dragging = false;
+        });
 
-  el.addEventListener('mousedown', e => {
-    dragging = true;
-    offsetX = e.clientX - el.offsetLeft;
-    offsetY = e.clientY - el.offsetTop;
-    el.style.cursor = 'grabbing';
-  });
-
-  document.addEventListener('mousemove', e => {
-    if(!dragging) return;
-    el.style.left = e.clientX - offsetX + 'px';
-    el.style.top  = e.clientY - offsetY + 'px';
-  });
-
-  document.addEventListener('mouseup', e => {
-    if(dragging) {
-      dragging = false;
-      el.style.cursor = 'grab';
-      // envia posição para Lua
-      fetch(`https://${GetParentResourceName()}/leader-moved`, {
-        method: 'POST',
-        headers: {'Content-Type':'application/json'},
-        body: JSON.stringify({
-          id: el.dataset.id,
-          x: parseInt(el.style.left),
-          y: parseInt(el.style.top)
-        })
-      });
-    }
-  });
-}
-
-// Recebe mensagens de Lua
-window.addEventListener('message', e => {
-  const d = e.data;
-  if(d.action === 'create-leader') {
-    createLeader(d.id, d.name, d.x, d.y);
-  }
-});
-</script>
+        const slider = document.getElementById('slider');
+        slider.addEventListener('input', (e) => {
+            // Envia valor do slider para Lua
+            fetch(`https://${GetParentResourceName()}/sliderValue`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json; charset=UTF-8' },
+                body: JSON.stringify({ value: e.target.value })
+            });
+        });
+    </script>
 </body>
 </html>
