@@ -1,147 +1,74 @@
+<!-- main.html -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <title>MiauAPI Slider</title>
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            background: transparent;
-            overflow: hidden;
-            width: 100%;
-            height: 100%;
-        }
-        #slider-container {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: transparent;
-        }
-        input[type="range"] {
-            width: 90%;
-            height: 20px;
-            background: transparent;
-            outline: none;
-            -webkit-appearance: none;
-            appearance: none;
-        }
-        input[type="range"]::-webkit-slider-track {
-            background: #333;
-            height: 8px;
-            border-radius: 4px;
-        }
-        input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 20px;
-            height: 20px;
-            background: #007bff;
-            border-radius: 50%;
-            cursor: pointer;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>MiauAPI Slider</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: transparent;
+      overflow: hidden;
+      width: 100%;
+      height: 100%;
+    }
+    #slider-container {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+    }
+    input[type="range"] {
+      width: 90%;
+      height: 20px;
+      background: transparent;
+      outline: none;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+    input[type="range"]::-webkit-slider-track {
+      background: #333;
+      height: 8px;
+      border-radius: 4px;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 20px;
+      height: 20px;
+      background: #007bff;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+  </style>
 </head>
 <body>
-    <div id="slider-container">
-        <input type="range" id="slider" min="0" max="100" value="50">
-    </div>
+  <div id="slider-container">
+    <input type="range" id="slider" min="0" max="100" value="50">
+  </div>
 
-    <script>
-        const slider = document.getElementById('slider');
-        let isDragging = false;
-        let startX = 0;
-        let startValue = 0;
+  <script>
+    const slider = document.getElementById("slider");
+    slider.addEventListener("input", () => {
+      sendValueToLua(slider.value);
+    });
 
-        // Função para enviar valor para Lua
-        function sendValueToLua(value) {
-            fetch(`https://${GetParentResourceName()}/sliderValue`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json; charset=UTF-8' },
-                body: JSON.stringify({ value: value })
-            });
-        }
+    function sendValueToLua(value) {
+      fetch(`https://${GetParentResourceName()}/sliderValue`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json; charset=UTF-8" },
+        body: JSON.stringify({ value: value })
+      });
+    }
 
-        // Evento de input do slider
-        slider.addEventListener('input', (e) => {
-            sendValueToLua(e.target.value);
-        });
-
-        // Sistema de drag personalizado
-        slider.addEventListener('mousedown', (e) => {
-            isDragging = true;
-            startX = e.clientX;
-            startValue = parseInt(slider.value);
-            e.preventDefault();
-            console.log('Drag iniciado:', startValue);
-        });
-
-        document.addEventListener('mousemove', (e) => {
-            if (isDragging) {
-                const rect = slider.getBoundingClientRect();
-                const sliderWidth = rect.width;
-                const thumbWidth = 20; // Largura aproximada do thumb
-                const usableWidth = sliderWidth - thumbWidth;
-                
-                // Calcula nova posição baseada no movimento do mouse
-                const deltaX = e.clientX - startX;
-                const deltaPercent = (deltaX / usableWidth) * 100;
-                const newValue = Math.max(0, Math.min(100, startValue + deltaPercent));
-                
-                slider.value = newValue;
-                sendValueToLua(newValue);
-            }
-        });
-
-        document.addEventListener('mouseup', () => {
-            if (isDragging) {
-                isDragging = false;
-                console.log('Drag finalizado:', slider.value);
-            }
-        });
-
-        // Também funciona com touch para dispositivos móveis
-        slider.addEventListener('touchstart', (e) => {
-            isDragging = true;
-            startX = e.touches[0].clientX;
-            startValue = parseInt(slider.value);
-            e.preventDefault();
-        });
-
-        document.addEventListener('touchmove', (e) => {
-            if (isDragging) {
-                const rect = slider.getBoundingClientRect();
-                const sliderWidth = rect.width;
-                const thumbWidth = 20;
-                const usableWidth = sliderWidth - thumbWidth;
-                
-                const deltaX = e.touches[0].clientX - startX;
-                const deltaPercent = (deltaX / usableWidth) * 100;
-                const newValue = Math.max(0, Math.min(100, startValue + deltaPercent));
-                
-                slider.value = newValue;
-                sendValueToLua(newValue);
-            }
-        });
-
-        document.addEventListener('touchend', () => {
-            if (isDragging) {
-                isDragging = false;
-            }
-        });
-
-        // Escuta mensagens do Lua para atualizar slider
-        window.addEventListener('message', (event) => {
-            const data = event.data;
-            if (data.type === 'updateSlider') {
-                slider.value = data.value;
-                console.log('Slider atualizado para:', data.value);
-            }
-        });
-
-        // Inicializa com valor padrão
-        sendValueToLua(50);
-    </script>
+    window.addEventListener("message", event => {
+      const data = event.data;
+      if (data.type === "updateSlider" && data.id === "slider") {
+        slider.value = data.value;
+      }
+    });
+  </script>
 </body>
 </html>
