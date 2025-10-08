@@ -1,29 +1,87 @@
-<!-- main.html (remoto) -->
 <!DOCTYPE html>
-<html>
+<html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MiauHUD – Drag & Drop</title>
   <style>
-    body { margin:0; background:rgba(0,0,0,0.5); display:none; }
-    #container { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); background:#222; padding:20px; border-radius:8px; }
-    input[type=range] { width:300px; }
+    html, body { width:100%; height:100%; margin:0; padding:0; overflow:hidden; background:transparent; }
+    .leader-box {
+      position: absolute;
+      width: 250px;
+      padding: 10px 15px;
+      background: rgba(0,0,0,0.7);
+      color: white;
+      border-radius: 10px;
+      cursor: grab;
+      user-select: none;
+      transition: transform 0.2s;
+    }
   </style>
 </head>
 <body>
-  <div id="container">
-    <input id="slider" type="range" min="0" max="100" value="50">
-  </div>
-  <script>
-    window.onload = () => {
-      fetch(`https://${GetParentResourceName()}/focus`, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ focus: true }) });
-    };
-    window.addEventListener('message', e => {
-      if(e.data.action==='showSlider') document.body.style.display = e.data.show?'block':'none';
-    });
-    document.getElementById('slider').addEventListener('input', () => {
-      const v = +document.getElementById('slider').value;
-      fetch(`https://${GetParentResourceName()}/sliderChange`, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ value: v }) });
-    });
-  </script>
+<script>
+const leaders = {}; // armazena elementos pelo ID
+
+// Cria um líder na tela
+function createLeader(id, name, x=100, y=100) {
+  if(leaders[id]) return;
+
+  const el = document.createElement('div');
+  el.className = 'leader-box';
+  el.dataset.id = id;
+  el.style.left = x + 'px';
+  el.style.top  = y + 'px';
+  el.textContent = name;
+
+  document.body.appendChild(el);
+  leaders[id] = el;
+
+  makeDraggable(el);
+}
+
+// Drag & Drop
+function makeDraggable(el) {
+  let offsetX = 0, offsetY = 0, dragging = false;
+
+  el.addEventListener('mousedown', e => {
+    dragging = true;
+    offsetX = e.clientX - el.offsetLeft;
+    offsetY = e.clientY - el.offsetTop;
+    el.style.cursor = 'grabbing';
+  });
+
+  document.addEventListener('mousemove', e => {
+    if(!dragging) return;
+    el.style.left = e.clientX - offsetX + 'px';
+    el.style.top  = e.clientY - offsetY + 'px';
+  });
+
+  document.addEventListener('mouseup', e => {
+    if(dragging) {
+      dragging = false;
+      el.style.cursor = 'grab';
+      // envia posição para Lua
+      fetch(`https://${GetParentResourceName()}/leader-moved`, {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({
+          id: el.dataset.id,
+          x: parseInt(el.style.left),
+          y: parseInt(el.style.top)
+        })
+      });
+    }
+  });
+}
+
+// Recebe mensagens de Lua
+window.addEventListener('message', e => {
+  const d = e.data;
+  if(d.action === 'create-leader') {
+    createLeader(d.id, d.name, d.x, d.y);
+  }
+});
+</script>
 </body>
 </html>
