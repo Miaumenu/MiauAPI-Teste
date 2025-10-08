@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>MiauAPI – Sistema Modular com Slider</title>
+  <title>MiauAPI – Sistema Modular Ajustado</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
@@ -16,7 +16,7 @@
     body { width: 1920px; height: 1080px; }
 
     /* ==========================================
-       MÓDULO: INFOBOX
+       MÓDULO: INFOBOX – TAMANHO REDUZIDO E QUEBRA DE LINHA
        ========================================== */
     .infobox-container {
       position: fixed;
@@ -110,7 +110,7 @@
       --infobox-accent-shadow: 0px 0px 4px 2px rgba(255,0,0,0.61);
     }
 
-    /* Animações Infobox */
+    /* Animações */
     @keyframes slideIn {
       from { transform: translateY(-20px); opacity: 0; }
       to   { transform: translateY(0);     opacity: 1; }
@@ -121,183 +121,12 @@
     }
     .infobox-enter { animation: slideIn 0.25s ease-out forwards; }
     .infobox-exit  { animation: slideOut 0.25s ease-in forwards; }
-
-    /* ==========================================
-       MÓDULO: SLIDER INTERATIVO
-       ========================================== */
-    .slider-container {
-      position: fixed;
-      background: rgba(0, 0, 0, 0.85);
-      border-radius: 20px;
-      padding: 30px 40px;
-      border: 2px solid rgba(255, 255, 255, 0.1);
-      box-shadow: 0px 10px 40px rgba(0, 0, 0, 0.5);
-      backdrop-filter: blur(10px);
-      min-width: 400px;
-      z-index: 10000;
-    }
-
-    .slider-header {
-      margin-bottom: 25px;
-      text-align: center;
-    }
-
-    .slider-title {
-      color: #FFFFFF;
-      font-size: 24px;
-      font-weight: 700;
-      margin-bottom: 8px;
-      letter-spacing: -0.02em;
-    }
-
-    .slider-description {
-      color: rgba(255, 255, 255, 0.6);
-      font-size: 16px;
-      font-weight: 400;
-    }
-
-    .slider-content {
-      margin-bottom: 25px;
-    }
-
-    .slider-value-display {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 15px;
-    }
-
-    .slider-label {
-      color: rgba(255, 255, 255, 0.8);
-      font-size: 16px;
-      font-weight: 500;
-    }
-
-    .slider-value {
-      color: #00AAFF;
-      font-size: 28px;
-      font-weight: 700;
-      text-shadow: 0px 0px 10px rgba(0, 170, 255, 0.5);
-    }
-
-    .slider-track-container {
-      position: relative;
-      width: 100%;
-      height: 8px;
-      margin-bottom: 10px;
-    }
-
-    .slider-track {
-      width: 100%;
-      height: 100%;
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 10px;
-      position: absolute;
-      top: 0;
-      left: 0;
-    }
-
-    .slider-fill {
-      height: 100%;
-      background: linear-gradient(90deg, #00AAFF, #00DDFF);
-      border-radius: 10px;
-      position: absolute;
-      top: 0;
-      left: 0;
-      box-shadow: 0px 0px 15px rgba(0, 170, 255, 0.6);
-      transition: width 0.1s ease;
-    }
-
-    .slider-thumb {
-      position: absolute;
-      width: 24px;
-      height: 24px;
-      background: #FFFFFF;
-      border: 3px solid #00AAFF;
-      border-radius: 50%;
-      top: 50%;
-      transform: translate(-50%, -50%);
-      cursor: pointer;
-      box-shadow: 0px 0px 15px rgba(0, 170, 255, 0.8);
-      transition: transform 0.2s ease;
-    }
-
-    .slider-thumb:hover {
-      transform: translate(-50%, -50%) scale(1.2);
-    }
-
-    .slider-thumb:active {
-      transform: translate(-50%, -50%) scale(1.1);
-    }
-
-    .slider-minmax {
-      display: flex;
-      justify-content: space-between;
-      color: rgba(255, 255, 255, 0.5);
-      font-size: 14px;
-      font-weight: 500;
-    }
-
-    .slider-footer {
-      display: flex;
-      gap: 15px;
-    }
-
-    .slider-button {
-      flex: 1;
-      padding: 12px 20px;
-      border: none;
-      border-radius: 10px;
-      font-size: 16px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      font-family: 'Inter', sans-serif;
-    }
-
-    .slider-button.confirm {
-      background: linear-gradient(135deg, #00AAFF, #0088CC);
-      color: #FFFFFF;
-      box-shadow: 0px 4px 15px rgba(0, 170, 255, 0.4);
-    }
-
-    .slider-button.confirm:hover {
-      background: linear-gradient(135deg, #0088CC, #006699);
-      transform: translateY(-2px);
-      box-shadow: 0px 6px 20px rgba(0, 170, 255, 0.6);
-    }
-
-    .slider-button.cancel {
-      background: rgba(255, 255, 255, 0.1);
-      color: rgba(255, 255, 255, 0.8);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-    }
-
-    .slider-button.cancel:hover {
-      background: rgba(255, 255, 255, 0.15);
-      border-color: rgba(255, 255, 255, 0.3);
-    }
-
-    /* Animações Slider */
-    @keyframes fadeInScale {
-      from { transform: scale(0.9); opacity: 0; }
-      to   { transform: scale(1);   opacity: 1; }
-    }
-    @keyframes fadeOutScale {
-      from { transform: scale(1);   opacity: 1; }
-      to   { transform: scale(0.9); opacity: 0; }
-    }
-    .slider-enter { animation: fadeInScale 0.3s ease-out forwards; }
-    .slider-exit  { animation: fadeOutScale 0.25s ease-in forwards; }
   </style>
 </head>
 <body>
   <script>
     console.log('[MiauAPI] Sistema iniciando...');
 
-    // ==========================================
-    // SISTEMA DE POSIÇÕES PARA INFOBOX
-    // ==========================================
     const positionPresets = {
       'superior-esquerdo': { x:20,  y:20 },
       'superior-direito':  { x:1920-600-20, y:20 },
@@ -375,194 +204,10 @@
       }, 4000);
     }
 
-    // ==========================================
-    // SISTEMA DE SLIDER INTERATIVO
-    // ==========================================
-    let activeSlider = null;
-    let isDragging = false;
-    let currentSliderData = null;
-
-    function createSlider(config) {
-      // Remove slider anterior se existir
-      if (activeSlider) {
-        destroySlider();
-      }
-
-      // Configurações padrão
-      const cfg = {
-        id: config.id || 'slider-' + Date.now(),
-        title: config.title || 'Slider',
-        description: config.description || '',
-        min: config.min || 0,
-        max: config.max || 100,
-        default: config.default || 50,
-        step: config.step || 1,
-        position: config.position || 'centro',
-        callback: config.callback || 'onSliderConfirm'
-      };
-
-      // Validação
-      if (cfg.default < cfg.min) cfg.default = cfg.min;
-      if (cfg.default > cfg.max) cfg.default = cfg.max;
-
-      currentSliderData = {
-        id: cfg.id,
-        value: cfg.default,
-        callback: cfg.callback
-      };
-
-      // Cria o container
-      const slider = document.createElement('div');
-      slider.className = 'slider-container slider-enter';
-      slider.id = cfg.id;
-
-      // Posicionamento
-      const positions = {
-        'centro': { left: '50%', top: '50%', transform: 'translate(-50%, -50%)' },
-        'superior-centro': { left: '50%', top: '100px', transform: 'translateX(-50%)' },
-        'inferior-centro': { left: '50%', bottom: '100px', transform: 'translateX(-50%)' }
-      };
-      const pos = positions[cfg.position] || positions['centro'];
-      Object.assign(slider.style, pos);
-
-      // Monta o HTML
-      slider.innerHTML = `
-        <div class="slider-header">
-          <div class="slider-title">${cfg.title}</div>
-          ${cfg.description ? `<div class="slider-description">${cfg.description}</div>` : ''}
-        </div>
-        <div class="slider-content">
-          <div class="slider-value-display">
-            <span class="slider-label">Valor:</span>
-            <span class="slider-value" id="${cfg.id}-value">${cfg.default}</span>
-          </div>
-          <div class="slider-track-container" id="${cfg.id}-track-container">
-            <div class="slider-track"></div>
-            <div class="slider-fill" id="${cfg.id}-fill"></div>
-            <div class="slider-thumb" id="${cfg.id}-thumb"></div>
-          </div>
-          <div class="slider-minmax">
-            <span>${cfg.min}</span>
-            <span>${cfg.max}</span>
-          </div>
-        </div>
-        <div class="slider-footer">
-          <button class="slider-button cancel" id="${cfg.id}-cancel">Cancelar</button>
-          <button class="slider-button confirm" id="${cfg.id}-confirm">Confirmar</button>
-        </div>
-      `;
-
-      document.body.appendChild(slider);
-      activeSlider = slider;
-
-      // Elementos interativos
-      const thumb = document.getElementById(`${cfg.id}-thumb`);
-      const fill = document.getElementById(`${cfg.id}-fill`);
-      const valueDisplay = document.getElementById(`${cfg.id}-value`);
-      const trackContainer = document.getElementById(`${cfg.id}-track-container`);
-      const confirmBtn = document.getElementById(`${cfg.id}-confirm`);
-      const cancelBtn = document.getElementById(`${cfg.id}-cancel`);
-
-      // Função para atualizar o slider
-      function updateSlider(clientX) {
-        const rect = trackContainer.getBoundingClientRect();
-        let percentage = (clientX - rect.left) / rect.width;
-        percentage = Math.max(0, Math.min(1, percentage));
-
-        const range = cfg.max - cfg.min;
-        let value = cfg.min + (percentage * range);
-        value = Math.round(value / cfg.step) * cfg.step;
-        value = Math.max(cfg.min, Math.min(cfg.max, value));
-
-        currentSliderData.value = value;
-        valueDisplay.textContent = value;
-
-        const fillPercentage = ((value - cfg.min) / range) * 100;
-        fill.style.width = fillPercentage + '%';
-        thumb.style.left = fillPercentage + '%';
-      }
-
-      // Inicializa posição
-      updateSlider(trackContainer.getBoundingClientRect().left + 
-                   (trackContainer.offsetWidth * ((cfg.default - cfg.min) / (cfg.max - cfg.min))));
-
-      // Event listeners
-      thumb.addEventListener('mousedown', (e) => {
-        isDragging = true;
-        e.preventDefault();
-      });
-
-      trackContainer.addEventListener('click', (e) => {
-        updateSlider(e.clientX);
-      });
-
-      document.addEventListener('mousemove', (e) => {
-        if (isDragging) {
-          updateSlider(e.clientX);
-        }
-      });
-
-      document.addEventListener('mouseup', () => {
-        isDragging = false;
-      });
-
-      // Botões
-      confirmBtn.addEventListener('click', () => {
-        // Envia callback para Lua
-        fetch(`https://${cfg.callback}`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            id: cfg.id,
-            value: currentSliderData.value
-          })
-        }).catch(() => {});
-        
-        destroySlider();
-      });
-
-      cancelBtn.addEventListener('click', () => {
-        destroySlider();
-      });
-
-      console.log(`[MiauAPI] Slider criado: ${cfg.id}`);
-    }
-
-    function destroySlider() {
-      if (!activeSlider) return;
-
-      activeSlider.classList.add('slider-exit');
-      setTimeout(() => {
-        if (activeSlider && activeSlider.parentNode) {
-          activeSlider.parentNode.removeChild(activeSlider);
-        }
-        activeSlider = null;
-        currentSliderData = null;
-        isDragging = false;
-      }, 250);
-
-      console.log('[MiauAPI] Slider destruído');
-    }
-
-    // ==========================================
-    // API GLOBAL
-    // ==========================================
-    window.MiauAPI = {
-      infobox: showInfobox,
-      slider: createSlider,
-      destroySlider: destroySlider
-    };
-
-    // Listener de mensagens do Lua
+    window.MiauAPI = { infobox: showInfobox };
     window.addEventListener('message', e => {
       const d = e.data;
-      if (d?.action === 'infobox') {
-        showInfobox(d.message, d.position, d.size, d.level);
-      } else if (d?.action === 'slider') {
-        createSlider(d.config);
-      } else if (d?.action === 'destroySlider') {
-        destroySlider();
-      }
+      if (d?.action === 'infobox') showInfobox(d.message, d.position, d.size, d.level);
     });
 
     console.log('[MiauAPI] Sistema pronto! ✓');
