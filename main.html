@@ -168,12 +168,21 @@
       });
     }
 
-    function showInfobox(message, position, size, level) {
-      if (!positionPresets[position]) return console.error('[MiauAPI] Posição inválida:', position);
-      const levelMap = { 'sucesso':'success', 'erro':'error', 'aviso':'warning', 'informacao':'info' };
-      const lvl = levelMap[level?.toLowerCase()] || level || 'info';
+    /**
+     * showInfobox com duração customizável
+     * @param {string} message - texto (use **highlight**)
+     * @param {number} duration - tempo em ms que a caixa ficará visível
+     * @param {string} position - preset (ex: 'superior-esquerdo')
+     * @param {string} level - 'info','success','warning','error'
+     */
+    function showInfobox(message, duration = 4000, position = 'centro-superior', level = 'info') {
+      if (!positionPresets[position]) {
+        console.error('[MiauAPI] Posição inválida:', position);
+        return;
+      }
+      const lvl = ({ 'sucesso':'success','erro':'error','aviso':'warning','informacao':'info' }[level.toLowerCase()] || level).toLowerCase();
       const prefixMap = { info:'Info:', success:'Success:', warning:'Warning:', error:'Error:' };
-      const prefixText = prefixMap[lvl];
+      const prefixText = prefixMap[lvl] || '';
 
       const container = getContainer(position);
       const box = document.createElement('div');
@@ -201,14 +210,18 @@
             container.remove();
             delete containers[position];
           }
-        }, 150);
-      }, 4000);
+        }, 250);
+      }, duration);
     }
 
     window.MiauAPI = { infobox: showInfobox };
+
     window.addEventListener('message', e => {
       const d = e.data;
-      if (d?.action === 'infobox') showInfobox(d.message, d.position, d.size, d.level);
+      if (d?.action === 'infobox') {
+        // suporta: infobox(message), infobox(message, duration, position, level)
+        showInfobox(d.message, d.duration, d.position, d.level);
+      }
     });
 
     console.log('[MiauAPI] Sistema pronto! ✓');
