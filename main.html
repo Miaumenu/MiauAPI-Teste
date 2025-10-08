@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Slider Interativo - MiauAPI</title>
+    <title>Slider Arrastável - MiauAPI</title>
     <style>
         * { 
             margin: 0; 
@@ -17,6 +17,7 @@
             overflow: hidden;
             background: transparent; 
             font-family: 'Inter', sans-serif;
+            cursor: none; /* Esconde cursor padrão */
         }
         
         body { 
@@ -34,15 +35,15 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 700px;
+            width: 800px;
             padding: 40px;
-            background: rgba(10, 10, 15, 0.95);
+            background: rgba(15, 20, 30, 0.95);
             border-radius: 25px;
-            border: 3px solid rgba(0, 170, 255, 0.7);
+            border: 3px solid rgba(0, 170, 255, 0.8);
             box-shadow: 
-                0 0 60px rgba(0, 170, 255, 0.4),
-                inset 0 0 30px rgba(0, 170, 255, 0.1);
-            backdrop-filter: blur(15px);
+                0 0 80px rgba(0, 170, 255, 0.5),
+                inset 0 0 40px rgba(0, 170, 255, 0.1);
+            backdrop-filter: blur(20px);
             z-index: 10000;
             transition: all 0.3s ease;
         }
@@ -56,30 +57,42 @@
         /* Título */
         .slider-title {
             color: #ffffff;
-            font-size: 32px;
+            font-size: 34px;
             font-weight: 700;
             text-align: center;
-            margin-bottom: 30px;
-            text-shadow: 0 0 15px rgba(0, 170, 255, 0.8);
+            margin-bottom: 35px;
+            text-shadow: 0 0 20px rgba(0, 170, 255, 1);
             letter-spacing: -0.5px;
         }
 
         /* Área do Slider */
         .slider-area {
             width: 100%;
-            margin: 40px 0;
+            margin: 45px 0;
             position: relative;
+            cursor: pointer;
         }
 
         /* Track do Slider */
         .slider-track {
             width: 100%;
-            height: 16px;
-            background: rgba(255, 255, 255, 0.08);
-            border-radius: 12px;
+            height: 18px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
             position: relative;
-            border: 1px solid rgba(255, 255, 255, 0.15);
+            border: 2px solid rgba(255, 255, 255, 0.2);
             overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .slider-track:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(0, 170, 255, 0.5);
+        }
+
+        .slider-track.active {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(0, 170, 255, 0.8);
         }
 
         /* Fill do Slider */
@@ -89,113 +102,152 @@
                 #00AAFF 0%, 
                 #00FFCC 50%, 
                 #00FF88 100%);
-            border-radius: 12px;
+            border-radius: 15px;
             width: 50%;
-            transition: width 0.15s ease;
+            transition: width 0.1s ease;
             box-shadow: 
-                0 0 20px rgba(0, 170, 255, 0.6),
-                inset 0 0 10px rgba(255, 255, 255, 0.3);
+                0 0 25px rgba(0, 170, 255, 0.8),
+                inset 0 0 15px rgba(255, 255, 255, 0.4);
             position: relative;
         }
 
         /* Thumb do Slider */
         .slider-thumb {
-            width: 40px;
-            height: 40px;
+            width: 45px;
+            height: 45px;
             background: #ffffff;
             border-radius: 50%;
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            border: 4px solid #00AAFF;
+            border: 5px solid #00AAFF;
             box-shadow: 
-                0 0 25px rgba(0, 170, 255, 1),
-                0 0 50px rgba(0, 170, 255, 0.5);
-            cursor: pointer;
+                0 0 30px rgba(0, 170, 255, 1),
+                0 0 60px rgba(0, 170, 255, 0.6),
+                inset 0 0 10px rgba(255, 255, 255, 0.8);
+            cursor: grab;
             transition: all 0.2s ease;
             z-index: 10;
         }
 
         .slider-thumb:hover {
-            transform: translate(-50%, -50%) scale(1.1);
+            transform: translate(-50%, -50%) scale(1.15);
             box-shadow: 
-                0 0 30px rgba(0, 170, 255, 1.2),
-                0 0 60px rgba(0, 170, 255, 0.7);
+                0 0 40px rgba(0, 170, 255, 1.2),
+                0 0 80px rgba(0, 170, 255, 0.8);
         }
 
         .slider-thumb:active {
-            transform: translate(-50%, -50%) scale(1.15);
+            transform: translate(-50%, -50%) scale(1.2);
+            cursor: grabbing;
+            box-shadow: 
+                0 0 50px rgba(0, 170, 255, 1.5),
+                0 0 100px rgba(0, 170, 255, 1);
         }
 
         /* Display do Valor */
         .value-display {
             text-align: center;
-            margin: 30px 0;
-            padding: 20px;
-            background: rgba(0, 170, 255, 0.1);
-            border-radius: 15px;
-            border: 2px solid rgba(0, 170, 255, 0.3);
+            margin: 35px 0;
+            padding: 25px;
+            background: rgba(0, 170, 255, 0.15);
+            border-radius: 20px;
+            border: 2px solid rgba(0, 170, 255, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .value-display.changing {
+            background: rgba(0, 170, 255, 0.25);
+            border-color: rgba(0, 255, 204, 0.6);
+            transform: scale(1.05);
         }
 
         .value-text {
             color: #ffffff;
-            font-size: 26px;
+            font-size: 28px;
             font-weight: 600;
             display: block;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
         }
 
         .value-number {
             color: #00FFCC;
-            font-size: 42px;
+            font-size: 46px;
             font-weight: 800;
-            text-shadow: 0 0 20px rgba(0, 255, 204, 0.8);
+            text-shadow: 0 0 25px rgba(0, 255, 204, 1);
             display: block;
+            transition: all 0.2s ease;
         }
 
         /* Instruções */
         .instructions {
             text-align: center;
-            margin-top: 25px;
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 18px;
+            margin-top: 30px;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 20px;
             line-height: 1.6;
         }
 
         .instruction-item {
-            margin: 8px 0;
-            padding: 8px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 8px;
+            margin: 10px 0;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+            border-left: 4px solid rgba(0, 170, 255, 0.6);
         }
 
         /* Indicador de Valor */
         .value-indicators {
             display: flex;
             justify-content: space-between;
-            margin-top: 15px;
-            color: rgba(255, 255, 255, 0.6);
-            font-size: 14px;
-            font-weight: 500;
+            margin-top: 20px;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        /* Cursor Personalizado */
+        .custom-cursor {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: #00FFCC;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 10001;
+            box-shadow: 0 0 15px rgba(0, 255, 204, 0.8);
+            transition: transform 0.1s ease;
+        }
+
+        .custom-cursor::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(0, 255, 204, 0.6);
+            border-radius: 50%;
         }
 
         /* Animações */
         @keyframes glowPulse {
             0% { 
                 box-shadow: 
-                    0 0 60px rgba(0, 170, 255, 0.4),
-                    inset 0 0 30px rgba(0, 170, 255, 0.1);
+                    0 0 80px rgba(0, 170, 255, 0.5),
+                    inset 0 0 40px rgba(0, 170, 255, 0.1);
             }
             50% { 
                 box-shadow: 
-                    0 0 80px rgba(0, 170, 255, 0.6),
-                    inset 0 0 40px rgba(0, 170, 255, 0.2);
+                    0 0 100px rgba(0, 170, 255, 0.7),
+                    inset 0 0 50px rgba(0, 170, 255, 0.2);
             }
             100% { 
                 box-shadow: 
-                    0 0 60px rgba(0, 170, 255, 0.4),
-                    inset 0 0 30px rgba(0, 170, 255, 0.1);
+                    0 0 80px rgba(0, 170, 255, 0.5),
+                    inset 0 0 40px rgba(0, 170, 255, 0.1);
             }
         }
 
@@ -213,16 +265,20 @@
         .slider-container {
             animation: 
                 slideIn 0.5s ease-out forwards,
-                glowPulse 3s ease-in-out infinite;
+                glowPulse 4s ease-in-out infinite;
         }
     </style>
 </head>
 <body>
+    <!-- Cursor Personalizado -->
+    <div class="custom-cursor" id="customCursor"></div>
+
+    <!-- Container do Slider -->
     <div class="slider-container" id="sliderContainer">
-        <div class="slider-title">🎛️ CONTROLE INTERATIVO DO SLIDER</div>
+        <div class="slider-title">🎛️ SLIDER ARRASTÁVEL</div>
         
         <div class="slider-area">
-            <div class="slider-track">
+            <div class="slider-track" id="sliderTrack">
                 <div class="slider-fill" id="sliderFill"></div>
                 <div class="slider-thumb" id="sliderThumb"></div>
             </div>
@@ -236,63 +292,141 @@
             </div>
         </div>
         
-        <div class="value-display">
+        <div class="value-display" id="valueDisplay">
             <span class="value-text">VALOR ATUAL</span>
-            <span class="value-number" id="valueDisplay">50%</span>
+            <span class="value-number" id="valueNumber">50%</span>
         </div>
         
         <div class="instructions">
-            <div class="instruction-item">← → para ajustar o valor</div>
-            <div class="instruction-item">SHIFT + ← → para ajustes rápidos</div>
-            <div class="instruction-item">ESC para fechar o slider</div>
+            <div class="instruction-item">🖱️ Clique e arraste o slider para ajustar</div>
+            <div class="instruction-item">💡 O valor é atualizado em tempo real</div>
+            <div class="instruction-item">ESC para fechar</div>
         </div>
     </div>
 
     <script>
         let currentValue = 50;
+        let isDragging = false;
+        let mouseX = 0;
+        let mouseY = 0;
+
         const sliderContainer = document.getElementById('sliderContainer');
+        const sliderTrack = document.getElementById('sliderTrack');
         const sliderFill = document.getElementById('sliderFill');
         const sliderThumb = document.getElementById('sliderThumb');
         const valueDisplay = document.getElementById('valueDisplay');
+        const valueNumber = document.getElementById('valueNumber');
+        const customCursor = document.getElementById('customCursor');
 
+        // Atualiza slider visualmente
         function updateSlider(value) {
-            currentValue = value;
+            currentValue = Math.max(0, Math.min(100, value));
             
-            // Atualiza elementos visuais
-            sliderFill.style.width = value + '%';
-            sliderThumb.style.left = value + '%';
-            valueDisplay.textContent = value + '%';
+            sliderFill.style.width = currentValue + '%';
+            sliderThumb.style.left = currentValue + '%';
+            valueNumber.textContent = currentValue + '%';
             
-            // Atualiza cor dinamicamente
-            updateSliderColor(value);
+            updateSliderColor(currentValue);
+            updateValueDisplay();
         }
 
+        // Atualiza cor dinamicamente
         function updateSliderColor(value) {
-            const hue = 180 + (value * 1.2); // Azul para Ciano
-            const saturation = 100;
-            const lightness = 50;
-            
+            const hue = 180 + (value * 1.2);
             sliderFill.style.background = `linear-gradient(90deg, 
-                hsl(${Math.min(hue, 240)}, ${saturation}%, ${lightness}%) 0%,
-                hsl(${Math.min(hue + 20, 260)}, ${saturation}%, ${lightness}%) 50%,
-                hsl(${Math.min(hue + 40, 280)}, ${saturation}%, ${lightness}%) 100%)`;
+                hsl(${Math.min(hue, 240)}, 100%, 50%) 0%,
+                hsl(${Math.min(hue + 20, 260)}, 100%, 50%) 50%,
+                hsl(${Math.min(hue + 40, 280)}, 100%, 50%) 100%)`;
         }
 
-        function showSlider() {
-            sliderContainer.classList.remove('hidden');
-            updateSlider(50);
+        // Feedback visual no display
+        function updateValueDisplay() {
+            if (isDragging) {
+                valueDisplay.classList.add('changing');
+                valueNumber.style.transform = 'scale(1.1)';
+            } else {
+                valueDisplay.classList.remove('changing');
+                valueNumber.style.transform = 'scale(1)';
+            }
         }
 
-        function hideSlider() {
-            sliderContainer.classList.add('hidden');
+        // Calcula valor baseado na posição X do mouse
+        function getValueFromMouseX(clientX) {
+            const trackRect = sliderTrack.getBoundingClientRect();
+            const relativeX = clientX - trackRect.left;
+            const percentage = (relativeX / trackRect.width) * 100;
+            return Math.max(0, Math.min(100, Math.round(percentage)));
         }
+
+        // Eventos de Mouse
+        function handleMouseDown(event) {
+            isDragging = true;
+            sliderTrack.classList.add('active');
+            updateValueDisplay();
+            
+            // Notifica Lua que começou o arrasto
+            if (window.invokeNative) {
+                window.invokeNative('sendDuiMessage', JSON.stringify({
+                    action: 'sliderDragStart',
+                    value: currentValue
+                }));
+            }
+            
+            updateSlider(getValueFromMouseX(event.clientX || mouseX));
+        }
+
+        function handleMouseMove(event) {
+            // Atualiza posição do cursor personalizado
+            if (event.clientX && event.clientY) {
+                mouseX = event.clientX;
+                mouseY = event.clientY;
+                customCursor.style.left = (mouseX - 4) + 'px';
+                customCursor.style.top = (mouseY - 4) + 'px';
+            }
+            
+            if (isDragging) {
+                updateSlider(getValueFromMouseX(event.clientX || mouseX));
+                
+                // Notifica Lua da mudança
+                if (window.invokeNative) {
+                    window.invokeNative('sendDuiMessage', JSON.stringify({
+                        action: 'sliderChange',
+                        value: currentValue
+                    }));
+                }
+            }
+        }
+
+        function handleMouseUp() {
+            if (isDragging) {
+                isDragging = false;
+                sliderTrack.classList.remove('active');
+                updateValueDisplay();
+                
+                // Notifica Lua que terminou o arrasto
+                if (window.invokeNative) {
+                    window.invokeNative('sendDuiMessage', JSON.stringify({
+                        action: 'sliderDragEnd',
+                        value: currentValue
+                    }));
+                }
+            }
+        }
+
+        // Event Listeners
+        sliderTrack.addEventListener('mousedown', handleMouseDown);
+        document.addEventListener('mousemove', handleMouseMove);
+        document.addEventListener('mouseup', handleMouseUp);
+
+        // Prevenir comportamento padrão de arrastar
+        document.addEventListener('dragstart', (e) => e.preventDefault());
 
         // Comunicação com Lua
         window.addEventListener('message', function(event) {
             const data = event.data;
             
             if (data.action === 'showSlider') {
-                showSlider();
+                sliderContainer.classList.remove('hidden');
                 if (data.value) {
                     updateSlider(data.value);
                 }
@@ -301,14 +435,21 @@
                 updateSlider(data.value);
             }
             else if (data.action === 'hideSlider') {
-                hideSlider();
+                sliderContainer.classList.add('hidden');
+            }
+            else if (data.action === 'mouseMove') {
+                // Atualiza posição do mouse vinda do Lua
+                mouseX = data.x * window.innerWidth;
+                mouseY = data.y * window.innerHeight;
+                customCursor.style.left = (mouseX - 4) + 'px';
+                customCursor.style.top = (mouseY - 4) + 'px';
             }
         });
 
         // Inicialização
         updateSlider(50);
         
-        console.log('[SliderUI] HTML carregado e pronto!');
+        console.log('[SliderUI] Slider arrastável carregado e pronto!');
     </script>
 </body>
 </html>
