@@ -4,9 +4,6 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>MiauAPI – Notificações</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
   <style>
     /* Reset básico */
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -84,22 +81,22 @@
     }
 
     /* Cores por tipo de notificação */
-    .infobox.info {
+    .infobox.informacao {
       --infobox-border: rgba(0,170,255,0.71);
       --infobox-shadow: 0px 0px 20px 2px rgba(0,170,255,0.25);
       --infobox-accent: #00AAFF;
     }
-    .infobox.success {
+    .infobox.sucesso {
       --infobox-border: rgba(17,255,0,0.71);
       --infobox-shadow: 0px 0px 20px 2px rgba(17,255,0,0.25);
       --infobox-accent: #11FF00;
     }
-    .infobox.warning {
+    .infobox.aviso {
       --infobox-border: rgba(238,255,0,0.71);
       --infobox-shadow: 0px 0px 20px 2px rgba(238,255,0,0.25);
       --infobox-accent: #EEFF00;
     }
-    .infobox.error {
+    .infobox.erro {
       --infobox-border: rgba(255,0,0,0.71);
       --infobox-shadow: 0px 0px 20px 2px rgba(255,0,0,0.25);
       --infobox-accent: #FF0000;
@@ -113,12 +110,11 @@
   </style>
 </head>
 <body>
-  <script>
-    // ==============================
-    // MiauAPI – Sistema de Notificações (Front-end)
-    // ==============================
+  <!-- Raiz onde as notificações serão injetadas -->
+  <div id="root"></div>
 
-    // Posições pré-definidas (em pixels)
+  <script>
+    // Presets de posição (em pixels)
     const positionPresets = {
       'superior-esquerdo': { x: 20, y: 20 },
       'superior-direito':  { x: 1920 - 600 - 20, y: 20 },
@@ -129,10 +125,10 @@
       'centro':            { x: (1920 - 600) / 2, y: 1080 / 2 }
     };
 
-    // Armazena os containers por posição
+    // Containers por posição
     const containers = {};
 
-    // Obtém (ou cria) o container para uma posição
+    // Cria ou obtém o container para a posição desejada
     function getContainer(posicao) {
       if (!containers[posicao]) {
         const container = document.createElement('div');
@@ -145,53 +141,39 @@
       return containers[posicao];
     }
 
-    // Formata a mensagem: **texto** vira highlight
-    function parseMessage(texto, elementoPai) {
+    // Converte **texto** em destaque
+    function parseMessage(texto, pai) {
       const partes = texto.split(/(\*\*.*?\*\*)/g);
       partes.forEach(parte => {
-        if (parte.startsWith('**') && parte.endsWith('**') && parte.length > 4) {
+        if (parte.startsWith('**') && parte.endsWith('**')) {
           const span = document.createElement('span');
           span.className = 'highlight';
           span.textContent = parte.slice(2, -2);
-          elementoPai.appendChild(span);
+          pai.appendChild(span);
         } else if (parte) {
           const span = document.createElement('span');
           span.className = 'normal-text';
           span.textContent = parte;
-          elementoPai.appendChild(span);
+          pai.appendChild(span);
         }
       });
     }
 
-    // Função principal: exibe uma notificação
+    // Exibe a notificação
     function showInfobox(mensagem, posicao, duracao, nivel) {
-      // Valida posição
-      if (!positionPresets[posicao]) {
-        console.warn('[MiauAPI] Posição inválida:', posicao);
-        posicao = 'superior-direito';
-      }
+      if (!positionPresets[posicao]) posicao = 'superior-direito';
 
-      // Mapeia nível (aceita tanto inglês quanto português)
-      const mapaNivel = {
-        'info': 'informacao', 'informacao': 'informacao',
-        'success': 'sucesso', 'sucesso': 'sucesso',
-        'warn': 'aviso', 'warning': 'aviso', 'aviso': 'aviso',
-        'error': 'erro', 'erro': 'erro'
-      };
-      const nivelFinal = mapaNivel[nivel?.toLowerCase()] || 'informacao';
-
-      // Prefixos para exibição
+      // Prefixos em português
       const prefixos = {
         informacao: 'Info:',
-        sucesso: 'Success:',
-        aviso: 'Warning:',
-        erro: 'Error:'
+        sucesso:    'Sucesso:',
+        aviso:      'Aviso:',
+        erro:       'Erro:'
       };
 
-      // Cria a notificação
       const container = getContainer(posicao);
       const box = document.createElement('div');
-      box.className = `infobox ${nivelFinal} infobox-enter`;
+      box.className = `infobox ${nivel} infobox-enter`;
       box.innerHTML = `
         <div class="infobox-accent"></div>
         <div class="infobox-content">
@@ -200,47 +182,35 @@
 
       container.appendChild(box);
 
-      // Adiciona prefixo + mensagem formatada
+      // Insere prefixo e texto
       const msgDiv = box.querySelector('.infobox-message');
       const prefixSpan = document.createElement('span');
       prefixSpan.className = 'infobox-prefix';
-      prefixSpan.textContent = prefixos[nivelFinal] || '';
+      prefixSpan.textContent = prefixos[nivel] || '';
       msgDiv.appendChild(prefixSpan);
 
       parseMessage(mensagem, msgDiv);
 
-      // Remove automaticamente após X milissegundos
-      const tempo = duracao || 4000;
+      // Remove após a duração (ms)
       setTimeout(() => {
         box.classList.add('infobox-exit');
         setTimeout(() => {
-          if (box.parentNode) box.parentNode.removeChild(box);
-          // Remove container se vazio
+          box.remove();
           if (container.children.length === 0) {
             container.remove();
             delete containers[posicao];
           }
         }, 250);
-      }, tempo);
+      }, duracao || 4000);
     }
 
-    // ==============================
-    // Ouvinte de mensagens do FiveM
-    // ==============================
-    window.addEventListener('message', (evento) => {
+    // Escuta mensagens do FiveM
+    window.addEventListener('message', evento => {
       const dados = evento.data;
       if (dados?.action === 'infobox') {
-        showInfobox(
-          dados.message,
-          dados.position,
-          dados.duration,
-          dados.level
-        );
+        showInfobox(dados.message, dados.position, dados.duration, dados.level);
       }
     });
-
-    // Expõe globalmente (útil para debug)
-    window.MiauAPI = { infobox: showInfobox };
   </script>
 </body>
 </html>
