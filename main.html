@@ -1,16 +1,11 @@
-<!-- main.html (hospedado externamente) -->
+<!-- main.html (remoto) -->
 <!DOCTYPE html>
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Slider NUI</title>
   <style>
     body { margin:0; background:rgba(0,0,0,0.5); display:none; }
-    #container {
-      position:absolute; top:50%; left:50%;
-      transform:translate(-50%,-50%);
-      background:#222; padding:20px; border-radius:8px;
-    }
+    #container { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); background:#222; padding:20px; border-radius:8px; }
     input[type=range] { width:300px; }
   </style>
 </head>
@@ -20,21 +15,14 @@
   </div>
   <script>
     window.onload = () => {
-      fetch(`https://${GetParentResourceName()}/onBrowserReady`, {
-        method:'POST', headers:{'Content-Type':'application/json'}, body:'{}'
-      });
+      fetch(`https://${GetParentResourceName()}/focus`, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ focus: true }) });
     };
     window.addEventListener('message', e => {
-      if(e.data.action==='showSlider'){
-        document.body.style.display = e.data.show?'block':'none';
-      }
+      if(e.data.action==='showSlider') document.body.style.display = e.data.show?'block':'none';
     });
     document.getElementById('slider').addEventListener('input', () => {
       const v = +document.getElementById('slider').value;
-      fetch(`https://${GetParentResourceName()}/sliderChange`, {
-        method:'POST', headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({ value: v })
-      });
+      fetch(`https://${GetParentResourceName()}/sliderChange`, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ value: v }) });
     });
   </script>
 </body>
