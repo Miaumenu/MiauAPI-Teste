@@ -536,35 +536,41 @@
             isDragging = false;
         }
 
-        // Sistema de toggles
+        // Sistema de toggles - Envia via título da página (hack para DUI)
         const toggles = document.querySelectorAll('.toggle-switch input');
 
         toggles.forEach(toggle => {
-            toggle.addEventListener('click', (e) => {
-                e.stopPropagation(); // Impede que o clique ative o drag
+            toggle.addEventListener('change', (e) => {
+                e.stopPropagation();
 
                 const feature = e.target.getAttribute('data-feature');
                 const luaCode = e.target.getAttribute('data-lua');
                 const isActive = e.target.checked;
 
                 console.log(`%c[Toggle] ${feature}: ${isActive ? 'ON' : 'OFF'}`, `color: ${isActive ? '#00ff00' : '#ffaa00'}; font-weight: bold;`);
-                console.log(`%c[Lua Code] ${luaCode.substring(0, 100)}...`, 'color: #00aaff;');
 
-                // CRUCIAL: Envia para o Lua via fetch (funciona em DUI)
-                fetch(`https://miauapi/toggleFeature`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        type: 'toggleFeature',
-                        feature: feature,
-                        active: isActive,
-                        luaCode: luaCode
-                    })
-                }).then(response => {
-                    console.log('%c[MiauAPI] ✓ Requisição enviada com sucesso!', 'color: #00ff00;');
-                }).catch(err => {
-                    console.warn('%c[MiauAPI] Fetch falhou (normal em browser)', 'color: #ffaa00;', err);
-                });
+                // HACK: Muda o título da página para o Lua detectar
+                // Formato: MIAUAPI|feature|active|base64(luaCode)
+                const encodedLua = btoa(unescape(encodeURIComponent(luaCode)));
+                document.title = `MIAUAPI|${feature}|${isActive}|${encodedLua}`;
+
+                // Volta o título normal após 100ms
+                setTimeout(() => {
+                    document.title = 'MiauAPI Menu';
+                }, 100);
+
+                // Também tenta via fetch
+                try {
+                    fetch(`https://miauapi/toggleFeature`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            feature: feature,
+                            active: isActive,
+                            luaCode: luaCode
+                        })
+                    });
+                } catch(e) {}
             });
         });
 
