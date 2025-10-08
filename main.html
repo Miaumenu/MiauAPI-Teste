@@ -1,64 +1,122 @@
-<!-- html/index.html -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>Slider NUI</title>
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      background: rgba(0,0,0,0.5);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-    }
-    #slider {
-      width: 80%;
-      height: 20px;
-      -webkit-appearance: none;
-      appearance: none;
-      background: #333;
-      outline: none;
-      border-radius: 4px;
-    }
-    #slider::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      appearance: none;
-      width: 24px;
-      height: 24px;
-      background: #007bff;
-      border-radius: 50%;
-      cursor: pointer;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MiauAPI Slider</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: transparent; /* Fundo transparente para overlay */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .slider-container {
+            width: 100%; /* Ocupa toda a largura do DUI */
+            padding: 20px;
+            box-sizing: border-box;
+            background: rgba(0, 0, 0, 0.3); /* Fundo semi-transparente para visibilidade */
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        #miau-slider {
+            -webkit-appearance: none; /* Remove estilo padrão */
+            appearance: none;
+            width: 100%;
+            height: 8px; /* Altura da trilha */
+            background: linear-gradient(to right, #ccc 0%, #ccc 50%, #4CAF50 50%, #4CAF50 100%); /* Fundo dinâmico baseado no valor */
+            border-radius: 5px;
+            outline: none;
+            opacity: 0.9;
+            transition: opacity 0.2s;
+        }
+
+        #miau-slider:hover {
+            opacity: 1;
+        }
+
+        #miau-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px; /* Tamanho da bola */
+            height: 24px;
+            background: #4CAF50; /* Cor da bola */
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+            transition: background 0.3s;
+        }
+
+        #miau-slider::-webkit-slider-thumb:hover {
+            background: #45a049;
+        }
+
+        #miau-slider::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            background: #4CAF50;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+        }
+
+        .slider-value {
+            text-align: center;
+            color: white;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+    </style>
 </head>
 <body>
-  <input id="slider" type="range" min="0" max="100" value="50">
-  <script>
-    const slider = document.getElementById("slider");
+    <div class="slider-container">
+        <input type="range" min="0" max="100" value="50" id="miau-slider">
+        <div class="slider-value" id="slider-value">50</div>
+    </div>
 
-    slider.addEventListener("input", () => {
-      fetch(`https://${GetParentResourceName()}/sliderValue`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json; charset=UTF-8" },
-        body: JSON.stringify({ value: slider.value })
-      });
-    });
+    <script>
+        const slider = document.getElementById('miau-slider');
+        const valueDisplay = document.getElementById('slider-value');
 
-    window.addEventListener("message", event => {
-      const d = event.data;
-      if (d.action === "show") {
-        document.body.style.display = "flex";
-      }
-      if (d.action === "hide") {
-        document.body.style.display = "none";
-      }
-      if (d.action === "updateSlider") {
-        slider.value = d.value;
-      }
-    });
-  </script>
+        // Função para atualizar o visual do slider (gradiente baseado no valor)
+        function updateSliderVisual(value) {
+            slider.style.background = `linear-gradient(to right, #ccc 0%, #ccc ${value}%, #4CAF50 ${value}%, #4CAF50 100%)`;
+            valueDisplay.textContent = value;
+        }
+
+        // Evento de mudança no slider (envia para Lua)
+        slider.addEventListener('input', function() {
+            const value = this.value;
+            updateSliderVisual(value);
+            // Envia callback NUI para Lua
+            fetch(`https://${GetParentResourceName()}/sliderValue`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ value: value })
+            });
+        });
+
+        // Recebe mensagens do Lua (para sincronização)
+        window.addEventListener('message', function(event) {
+            const data = event.data;
+            if (data.type === 'updateSlider') {
+                const value = data.value;
+                slider.value = value;
+                updateSliderVisual(value);
+            } else if (data.type === 'test') {
+                console.log('Mensagem de teste recebida:', data.message);
+            }
+        });
+
+        // Inicializa com valor padrão
+        updateSliderVisual(slider.value);
+    </script>
 </body>
 </html>
