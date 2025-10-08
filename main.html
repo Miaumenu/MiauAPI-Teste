@@ -46,9 +46,13 @@
         <div id="title">Slider Draggable</div>
         <div id="slider-container">
             <input type="range" id="slider" min="0" max="100" value="50">
-            <div style="margin-top: 10px;">
-                <button id="resetBtn" style="background: #28a745; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">
-                    Resetar Posição
+            <div id="slider-value" style="color: #00ff00; font-weight: bold; margin: 5px 0;">Valor: 50</div>
+            <div style="margin-top: 10px; display: flex; gap: 10px; justify-content: center;">
+                <button id="resetBtn" style="background: #28a745; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-weight: bold;">
+                    🔄 Resetar
+                </button>
+                <button id="debugBtn" style="background: #ffc107; color: black; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-weight: bold;">
+                    🐛 Debug
                 </button>
             </div>
         </div>
@@ -87,7 +91,12 @@
         });
 
         const slider = document.getElementById('slider');
+        const sliderValue = document.getElementById('slider-value');
+        
         slider.addEventListener('input', (e) => {
+            // Atualiza display do valor
+            sliderValue.textContent = 'Valor: ' + e.target.value;
+            
             // Envia valor do slider para Lua
             fetch(`https://${GetParentResourceName()}/sliderValue`, {
                 method: 'POST',
@@ -101,6 +110,7 @@
             const data = event.data;
             if (data.type === 'updateSlider') {
                 slider.value = data.value;
+                sliderValue.textContent = 'Valor: ' + data.value;
                 console.log('Slider atualizado para:', data.value);
             }
         });
@@ -114,6 +124,23 @@
                 headers: { 'Content-Type': 'application/json; charset=UTF-8' },
                 body: JSON.stringify({})
             });
+        });
+
+        // Botão de debug
+        const debugBtn = document.getElementById('debugBtn');
+        debugBtn.addEventListener('click', () => {
+            // Mostra informações de debug
+            const debugInfo = {
+                sliderValue: slider.value,
+                position: { x: window.screenX, y: window.screenY },
+                timestamp: new Date().toLocaleTimeString()
+            };
+            
+            console.log('🐛 DEBUG INFO:', debugInfo);
+            alert('🐛 DEBUG INFO:\n' + 
+                  'Valor do Slider: ' + debugInfo.sliderValue + '\n' +
+                  'Posição: ' + debugInfo.position.x + ', ' + debugInfo.position.y + '\n' +
+                  'Timestamp: ' + debugInfo.timestamp);
         });
     </script>
 </body>
