@@ -5,118 +5,278 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MiauAPI Slider</title>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
             margin: 0;
             padding: 0;
-            background: transparent; /* Fundo transparente para overlay */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
+            background: rgba(20, 20, 20, 0.95);
             overflow: hidden;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        .slider-container {
-            width: 100%; /* Ocupa toda a largura do DUI */
-            padding: 20px;
-            box-sizing: border-box;
-            background: rgba(0, 0, 0, 0.3); /* Fundo semi-transparente para visibilidade */
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-        }
-
-        #miau-slider {
-            -webkit-appearance: none; /* Remove estilo padrão */
-            appearance: none;
             width: 100%;
-            height: 8px; /* Altura da trilha */
-            background: linear-gradient(to right, #ccc 0%, #ccc 50%, #4CAF50 50%, #4CAF50 100%); /* Fundo dinâmico baseado no valor */
-            border-radius: 5px;
+            height: 100%;
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
+
+        #slider-container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+        }
+
+        .slider-wrapper {
+            width: 95%;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            background: rgba(40, 40, 40, 0.8);
+            padding: 20px;
+            border-radius: 12px;
+            border: 2px solid rgba(0, 123, 255, 0.5);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+        }
+
+        #value-display {
+            color: #00ff00;
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            text-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+            letter-spacing: 2px;
+        }
+
+        .slider-track {
+            position: relative;
+            width: 100%;
+            height: 40px;
+            display: flex;
+            align-items: center;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 40px;
+            background: transparent;
             outline: none;
-            opacity: 0.9;
-            transition: opacity 0.2s;
-        }
-
-        #miau-slider:hover {
-            opacity: 1;
-        }
-
-        #miau-slider::-webkit-slider-thumb {
             -webkit-appearance: none;
             appearance: none;
-            width: 24px; /* Tamanho da bola */
-            height: 24px;
-            background: #4CAF50; /* Cor da bola */
-            border-radius: 50%;
             cursor: pointer;
-            box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
-            transition: background 0.3s;
+            position: relative;
+            z-index: 10;
         }
 
-        #miau-slider::-webkit-slider-thumb:hover {
-            background: #45a049;
+        /* Webkit (Chrome, Safari, Edge) */
+        input[type="range"]::-webkit-slider-track {
+            background: linear-gradient(to right, #333 0%, #555 100%);
+            height: 12px;
+            border-radius: 6px;
+            border: 2px solid #007bff;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);
         }
 
-        #miau-slider::-moz-range-thumb {
-            width: 24px;
-            height: 24px;
-            background: #4CAF50;
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 28px;
+            height: 28px;
+            background: linear-gradient(145deg, #00ff00, #00aa00);
             border-radius: 50%;
-            cursor: pointer;
-            box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+            cursor: grab;
+            border: 3px solid #fff;
+            box-shadow: 0 3px 8px rgba(0, 255, 0, 0.6), 0 0 15px rgba(0, 255, 0, 0.4);
+            transition: all 0.15s ease;
+            margin-top: -8px;
         }
 
-        .slider-value {
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.15);
+            box-shadow: 0 4px 12px rgba(0, 255, 0, 0.8), 0 0 20px rgba(0, 255, 0, 0.6);
+        }
+
+        input[type="range"]::-webkit-slider-thumb:active {
+            cursor: grabbing;
+            transform: scale(1.05);
+            background: linear-gradient(145deg, #00aa00, #007700);
+        }
+
+        /* Firefox */
+        input[type="range"]::-moz-range-track {
+            background: linear-gradient(to right, #333 0%, #555 100%);
+            height: 12px;
+            border-radius: 6px;
+            border: 2px solid #007bff;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 28px;
+            height: 28px;
+            background: linear-gradient(145deg, #00ff00, #00aa00);
+            border-radius: 50%;
+            cursor: grab;
+            border: 3px solid #fff;
+            box-shadow: 0 3px 8px rgba(0, 255, 0, 0.6), 0 0 15px rgba(0, 255, 0, 0.4);
+        }
+
+        input[type="range"]::-moz-range-thumb:hover {
+            transform: scale(1.15);
+        }
+
+        input[type="range"]::-moz-range-thumb:active {
+            cursor: grabbing;
+        }
+
+        #debug-info {
+            color: #ffff00;
+            font-size: 11px;
             text-align: center;
-            color: white;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 5px 10px;
+            border-radius: 5px;
+            margin-top: 5px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .title {
+            color: #007bff;
+            text-align: center;
             font-size: 16px;
-            margin-top: 10px;
+            font-weight: 600;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Animação de carregamento */
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .loading {
+            animation: pulse 2s infinite;
         }
     </style>
 </head>
 <body>
-    <div class="slider-container">
-        <input type="range" min="0" max="100" value="50" id="miau-slider">
-        <div class="slider-value" id="slider-value">50</div>
+    <div id="slider-container">
+        <div class="slider-wrapper">
+            <div class="title">🎮 MiauAPI Slider</div>
+            <div id="value-display">Valor: 50</div>
+            <div class="slider-track">
+                <input type="range" id="slider" min="0" max="100" value="50" step="1">
+            </div>
+            <div id="debug-info" class="loading">Aguardando conexão...</div>
+        </div>
     </div>
 
     <script>
-        const slider = document.getElementById('miau-slider');
-        const valueDisplay = document.getElementById('slider-value');
+        console.log('%c[MiauAPI] 🐱 Inicializando...', 'color: #00ff00; font-size: 14px; font-weight: bold;');
+        
+        const slider = document.getElementById('slider');
+        const valueDisplay = document.getElementById('value-display');
+        const debugInfo = document.getElementById('debug-info');
 
-        // Função para atualizar o visual do slider (gradiente baseado no valor)
-        function updateSliderVisual(value) {
-            slider.style.background = `linear-gradient(to right, #ccc 0%, #ccc ${value}%, #4CAF50 ${value}%, #4CAF50 100%)`;
-            valueDisplay.textContent = value;
+        let updateCount = 0;
+        let lastValue = 50;
+        let isConnected = false;
+
+        // Atualiza display do valor
+        function updateDisplay(value) {
+            const numValue = Math.round(value);
+            valueDisplay.textContent = `Valor: ${numValue}`;
+            lastValue = numValue;
+            updateCount++;
+            
+            debugInfo.textContent = `✓ Ativo | Updates: ${updateCount} | Valor: ${numValue}`;
+            debugInfo.classList.remove('loading');
+            
+            console.log(`%c[Slider] Valor atualizado: ${numValue}`, 'color: #00aaff;');
         }
 
-        // Evento de mudança no slider (envia para Lua)
-        slider.addEventListener('input', function() {
-            const value = this.value;
-            updateSliderVisual(value);
-            // Envia callback NUI para Lua
-            fetch(`https://${GetParentResourceName()}/sliderValue`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ value: value })
-            });
+        // Evento quando usuário está movendo o slider
+        slider.addEventListener('input', (e) => {
+            const value = parseInt(e.target.value);
+            updateDisplay(value);
         });
 
-        // Recebe mensagens do Lua (para sincronização)
-        window.addEventListener('message', function(event) {
+        // Evento quando usuário solta o slider
+        slider.addEventListener('change', (e) => {
+            const value = parseInt(e.target.value);
+            console.log(`%c[Slider] ✓ Movimento finalizado em: ${value}`, 'color: #00ff00; font-weight: bold;');
+        });
+
+        // Eventos de mouse para melhor feedback
+        slider.addEventListener('mousedown', () => {
+            console.log('%c[Slider] 🖱️ Mouse pressionado', 'color: #ffaa00;');
+        });
+
+        slider.addEventListener('mouseup', () => {
+            console.log('%c[Slider] 🖱️ Mouse solto', 'color: #ffaa00;');
+        });
+
+        // Escuta mensagens vindas do Lua (via SendDuiMessage)
+        window.addEventListener('message', (event) => {
             const data = event.data;
-            if (data.type === 'updateSlider') {
-                const value = data.value;
+            
+            console.log('%c[Message] Recebido:', 'color: #ff00ff;', data);
+            
+            if (data.type === 'updateSlider' && data.value !== undefined) {
+                const value = parseInt(data.value);
                 slider.value = value;
-                updateSliderVisual(value);
-            } else if (data.type === 'test') {
-                console.log('Mensagem de teste recebida:', data.message);
+                updateDisplay(value);
+                
+                if (!isConnected) {
+                    isConnected = true;
+                    console.log('%c[MiauAPI] ✓ Conectado ao Lua!', 'color: #00ff00; font-size: 16px; font-weight: bold;');
+                }
             }
         });
 
-        // Inicializa com valor padrão
-        updateSliderVisual(slider.value);
+        // Testa se o slider está responsivo
+        function testSlider() {
+            console.log('%c[Test] Testando responsividade do slider...', 'color: #00ffff;');
+            const testValue = Math.floor(Math.random() * 100);
+            slider.value = testValue;
+            updateDisplay(testValue);
+        }
+
+        // Inicialização
+        console.log('%c[MiauAPI] 🎨 HTML carregado com sucesso!', 'color: #00ff00; font-size: 14px;');
+        console.log('%c[Info] Dimensões: ' + window.innerWidth + 'x' + window.innerHeight, 'color: #aaaaaa;');
+        updateDisplay(50);
+
+        // Heartbeat para verificar se está ativo
+        let heartbeatCount = 0;
+        setInterval(() => {
+            heartbeatCount++;
+            console.log(`%c[Heartbeat #${heartbeatCount}] 💚 Slider ativo | Valor: ${lastValue} | Connected: ${isConnected}`, 'color: #00aa00;');
+        }, 5000);
+
+        // Teste inicial após 2 segundos
+        setTimeout(() => {
+            if (!isConnected) {
+                console.log('%c[Warning] ⚠️ Nenhuma mensagem do Lua recebida ainda', 'color: #ffaa00; font-weight: bold;');
+                testSlider();
+            }
+        }, 2000);
+
+        // Log de eventos do DOM
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('%c[DOM] ✓ DOM totalmente carregado', 'color: #00ff00;');
+        });
+
+        // Detecta cliques em qualquer lugar
+        document.body.addEventListener('click', (e) => {
+            console.log('%c[Click] 👆 Clique detectado em:', 'color: #ff00ff;', e.target);
+        });
+
+        console.log('%c[MiauAPI] 🚀 Sistema pronto para uso!', 'color: #00ff00; font-size: 16px; font-weight: bold;');
     </script>
 </body>
 </html>
