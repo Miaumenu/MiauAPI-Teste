@@ -4,13 +4,21 @@
   <meta charset="UTF-8">
   <title>Slider NUI</title>
   <style>
-    body { margin: 0; overflow: hidden; background: transparent; }
+    body {
+      margin: 0;
+      overflow: hidden;
+      background: rgba(0,0,0,0.5);
+      display: none; /* esconde até receber showSlider */
+    }
     #sliderContainer {
       position: absolute;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
       width: 80%;
+      background: #222;
+      padding: 20px;
+      border-radius: 10px;
     }
     #slider {
       width: 100%;
@@ -23,13 +31,25 @@
   </div>
 
   <script>
-    window.onload = function() {
-      fetch(`https://${GetParentResourceName()}/focus`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ focus: true })
-      });
-    };
+    window.addEventListener('message', event => {
+      const msg = event.data;
+      if (msg.action === 'showSlider') {
+        document.body.style.display = msg.show ? 'block' : 'none';
+        if (msg.show) {
+          fetch(`https://${GetParentResourceName()}/focus`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ focus: true })
+          });
+        } else {
+          fetch(`https://${GetParentResourceName()}/focus`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ focus: false })
+          });
+        }
+      }
+    });
 
     const slider = document.getElementById('slider');
     slider.addEventListener('input', () => {
