@@ -3,263 +3,57 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MiauAPI Slider</title>
+    <title>MiauAPI Menu</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=Roboto:wght@900&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            margin: 0;
-            padding: 0;
-            /* FUNDO SUPER VISÍVEL PARA TESTAR */
-            background: linear-gradient(135deg, #ff0000 0%, #00ff00 50%, #0000ff 100%);
-            overflow: hidden;
-            width: 100%;
-            height: 100%;
-            font-family: Arial, sans-serif;
-        }
-
-        #test-screen {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(45deg, 
-                #ff0000 0%, #ff7700 25%, 
-                #ffff00 50%, #00ff00 75%, 
-                #0000ff 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            animation: rainbow 3s linear infinite;
-        }
-
-        @keyframes rainbow {
-            0% { filter: hue-rotate(0deg); }
-            100% { filter: hue-rotate(360deg); }
-        }
-
-        .big-text {
-            font-size: 60px;
-            font-weight: bold;
-            color: white;
-            text-shadow: 
-                3px 3px 0px #000,
-                -3px -3px 0px #000,
-                3px -3px 0px #000,
-                -3px 3px 0px #000,
-                0 0 20px rgba(255,255,255,0.8);
-            animation: pulse 1s infinite;
-            margin: 20px;
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-        }
-
-        #slider-container {
-            width: 80%;
-            max-width: 500px;
-            background: rgba(0, 0, 0, 0.9);
-            padding: 40px;
-            border-radius: 20px;
-            border: 5px solid white;
-            box-shadow: 0 0 30px rgba(255,255,255,0.5);
-        }
-
-        .slider-wrapper {
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        #value-display {
-            color: #00ff00;
-            text-align: center;
-            font-size: 48px;
-            font-weight: bold;
-            text-shadow: 0 0 20px #00ff00;
-            background: #000;
-            padding: 20px;
-            border-radius: 10px;
-            border: 3px solid #00ff00;
-        }
-
-        input[type="range"] {
-            width: 100%;
-            height: 60px;
-            background: transparent;
-            outline: none;
-            -webkit-appearance: none;
-            appearance: none;
-            cursor: pointer;
-        }
-
-        input[type="range"]::-webkit-slider-track {
-            background: linear-gradient(to right, #ff0000, #ffff00, #00ff00);
-            height: 20px;
-            border-radius: 10px;
-            border: 3px solid white;
-        }
-
-        input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 50px;
-            height: 50px;
-            background: white;
-            border-radius: 50%;
-            cursor: pointer;
-            border: 5px solid #000;
-            box-shadow: 0 0 20px rgba(255,255,255,0.8);
-        }
-
-        input[type="range"]::-webkit-slider-thumb:hover {
-            transform: scale(1.2);
-        }
-
-        input[type="range"]::-webkit-slider-thumb:active {
-            transform: scale(1.5);
-            background: #ff0000;
-        }
-
-        input[type="range"]::-moz-range-track {
-            background: linear-gradient(to right, #ff0000, #ffff00, #00ff00);
-            height: 20px;
-            border-radius: 10px;
-            border: 3px solid white;
-        }
-
-        input[type="range"]::-moz-range-thumb {
-            width: 50px;
-            height: 50px;
-            background: white;
-            border-radius: 50%;
-            cursor: pointer;
-            border: 5px solid #000;
-        }
-
-        #debug-info {
-            color: yellow;
-            font-size: 16px;
-            text-align: center;
-            background: rgba(0, 0, 0, 0.9);
-            padding: 15px;
-            border-radius: 10px;
-            border: 2px solid yellow;
-            font-family: 'Courier New', monospace;
-            margin-top: 10px;
-        }
-
-        .blink {
-            animation: blink 0.5s infinite;
-        }
-
-        @keyframes blink {
-            0%, 50% { opacity: 1; }
-            51%, 100% { opacity: 0; }
-        }
-    </style>
-</head>
-<body>
-    <div id="test-screen">
-        <div class="big-text">🐱 MIAUAPI 🐱</div>
-        <div class="big-text blink">TESTE VISÍVEL</div>
-        
-        <div id="slider-container">
-            <div class="slider-wrapper">
-                <div id="value-display">50</div>
-                <input type="range" id="slider" min="0" max="100" value="50" step="1">
-                <div id="debug-info">
-                    Arraste o slider!<br>
-                    Updates: 0
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        // SUPER LOG VISÍVEL
-        console.log('%c███████████████████████████████████████', 'color: red; font-size: 20px;');
-        console.log('%c█  MIAUAPI HTML CARREGADO!!!        █', 'color: yellow; font-size: 20px;');
-        console.log('%c███████████████████████████████████████', 'color: green; font-size: 20px;');
-        
-        const slider = document.getElementById('slider');
-        const valueDisplay = document.getElementById('value-display');
-        const debugInfo = document.getElementById('debug-info');
-
-        let updateCount = 0;
-        let dragCount = 0;
-
-        function updateDisplay(value) {
-            const numValue = Math.round(value);
-            valueDisplay.textContent = numValue;
-            updateCount++;
-            
-            debugInfo.innerHTML = `
-                ✓ FUNCIONANDO!<br>
-                Valor: ${numValue}<br>
-                Updates: ${updateCount}<br>
-                Drags: ${dragCount}
-            `;
-            
-            console.log(`%c[${updateCount}] VALOR: ${numValue}`, 'color: lime; font-size: 16px; font-weight: bold;');
-        }
-
-        slider.addEventListener('input', (e) => {
-            updateDisplay(e.target.value);
-        });
-
-        slider.addEventListener('mousedown', () => {
-            dragCount++;
-            console.log('%c🖱️ MOUSE DOWN! Drag #' + dragCount, 'color: orange; font-size: 14px;');
-        });
-
-        slider.addEventListener('mouseup', () => {
-            console.log('%c🖱️ MOUSE UP!', 'color: orange; font-size: 14px;');
-        });
-
-        slider.addEventListener('change', (e) => {
-            console.log('%c✓ CHANGE EVENT: ' + e.target.value, 'color: cyan; font-size: 14px;');
-        });
-
-        window.addEventListener('message', (event) => {
-            console.log('%c📨 MENSAGEM DO LUA:', 'color: magenta; font-size: 14px;', event.data);
-            
-            if (event.data.type === 'updateSlider' && event.data.value !== undefined) {
-                slider.value = event.data.value;
-                updateDisplay(event.data.value);
-            }
-        });
-
-        // Auto-teste
-        let autoTestCount = 0;
-        setInterval(() => {
-            autoTestCount++;
-            console.log(`%c💚 HEARTBEAT #${autoTestCount} - Valor: ${slider.value}`, 'color: lime; font-size: 12px;');
-        }, 3000);
-
-        // Testa movimento automático
-        setTimeout(() => {
-            console.log('%c🤖 TESTE AUTOMÁTICO: Movendo slider...', 'color: yellow; font-size: 14px;');
-            for (let i = 0; i <= 100; i += 10) {
-                setTimeout(() => {
-                    slider.value = i;
-                    updateDisplay(i);
-                }, i * 50);
-            }
-        }, 3000);
-
-        updateDisplay(50);
-        
-        console.log('%c✓ Script inicializado!', 'color: lime; font-size: 16px;');
-        console.log(`%cDimensões: ${window.innerWidth}x${window.innerHeight}`, 'color: cyan;');
-    </script>
-</body>
-</html>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: transparent; overflow: hidden; width: 100%; height: 100%; color: white; }
+        .container { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 932px; height: 640px; background: rgba(0, 0, 0, 0.25); backdrop-filter: blur(22.5px); border-radius: 18px; display: flex; }
+        .sidebar { width: 200px; background: rgba(0, 0, 0, 0.5); border-radius: 18px 0 0 18px; padding: 20px 0; position: relative; }
+        .menu-item { display: flex; align-items: center; padding: 15px 20px; cursor: pointer; transition: all 0.3s; position: relative; }
+        .menu-item:hover { background: rgba(255, 255, 255, 0.05); }
+        .menu-item.active { background: rgba(255, 255, 255, 0.1); }
+        .menu-item.active::before { content: ''; position: absolute; left: 0; width: 3px; height: 24px; background: #FF0000; border-radius: 4px; }
+        .menu-icon { width: 26px; height: 26px; margin-right: 12px; filter: brightness(0) invert(1); opacity: 0.76; }
+        .menu-text { font-weight: 600; font-size: 13px; color: #FFFFFF; opacity: 0.76; }
+        .menu-item.active .menu-text { opacity: 1; }
+        .profile-section { position: absolute; bottom: 20px; left: 20px; display: flex; align-items: center; gap: 10px; }
+        .profile-avatar { width: 54px; height: 70px; border-radius: 8px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .profile-info { display: flex; flex-direction: column; }
+        .profile-name, .profile-role { font-family: 'Roboto', sans-serif; font-weight: 900; font-size: 10px; color: #817D7E; letter-spacing: -0.02em; }
+        .main-content { flex: 1; padding: 30px; display: flex; flex-direction: column; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .search-box { display: flex; align-items: center; background: rgba(0, 0, 0, 0.21); border-radius: 4px; padding: 8px 12px; width: 157px; }
+        .search-icon { width: 16px; height: 16px; margin-right: 8px; opacity: 0.76; }
+        .search-input { background: transparent; border: none; outline: none; color: white; font-size: 10px; font-weight: 600; opacity: 0.76; width: 100%; }
+        .content-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; flex: 1; overflow-y: auto; }
+        .content-grid::-webkit-scrollbar { width: 6px; }
+        .content-grid::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.05); }
+        .content-grid::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.2); border-radius: 3px; }
+        .card { background: rgba(0, 0, 0, 0.35); border-radius: 7px; height: fit-content; }
+        .card-header { display: flex; align-items: center; padding: 10px 15px; background: rgba(0, 0, 0, 0.35); border-radius: 7px 7px 0 0; }
+        .card-icon { width: 21px; height: 21px; margin-right: 10px; filter: brightness(0) invert(1); }
+        .card-title { font-weight: 600; font-size: 11px; color: #FFFFFF; }
+        .card-body { background: rgba(0, 0, 0, 0.21); border-radius: 0 0 7px 7px; }
+        .table-header { display: grid; grid-template-columns: 3fr 1fr 1fr 1fr; padding: 8px 15px; background: rgba(0, 0, 0, 0.35); font-size: 10px; font-weight: 600; opacity: 0.76; gap: 10px; }
+        .feature-item { display: grid; grid-template-columns: 3fr 1fr 1fr 1fr; padding: 12px 15px; border-bottom: 1px solid #454545; align-items: center; gap: 10px; }
+        .feature-item:last-child { border-bottom: none; }
+        .feature-info { display: flex; flex-direction: column; }
+        .feature-name { font-weight: 600; font-size: 10px; color: #FFFFFF; }
+        .feature-description { font-weight: 600; font-size: 10px; color: #FFFFFF; opacity: 0.45; margin-top: 2px; }
+        .status-badge { display: flex; align-items: center; gap: 5px; justify-content: center; }
+        .status-dot { width: 5px; height: 5px; border-radius: 50%; }
+        .status-dot.safe { background: #11FF00; }
+        .status-dot.risk { background: #FF0000; }
+        .status-text { font-weight: 600; font-size: 7px; letter-spacing: -0.02em; }
+        .status-text.safe { color: #11FF00; }
+        .status-text.risk { color: #FF0000; }
+        .config-btn { width: 24px; height: 24px; background: transparent; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: transform 0.2s; }
+        .config-btn:hover { transform: scale(1.1); }
+        .config-icon { width: 14px; height: 14px; filter: brightness(0) invert(1); }
+        .toggle-switch { position: relative; width: 32px; height: 15px; cursor: pointer; }
+        .toggle-switch input { display: none; }
+        .toggle-bg { position: absolute; width: 100%; height: 100%; background: #454545; border-radius: 7px; transition: all 0.3s; }
+        .toggle-switch input:checked + .toggle-bg { background: rgba(17, 255, 0, 0.62); }
+        .toggle-handle { position: absolute; width: 13px; height: 13px; background: #FFFFFF; border-radius: 7px; top: 1px; left: 1px; transition: all 0.3s; }
+        .toggle-switch input:checked ~ .toggle-handle { left: 18px; }
