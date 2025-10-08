@@ -1,216 +1,192 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>MiauAPI – Sistema Modular Ajustado</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    html, body {
-      width: 100%; height: 100%; overflow: hidden;
-      background: transparent; font-family: 'Inter', sans-serif;
-    }
-    body { width: 1920px; height: 1080px; }
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Slider Interativo - MiauAPI</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body {
+            width: 100%; height: 100%; overflow: hidden;
+            background: transparent; font-family: 'Inter', sans-serif;
+        }
+        body { 
+            width: 1920px; height: 1080px;
+            display: flex; justify-content: center; align-items: center;
+        }
 
-    /* ==========================================
-       MÓDULO: INFOBOX – TAMANHO REDUZIDO E QUEBRA DE LINHA
-       ========================================== */
-    .infobox-container {
-      position: fixed;
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-      z-index: 9999;
-    }
-    .infobox {
-      position: relative;
-      max-width: 600px;
-      width: calc(100% - 40px);
-      display: flex;
-      align-items: stretch;
-      padding: 15px 20px;
-      background: rgba(0,0,0,0.7);
-      border-radius: 14px;
-      border: 2px solid var(--infobox-border);
-      box-shadow: var(--infobox-shadow);
-    }
-    .infobox-accent {
-      width: 6px;
-      background: var(--infobox-accent);
-      box-shadow: var(--infobox-accent-shadow);
-      border-radius: 14px;
-      margin-right: 20px;
-      flex-shrink: 0;
-    }
-    .infobox-content {
-      flex: 1;
-      display: block;
-    }
-    .infobox-message {
-      display: block;
-      white-space: normal;
-      word-wrap: break-word;
-      word-break: break-word;
-    }
-    .infobox-message span {
-      display: inline;
-    }
-    .normal-text {
-      opacity: 0.67;
-      color: #FFFFFF;
-      font-weight: 600;
-      font-size: 20px;
-      line-height: 1.3;
-      letter-spacing: -0.01em;
-    }
-    .highlight {
-      opacity: 1;
-      color: #FFFFFF;
-      font-weight: 700;
-      font-size: 20px;
-      line-height: 1.3;
-      letter-spacing: -0.01em;
-    }
-    .infobox-prefix {
-      opacity: 1;
-      color: #FFFFFF;
-      margin-right: 6px;
-      font-weight: 700;
-      font-size: 20px;
-      line-height: 1.3;
-      letter-spacing: -0.01em;
-    }
+        /* Container do Slider */
+        .slider-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 600px;
+            padding: 30px;
+            background: rgba(0, 0, 0, 0.85);
+            border-radius: 20px;
+            border: 2px solid rgba(0, 170, 255, 0.5);
+            box-shadow: 0 0 40px rgba(0, 170, 255, 0.3);
+            backdrop-filter: blur(10px);
+        }
 
-    /* Níveis de INFOBOX */
-    .infobox.info {
-      --infobox-border: rgba(0,170,255,0.71);
-      --infobox-shadow: 0px 0px 20px 2px rgba(0,170,255,0.25);
-      --infobox-accent: #00AAFF;
-      --infobox-accent-shadow: 0px 0px 4px 2px rgba(0,170,255,0.61);
-    }
-    .infobox.success {
-      --infobox-border: rgba(17,255,0,0.71);
-      --infobox-shadow: 0px 0px 20px 2px rgba(17,255,0,0.25);
-      --infobox-accent: #11FF00;
-      --infobox-accent-shadow: 0px 0px 4px 2px rgba(17,255,0,0.61);
-    }
-    .infobox.warning {
-      --infobox-border: rgba(238,255,0,0.71);
-      --infobox-shadow: 0px 0px 20px 2px rgba(238,255,0,0.25);
-      --infobox-accent: #EEFF00;
-      --infobox-accent-shadow: 0px 0px 4px 2px rgba(238,255,0,0.61);
-    }
-    .infobox.error {
-      --infobox-border: rgba(255,0,0,0.71);
-      --infobox-shadow: 0px 0px 20px 2px rgba(255,0,0,0.25);
-      --infobox-accent: #FF0000;
-      --infobox-accent-shadow: 0px 0px 4px 2px rgba(255,0,0,0.61);
-    }
+        /* Título */
+        .slider-title {
+            color: #ffffff;
+            font-size: 28px;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 25px;
+            text-shadow: 0 0 10px rgba(0, 170, 255, 0.5);
+        }
 
-    /* Animações */
-    @keyframes slideIn {
-      from { transform: translateY(-20px); opacity: 0; }
-      to   { transform: translateY(0);     opacity: 1; }
-    }
-    @keyframes slideOut {
-      from { transform: translateY(0);     opacity: 1; }
-      to   { transform: translateY(-20px); opacity: 0; }
-    }
-    .infobox-enter { animation: slideIn 0.25s ease-out forwards; }
-    .infobox-exit  { animation: slideOut 0.25s ease-in forwards; }
-  </style>
+        /* Slider Track */
+        .slider-track {
+            width: 100%;
+            height: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            position: relative;
+            margin: 30px 0;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* Slider Fill */
+        .slider-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00AAFF, #00FFAA);
+            border-radius: 10px;
+            width: 50%; /* Inicializado em 50% */
+            transition: width 0.1s ease;
+            box-shadow: 0 0 15px rgba(0, 170, 255, 0.5);
+        }
+
+        /* Slider Thumb */
+        .slider-thumb {
+            width: 30px;
+            height: 30px;
+            background: #ffffff;
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            cursor: pointer;
+            border: 3px solid #00AAFF;
+            box-shadow: 0 0 20px rgba(0, 170, 255, 0.8);
+            transition: all 0.1s ease;
+        }
+
+        .slider-thumb:hover {
+            transform: translate(-50%, -50%) scale(1.1);
+            box-shadow: 0 0 25px rgba(0, 170, 255, 1);
+        }
+
+        .slider-thumb:active {
+            transform: translate(-50%, -50%) scale(1.15);
+        }
+
+        /* Display do Valor */
+        .value-display {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .value-text {
+            color: #ffffff;
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .value-number {
+            color: #00AAFF;
+            font-size: 32px;
+            font-weight: 700;
+            text-shadow: 0 0 10px rgba(0, 170, 255, 0.5);
+            margin-left: 10px;
+        }
+
+        /* Instruções */
+        .instructions {
+            text-align: center;
+            margin-top: 25px;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 16px;
+            line-height: 1.4;
+        }
+
+        /* Animações */
+        @keyframes glowPulse {
+            0% { box-shadow: 0 0 20px rgba(0, 170, 255, 0.5); }
+            50% { box-shadow: 0 0 30px rgba(0, 170, 255, 0.8); }
+            100% { box-shadow: 0 0 20px rgba(0, 170, 255, 0.5); }
+        }
+
+        .slider-container {
+            animation: glowPulse 2s ease-in-out infinite;
+        }
+    </style>
 </head>
 <body>
-  <script>
-    console.log('[MiauAPI] Sistema iniciando...');
+    <div class="slider-container">
+        <div class="slider-title">CONTROLE INTERATIVO DO SLIDER</div>
+        
+        <div class="slider-track">
+            <div class="slider-fill" id="sliderFill"></div>
+            <div class="slider-thumb" id="sliderThumb"></div>
+        </div>
+        
+        <div class="value-display">
+            <span class="value-text">VALOR ATUAL:</span>
+            <span class="value-number" id="valueDisplay">50%</span>
+        </div>
+        
+        <div class="instructions">
+            Use as SETAS ← → para ajustar<br>
+            Pressione SHIFT para ajustes rápidos<br>
+            ESC para sair
+        </div>
+    </div>
 
-    const positionPresets = {
-      'superior-esquerdo': { x:20,  y:20 },
-      'superior-direito':  { x:1920-600-20, y:20 },
-      'inferior-esquerdo': { x:20, y:1080-20 },
-      'inferior-direito':  { x:1920-600-20, y:1080-20 },
-      'centro-superior':   { x:(1920-600)/2, y:20 },
-      'centro-inferior':   { x:(1920-600)/2, y:1080-20 },
-      'centro':            { x:(1920-600)/2, y:1080/2 }
-    };
-    const containers = {};
+    <script>
+        let currentValue = 50;
+        const sliderFill = document.getElementById('sliderFill');
+        const sliderThumb = document.getElementById('sliderThumb');
+        const valueDisplay = document.getElementById('valueDisplay');
 
-    function getContainer(key) {
-      if (!containers[key]) {
-        const c = document.createElement('div');
-        c.className = 'infobox-container';
-        c.style.left = positionPresets[key].x + 'px';
-        c.style.top  = positionPresets[key].y + 'px';
-        document.body.appendChild(c);
-        containers[key] = c;
-      }
-      return containers[key];
-    }
-
-    function parseMessage(text, parent) {
-      const parts = text.split(/(\*\*.*?\*\*)/g);
-      parts.forEach(p => {
-        if (p.startsWith('**') && p.endsWith('**') && p.length > 4) {
-          const span = document.createElement('span');
-          span.className = 'highlight';
-          span.textContent = p.slice(2, -2);
-          parent.appendChild(span);
-        } else if (p) {
-          const span = document.createElement('span');
-          span.className = 'normal-text';
-          span.textContent = p;
-          parent.appendChild(span);
+        function updateSlider(value) {
+            currentValue = value;
+            sliderFill.style.width = value + '%';
+            sliderThumb.style.left = value + '%';
+            valueDisplay.textContent = value + '%';
+            
+            // Feedback visual dinâmico
+            const hue = (value * 1.2) + 180; // Azul → Ciano
+            sliderFill.style.background = `linear-gradient(90deg, hsl(${hue}, 100%, 50%), hsl(160, 100%, 50%))`;
         }
-      });
-    }
 
-    function showInfobox(message, position, size, level) {
-      if (!positionPresets[position]) return console.error('[MiauAPI] Posição inválida:', position);
-      const levelMap = { 'sucesso':'success', 'erro':'error', 'aviso':'warning', 'informacao':'info' };
-      const lvl = levelMap[level?.toLowerCase()] || level || 'info';
-      const prefixMap = { info:'Info:', success:'Success:', warning:'Warning:', error:'Error:' };
-      const prefixText = prefixMap[lvl];
+        // Inicialização
+        updateSlider(50);
 
-      const container = getContainer(position);
-      const box = document.createElement('div');
-      box.className = `infobox ${lvl} infobox-enter`;
-      box.innerHTML = `
-        <div class="infobox-accent"></div>
-        <div class="infobox-content">
-          <div class="infobox-message"></div>
-        </div>`;
-      container.appendChild(box);
+        // Comunicação com Lua
+        window.addEventListener('message', function(event) {
+            const data = event.data;
+            
+            if (data.action === 'updateSlider') {
+                updateSlider(data.value);
+            }
+        });
 
-      const msgDiv = box.querySelector('.infobox-message');
-      const prefixSpan = document.createElement('span');
-      prefixSpan.className = 'infobox-prefix';
-      prefixSpan.textContent = prefixText;
-      msgDiv.appendChild(prefixSpan);
+        // Envia atualizações para o Lua (se interação direta por mouse for implementada)
+        function sendValueToLua(value) {
+            if (window.invokeNative) {
+                window.invokeNative('sendDuiMessage', JSON.stringify({
+                    action: 'sliderChange',
+                    value: value
+                }));
+            }
+        }
 
-      parseMessage(message, msgDiv);
-
-      setTimeout(() => {
-        box.classList.add('infobox-exit');
-        setTimeout(() => {
-          if (box.parentNode) box.parentNode.removeChild(box);
-          if (container.children.length === 0) {
-            container.remove();
-            delete containers[position];
-          }
-        }, 150);
-      }, 4000);
-    }
-
-    window.MiauAPI = { infobox: showInfobox };
-    window.addEventListener('message', e => {
-      const d = e.data;
-      if (d?.action === 'infobox') showInfobox(d.message, d.position, d.size, d.level);
-    });
-
-    console.log('[MiauAPI] Sistema pronto! ✓');
-  </script>
+        console.log('[SliderUI] Interface carregada e pronta!');
+    </script>
 </body>
 </html>
