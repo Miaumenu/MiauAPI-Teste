@@ -5,14 +5,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Slider Interativo - MiauAPI</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        html, body {
-            width: 100%; height: 100%; overflow: hidden;
-            background: transparent; font-family: 'Inter', sans-serif;
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
         }
+        
+        html, body {
+            width: 100%; 
+            height: 100%; 
+            overflow: hidden;
+            background: transparent; 
+            font-family: 'Inter', sans-serif;
+        }
+        
         body { 
-            width: 1920px; height: 1080px;
-            display: flex; justify-content: center; align-items: center;
+            width: 1920px; 
+            height: 1080px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: transparent;
         }
 
         /* Container do Slider */
@@ -21,64 +34,94 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 600px;
-            padding: 30px;
-            background: rgba(0, 0, 0, 0.85);
-            border-radius: 20px;
-            border: 2px solid rgba(0, 170, 255, 0.5);
-            box-shadow: 0 0 40px rgba(0, 170, 255, 0.3);
-            backdrop-filter: blur(10px);
+            width: 700px;
+            padding: 40px;
+            background: rgba(10, 10, 15, 0.95);
+            border-radius: 25px;
+            border: 3px solid rgba(0, 170, 255, 0.7);
+            box-shadow: 
+                0 0 60px rgba(0, 170, 255, 0.4),
+                inset 0 0 30px rgba(0, 170, 255, 0.1);
+            backdrop-filter: blur(15px);
+            z-index: 10000;
+            transition: all 0.3s ease;
+        }
+
+        .slider-container.hidden {
+            opacity: 0;
+            transform: translate(-50%, -50%) scale(0.8);
+            pointer-events: none;
         }
 
         /* Título */
         .slider-title {
             color: #ffffff;
-            font-size: 28px;
+            font-size: 32px;
             font-weight: 700;
             text-align: center;
-            margin-bottom: 25px;
-            text-shadow: 0 0 10px rgba(0, 170, 255, 0.5);
+            margin-bottom: 30px;
+            text-shadow: 0 0 15px rgba(0, 170, 255, 0.8);
+            letter-spacing: -0.5px;
         }
 
-        /* Slider Track */
+        /* Área do Slider */
+        .slider-area {
+            width: 100%;
+            margin: 40px 0;
+            position: relative;
+        }
+
+        /* Track do Slider */
         .slider-track {
             width: 100%;
-            height: 12px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
+            height: 16px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
             position: relative;
-            margin: 30px 0;
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            overflow: hidden;
         }
 
-        /* Slider Fill */
+        /* Fill do Slider */
         .slider-fill {
             height: 100%;
-            background: linear-gradient(90deg, #00AAFF, #00FFAA);
-            border-radius: 10px;
-            width: 50%; /* Inicializado em 50% */
-            transition: width 0.1s ease;
-            box-shadow: 0 0 15px rgba(0, 170, 255, 0.5);
+            background: linear-gradient(90deg, 
+                #00AAFF 0%, 
+                #00FFCC 50%, 
+                #00FF88 100%);
+            border-radius: 12px;
+            width: 50%;
+            transition: width 0.15s ease;
+            box-shadow: 
+                0 0 20px rgba(0, 170, 255, 0.6),
+                inset 0 0 10px rgba(255, 255, 255, 0.3);
+            position: relative;
         }
 
-        /* Slider Thumb */
+        /* Thumb do Slider */
         .slider-thumb {
-            width: 30px;
-            height: 30px;
+            width: 40px;
+            height: 40px;
             background: #ffffff;
             border-radius: 50%;
             position: absolute;
             top: 50%;
+            left: 50%;
             transform: translate(-50%, -50%);
+            border: 4px solid #00AAFF;
+            box-shadow: 
+                0 0 25px rgba(0, 170, 255, 1),
+                0 0 50px rgba(0, 170, 255, 0.5);
             cursor: pointer;
-            border: 3px solid #00AAFF;
-            box-shadow: 0 0 20px rgba(0, 170, 255, 0.8);
-            transition: all 0.1s ease;
+            transition: all 0.2s ease;
+            z-index: 10;
         }
 
         .slider-thumb:hover {
             transform: translate(-50%, -50%) scale(1.1);
-            box-shadow: 0 0 25px rgba(0, 170, 255, 1);
+            box-shadow: 
+                0 0 30px rgba(0, 170, 255, 1.2),
+                0 0 60px rgba(0, 170, 255, 0.7);
         }
 
         .slider-thumb:active {
@@ -88,105 +131,184 @@
         /* Display do Valor */
         .value-display {
             text-align: center;
-            margin-top: 20px;
+            margin: 30px 0;
+            padding: 20px;
+            background: rgba(0, 170, 255, 0.1);
+            border-radius: 15px;
+            border: 2px solid rgba(0, 170, 255, 0.3);
         }
 
         .value-text {
             color: #ffffff;
-            font-size: 24px;
+            font-size: 26px;
             font-weight: 600;
+            display: block;
+            margin-bottom: 8px;
         }
 
         .value-number {
-            color: #00AAFF;
-            font-size: 32px;
-            font-weight: 700;
-            text-shadow: 0 0 10px rgba(0, 170, 255, 0.5);
-            margin-left: 10px;
+            color: #00FFCC;
+            font-size: 42px;
+            font-weight: 800;
+            text-shadow: 0 0 20px rgba(0, 255, 204, 0.8);
+            display: block;
         }
 
         /* Instruções */
         .instructions {
             text-align: center;
             margin-top: 25px;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 18px;
+            line-height: 1.6;
+        }
+
+        .instruction-item {
+            margin: 8px 0;
+            padding: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+        }
+
+        /* Indicador de Valor */
+        .value-indicators {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
             color: rgba(255, 255, 255, 0.6);
-            font-size: 16px;
-            line-height: 1.4;
+            font-size: 14px;
+            font-weight: 500;
         }
 
         /* Animações */
         @keyframes glowPulse {
-            0% { box-shadow: 0 0 20px rgba(0, 170, 255, 0.5); }
-            50% { box-shadow: 0 0 30px rgba(0, 170, 255, 0.8); }
-            100% { box-shadow: 0 0 20px rgba(0, 170, 255, 0.5); }
+            0% { 
+                box-shadow: 
+                    0 0 60px rgba(0, 170, 255, 0.4),
+                    inset 0 0 30px rgba(0, 170, 255, 0.1);
+            }
+            50% { 
+                box-shadow: 
+                    0 0 80px rgba(0, 170, 255, 0.6),
+                    inset 0 0 40px rgba(0, 170, 255, 0.2);
+            }
+            100% { 
+                box-shadow: 
+                    0 0 60px rgba(0, 170, 255, 0.4),
+                    inset 0 0 30px rgba(0, 170, 255, 0.1);
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -60%) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
         }
 
         .slider-container {
-            animation: glowPulse 2s ease-in-out infinite;
+            animation: 
+                slideIn 0.5s ease-out forwards,
+                glowPulse 3s ease-in-out infinite;
         }
     </style>
 </head>
 <body>
-    <div class="slider-container">
-        <div class="slider-title">CONTROLE INTERATIVO DO SLIDER</div>
+    <div class="slider-container" id="sliderContainer">
+        <div class="slider-title">🎛️ CONTROLE INTERATIVO DO SLIDER</div>
         
-        <div class="slider-track">
-            <div class="slider-fill" id="sliderFill"></div>
-            <div class="slider-thumb" id="sliderThumb"></div>
+        <div class="slider-area">
+            <div class="slider-track">
+                <div class="slider-fill" id="sliderFill"></div>
+                <div class="slider-thumb" id="sliderThumb"></div>
+            </div>
+            
+            <div class="value-indicators">
+                <span>0%</span>
+                <span>25%</span>
+                <span>50%</span>
+                <span>75%</span>
+                <span>100%</span>
+            </div>
         </div>
         
         <div class="value-display">
-            <span class="value-text">VALOR ATUAL:</span>
+            <span class="value-text">VALOR ATUAL</span>
             <span class="value-number" id="valueDisplay">50%</span>
         </div>
         
         <div class="instructions">
-            Use as SETAS ← → para ajustar<br>
-            Pressione SHIFT para ajustes rápidos<br>
-            ESC para sair
+            <div class="instruction-item">← → para ajustar o valor</div>
+            <div class="instruction-item">SHIFT + ← → para ajustes rápidos</div>
+            <div class="instruction-item">ESC para fechar o slider</div>
         </div>
     </div>
 
     <script>
         let currentValue = 50;
+        const sliderContainer = document.getElementById('sliderContainer');
         const sliderFill = document.getElementById('sliderFill');
         const sliderThumb = document.getElementById('sliderThumb');
         const valueDisplay = document.getElementById('valueDisplay');
 
         function updateSlider(value) {
             currentValue = value;
+            
+            // Atualiza elementos visuais
             sliderFill.style.width = value + '%';
             sliderThumb.style.left = value + '%';
             valueDisplay.textContent = value + '%';
             
-            // Feedback visual dinâmico
-            const hue = (value * 1.2) + 180; // Azul → Ciano
-            sliderFill.style.background = `linear-gradient(90deg, hsl(${hue}, 100%, 50%), hsl(160, 100%, 50%))`;
+            // Atualiza cor dinamicamente
+            updateSliderColor(value);
         }
 
-        // Inicialização
-        updateSlider(50);
+        function updateSliderColor(value) {
+            const hue = 180 + (value * 1.2); // Azul para Ciano
+            const saturation = 100;
+            const lightness = 50;
+            
+            sliderFill.style.background = `linear-gradient(90deg, 
+                hsl(${Math.min(hue, 240)}, ${saturation}%, ${lightness}%) 0%,
+                hsl(${Math.min(hue + 20, 260)}, ${saturation}%, ${lightness}%) 50%,
+                hsl(${Math.min(hue + 40, 280)}, ${saturation}%, ${lightness}%) 100%)`;
+        }
+
+        function showSlider() {
+            sliderContainer.classList.remove('hidden');
+            updateSlider(50);
+        }
+
+        function hideSlider() {
+            sliderContainer.classList.add('hidden');
+        }
 
         // Comunicação com Lua
         window.addEventListener('message', function(event) {
             const data = event.data;
             
-            if (data.action === 'updateSlider') {
+            if (data.action === 'showSlider') {
+                showSlider();
+                if (data.value) {
+                    updateSlider(data.value);
+                }
+            }
+            else if (data.action === 'updateSlider') {
                 updateSlider(data.value);
+            }
+            else if (data.action === 'hideSlider') {
+                hideSlider();
             }
         });
 
-        // Envia atualizações para o Lua (se interação direta por mouse for implementada)
-        function sendValueToLua(value) {
-            if (window.invokeNative) {
-                window.invokeNative('sendDuiMessage', JSON.stringify({
-                    action: 'sliderChange',
-                    value: value
-                }));
-            }
-        }
-
-        console.log('[SliderUI] Interface carregada e pronta!');
+        // Inicialização
+        updateSlider(50);
+        
+        console.log('[SliderUI] HTML carregado e pronto!');
     </script>
 </body>
 </html>
