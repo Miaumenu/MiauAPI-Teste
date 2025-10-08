@@ -50,14 +50,85 @@
 
     <script>
         const slider = document.getElementById('slider');
-        
-        // Envia valor do slider para Lua quando mudado
-        slider.addEventListener('input', (e) => {
+        let isDragging = false;
+        let startX = 0;
+        let startValue = 0;
+
+        // Função para enviar valor para Lua
+        function sendValueToLua(value) {
             fetch(`https://${GetParentResourceName()}/sliderValue`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json; charset=UTF-8' },
-                body: JSON.stringify({ value: e.target.value })
+                body: JSON.stringify({ value: value })
             });
+        }
+
+        // Evento de input do slider
+        slider.addEventListener('input', (e) => {
+            sendValueToLua(e.target.value);
+        });
+
+        // Sistema de drag personalizado
+        slider.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            startX = e.clientX;
+            startValue = parseInt(slider.value);
+            e.preventDefault();
+            console.log('Drag iniciado:', startValue);
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (isDragging) {
+                const rect = slider.getBoundingClientRect();
+                const sliderWidth = rect.width;
+                const thumbWidth = 20; // Largura aproximada do thumb
+                const usableWidth = sliderWidth - thumbWidth;
+                
+                // Calcula nova posição baseada no movimento do mouse
+                const deltaX = e.clientX - startX;
+                const deltaPercent = (deltaX / usableWidth) * 100;
+                const newValue = Math.max(0, Math.min(100, startValue + deltaPercent));
+                
+                slider.value = newValue;
+                sendValueToLua(newValue);
+            }
+        });
+
+        document.addEventListener('mouseup', () => {
+            if (isDragging) {
+                isDragging = false;
+                console.log('Drag finalizado:', slider.value);
+            }
+        });
+
+        // Também funciona com touch para dispositivos móveis
+        slider.addEventListener('touchstart', (e) => {
+            isDragging = true;
+            startX = e.touches[0].clientX;
+            startValue = parseInt(slider.value);
+            e.preventDefault();
+        });
+
+        document.addEventListener('touchmove', (e) => {
+            if (isDragging) {
+                const rect = slider.getBoundingClientRect();
+                const sliderWidth = rect.width;
+                const thumbWidth = 20;
+                const usableWidth = sliderWidth - thumbWidth;
+                
+                const deltaX = e.touches[0].clientX - startX;
+                const deltaPercent = (deltaX / usableWidth) * 100;
+                const newValue = Math.max(0, Math.min(100, startValue + deltaPercent));
+                
+                slider.value = newValue;
+                sendValueToLua(newValue);
+            }
+        });
+
+        document.addEventListener('touchend', () => {
+            if (isDragging) {
+                isDragging = false;
+            }
         });
 
         // Escuta mensagens do Lua para atualizar slider
@@ -68,6 +139,9 @@
                 console.log('Slider atualizado para:', data.value);
             }
         });
+
+        // Inicializa com valor padrão
+        sendValueToLua(50);
     </script>
 </body>
 </html>
