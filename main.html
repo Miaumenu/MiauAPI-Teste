@@ -17,10 +17,6 @@
             color: white;
             margin: 0;
             padding: 0;
-            display: none; /* Oculto por padrão */
-        }
-
-        body.visible {
             display: block;
         }
 
@@ -363,6 +359,8 @@
                             <div>CFG</div>
                             <div>ON</div>
                         </div>
+                        
+                        <!-- GodMod -->
                         <div class="feature-item">
                             <div class="feature-info">
                                 <div class="feature-name">GodMod</div>
@@ -376,11 +374,13 @@
                                 <svg class="config-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
                             </button>
                             <label class="toggle-switch">
-                                <input type="checkbox" data-feature="godmod" data-lua="local ped = PlayerPedId() SetEntityInvincible(ped, features.godmod) print(features.godmod and '^2GodMod ON^0' or '^3GodMod OFF^0')">
+                                <input type="checkbox" data-feature="godmod">
                                 <div class="toggle-bg"></div>
                                 <div class="toggle-handle"></div>
                             </label>
                         </div>
+
+                        <!-- Curar -->
                         <div class="feature-item">
                             <div class="feature-info">
                                 <div class="feature-name">Curar</div>
@@ -394,11 +394,13 @@
                                 <svg class="config-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
                             </button>
                             <label class="toggle-switch">
-                                <input type="checkbox" data-feature="heal" data-lua="local ped = PlayerPedId() SetEntityHealth(ped, GetEntityMaxHealth(ped)) SetPedArmour(ped, 100) print('^2Curado!^0')">
+                                <input type="checkbox" data-feature="heal">
                                 <div class="toggle-bg"></div>
                                 <div class="toggle-handle"></div>
                             </label>
                         </div>
+
+                        <!-- Suicidar -->
                         <div class="feature-item">
                             <div class="feature-info">
                                 <div class="feature-name">Suicidar</div>
@@ -412,59 +414,7 @@
                                 <svg class="config-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
                             </button>
                             <label class="toggle-switch">
-                                <input type="checkbox" data-feature="suicide" data-lua="SetEntityHealth(PlayerPedId(), 0) print('^1Jogador suicidado!^0')">
-                                <div class="toggle-bg"></div>
-                                <div class="toggle-handle"></div>
-                            </label>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- CARD MOVIMENTAÇÃO -->
-                <div class="card">
-                    <div class="card-header">
-                        <svg class="card-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71z"/></svg>
-                        <span class="card-title">Movimento</span>
-                    </div>
-                    <div class="card-body">
-                        <div class="table-header">
-                            <div>NOME</div>
-                            <div>STATUS</div>
-                            <div>CFG</div>
-                            <div>ON</div>
-                        </div>
-                        <div class="feature-item">
-                            <div class="feature-info">
-                                <div class="feature-name">Noclip</div>
-                                <div class="feature-description">Voar invisível</div>
-                            </div>
-                            <div class="status-badge">
-                                <div class="status-dot safe"></div>
-                                <div class="status-text safe">Safe</div>
-                            </div>
-                            <button class="config-btn">
-                                <svg class="config-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
-                            </button>
-                            <label class="toggle-switch">
-                                <input type="checkbox" data-feature="noclip" data-lua="if not activeThreads.noclip and features.noclip then activeThreads.noclip = CreateThread(function() local ped = PlayerPedId() SetEntityVisible(ped, false, false) SetEntityInvincible(ped, true) SetEntityCollision(ped, false, false) local speed = 1.0 while features.noclip do local coords = GetEntityCoords(ped) if IsControlPressed(0, 32) then local newCoords = GetOffsetFromEntityInWorld(ped, 0.0, speed, 0.0) SetEntityCoordsNoOffset(ped, newCoords.x, newCoords.y, coords.z, false, false, false) end if IsControlPressed(0, 33) then local newCoords = GetOffsetFromEntityInWorld(ped, 0.0, -speed, 0.0) SetEntityCoordsNoOffset(ped, newCoords.x, newCoords.y, coords.z, false, false, false) end if IsControlPressed(0, 21) then SetEntityCoordsNoOffset(ped, coords.x, coords.y, coords.z + speed, false, false, false) end if IsControlPressed(0, 36) then SetEntityCoordsNoOffset(ped, coords.x, coords.y, coords.z - speed, false, false, false) end Wait(0) end SetEntityVisible(ped, true, false) SetEntityInvincible(ped, false) SetEntityCollision(ped, true, true) activeThreads.noclip = nil end) print('^2Noclip ON^0') else features.noclip = false print('^3Noclip OFF^0') end">
-                                <div class="toggle-bg"></div>
-                                <div class="toggle-handle"></div>
-                            </label>
-                        </div>
-                        <div class="feature-item">
-                            <div class="feature-info">
-                                <div class="feature-name">Super Pulo</div>
-                                <div class="feature-description">Pular alto</div>
-                            </div>
-                            <div class="status-badge">
-                                <div class="status-dot safe"></div>
-                                <div class="status-text safe">Safe</div>
-                            </div>
-                            <button class="config-btn">
-                                <svg class="config-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
-                            </button>
-                            <label class="toggle-switch">
-                                <input type="checkbox" data-feature="superjump" data-lua="if not activeThreads.superjump and features.superjump then activeThreads.superjump = CreateThread(function() while features.superjump do SetSuperJumpThisFrame(PlayerId()) Wait(0) end activeThreads.superjump = nil end) print('^2Super Pulo ON^0') else features.superjump = false print('^3Super Pulo OFF^0') end">
+                                <input type="checkbox" data-feature="suicide">
                                 <div class="toggle-bg"></div>
                                 <div class="toggle-handle"></div>
                             </label>
@@ -477,27 +427,6 @@
 
     <script>
         console.log('%c[MiauAPI] 🐱 Menu carregado!', 'color: #00ff00; font-size: 16px; font-weight: bold;');
-
-        // Sistema de visibilidade
-        window.addEventListener('message', (event) => {
-            const data = event.data;
-
-            if (data.action === 'setVisible') {
-                console.log('%c[MiauAPI] Visibilidade:', 'color: #00ffaa;', data.visible);
-                if (data.visible) {
-                    document.body.classList.add('visible');
-                } else {
-                    document.body.classList.remove('visible');
-                }
-            }
-
-            if (data.type === 'featureUpdated') {
-                const toggle = document.querySelector(`input[data-feature="${data.feature}"]`);
-                if (toggle) {
-                    toggle.checked = data.active;
-                }
-            }
-        });
 
         // Sistema de arrastar
         const container = document.getElementById('draggable-container');
@@ -536,7 +465,7 @@
             isDragging = false;
         }
 
-        // Sistema de toggles - Envia via título da página (hack para DUI)
+        // Sistema de toggles - Envia para o client.lua via NUI Callback
         const toggles = document.querySelectorAll('.toggle-switch input');
 
         toggles.forEach(toggle => {
@@ -544,37 +473,119 @@
                 e.stopPropagation();
 
                 const feature = e.target.getAttribute('data-feature');
-                const luaCode = e.target.getAttribute('data-lua');
                 const isActive = e.target.checked;
 
                 console.log(`%c[Toggle] ${feature}: ${isActive ? 'ON' : 'OFF'}`, `color: ${isActive ? '#00ff00' : '#ffaa00'}; font-weight: bold;`);
 
-                // HACK: Muda o título da página para o Lua detectar
-                // Formato: MIAUAPI|feature|active|base64(luaCode)
-                const encodedLua = btoa(unescape(encodeURIComponent(luaCode)));
-                document.title = `MIAUAPI|${feature}|${isActive}|${encodedLua}`;
-
-                // Volta o título normal após 100ms
-                setTimeout(() => {
-                    document.title = 'MiauAPI Menu';
-                }, 100);
-
-                // Também tenta via fetch
-                try {
-                    fetch(`https://miauapi/toggleFeature`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            feature: feature,
-                            active: isActive,
-                            luaCode: luaCode
-                        })
-                    });
-                } catch(e) {}
+                // Envia para o client.lua via fetch NUI
+                fetch(`https://miauapi/toggleFeature`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        feature: feature,
+                        active: isActive
+                    })
+                }).then(response => response.json())
+                  .then(data => {
+                      console.log('%c[NUI Response]', 'color: #00aaff;', data);
+                      
+                      // Se houver erro, reverte o toggle
+                      if (!data.success) {
+                          e.target.checked = !isActive;
+                      }
+                  })
+                  .catch(error => {
+                      console.error('%c[NUI Error]', 'color: #ff0000;', error);
+                      // Reverte em caso de erro
+                      e.target.checked = !isActive;
+                  });
             });
+        });
+
+        // Listener para atualização de features do client.lua
+        window.addEventListener('message', (event) => {
+            const data = event.data;
+
+            if (data.type === 'featureUpdated') {
+                console.log('%c[Feature Updated]', 'color: #00ffaa;', data);
+                
+                const toggle = document.querySelector(`input[data-feature="${data.feature}"]`);
+                if (toggle) {
+                    toggle.checked = data.active;
+                    
+                    // Feedback visual de sucesso/erro
+                    const featureItem = toggle.closest('.feature-item');
+                    if (featureItem) {
+                        if (data.success) {
+                            featureItem.style.background = 'rgba(17, 255, 0, 0.1)';
+                        } else {
+                            featureItem.style.background = 'rgba(255, 0, 0, 0.1)';
+                        }
+                        
+                        setTimeout(() => {
+                            featureItem.style.background = '';
+                        }, 500);
+                    }
+                }
+            }
         });
 
         console.log('%c[MiauAPI] ✓ Sistema pronto!', 'color: #00ff00; font-weight: bold;');
     </script>
 </body>
-</html>
+</html></div>
+
+                <!-- CARD MOVIMENTO -->
+                <div class="card">
+                    <div class="card-header">
+                        <svg class="card-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71z"/></svg>
+                        <span class="card-title">Movimento</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-header">
+                            <div>NOME</div>
+                            <div>STATUS</div>
+                            <div>CFG</div>
+                            <div>ON</div>
+                        </div>
+
+                        <!-- Noclip -->
+                        <div class="feature-item">
+                            <div class="feature-info">
+                                <div class="feature-name">Noclip</div>
+                                <div class="feature-description">Voar invisível</div>
+                            </div>
+                            <div class="status-badge">
+                                <div class="status-dot safe"></div>
+                                <div class="status-text safe">Safe</div>
+                            </div>
+                            <button class="config-btn">
+                                <svg class="config-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+                            </button>
+                            <label class="toggle-switch">
+                                <input type="checkbox" data-feature="noclip">
+                                <div class="toggle-bg"></div>
+                                <div class="toggle-handle"></div>
+                            </label>
+                        </div>
+
+                        <!-- Super Pulo -->
+                        <div class="feature-item">
+                            <div class="feature-info">
+                                <div class="feature-name">Super Pulo</div>
+                                <div class="feature-description">Pular alto</div>
+                            </div>
+                            <div class="status-badge">
+                                <div class="status-dot safe"></div>
+                                <div class="status-text safe">Safe</div>
+                            </div>
+                            <button class="config-btn">
+                                <svg class="config-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+                            </button>
+                            <label class="toggle-switch">
+                                <input type="checkbox" data-feature="superjump">
+                                <div class="toggle-bg"></div>
+                                <div class="toggle-handle"></div>
+                            </label>
+                        </div>
+                    </div>
