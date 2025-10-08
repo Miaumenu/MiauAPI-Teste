@@ -1,216 +1,304 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>MiauAPI – Sistema Modular Ajustado</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    html, body {
-      width: 100%; height: 100%; overflow: hidden;
-      background: transparent; font-family: 'Inter', sans-serif;
-    }
-    body { width: 1920px; height: 1080px; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Notificações</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    /* ==========================================
-       MÓDULO: INFOBOX – TAMANHO REDUZIDO E QUEBRA DE LINHA
-       ========================================== */
-    .infobox-container {
-      position: fixed;
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-      z-index: 9999;
-    }
-    .infobox {
-      position: relative;
-      max-width: 600px;
-      width: calc(100% - 40px);
-      display: flex;
-      align-items: stretch;
-      padding: 15px 20px;
-      background: rgba(0,0,0,0.7);
-      border-radius: 14px;
-      border: 2px solid var(--infobox-border);
-      box-shadow: var(--infobox-shadow);
-    }
-    .infobox-accent {
-      width: 6px;
-      background: var(--infobox-accent);
-      box-shadow: var(--infobox-accent-shadow);
-      border-radius: 14px;
-      margin-right: 20px;
-      flex-shrink: 0;
-    }
-    .infobox-content {
-      flex: 1;
-      display: block;
-    }
-    .infobox-message {
-      display: block;
-      white-space: normal;
-      word-wrap: break-word;
-      word-break: break-word;
-    }
-    .infobox-message span {
-      display: inline;
-    }
-    .normal-text {
-      opacity: 0.67;
-      color: #FFFFFF;
-      font-weight: 600;
-      font-size: 20px;
-      line-height: 1.3;
-      letter-spacing: -0.01em;
-    }
-    .highlight {
-      opacity: 1;
-      color: #FFFFFF;
-      font-weight: 700;
-      font-size: 20px;
-      line-height: 1.3;
-      letter-spacing: -0.01em;
-    }
-    .infobox-prefix {
-      opacity: 1;
-      color: #FFFFFF;
-      margin-right: 6px;
-      font-weight: 700;
-      font-size: 20px;
-      line-height: 1.3;
-      letter-spacing: -0.01em;
-    }
+        html, body {
+            height: 100%;
+            overflow: hidden;
+            background: transparent;
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
 
-    /* Níveis de INFOBOX */
-    .infobox.info {
-      --infobox-border: rgba(0,170,255,0.71);
-      --infobox-shadow: 0px 0px 20px 2px rgba(0,170,255,0.25);
-      --infobox-accent: #00AAFF;
-      --infobox-accent-shadow: 0px 0px 4px 2px rgba(0,170,255,0.61);
-    }
-    .infobox.success {
-      --infobox-border: rgba(17,255,0,0.71);
-      --infobox-shadow: 0px 0px 20px 2px rgba(17,255,0,0.25);
-      --infobox-accent: #11FF00;
-      --infobox-accent-shadow: 0px 0px 4px 2px rgba(17,255,0,0.61);
-    }
-    .infobox.warning {
-      --infobox-border: rgba(238,255,0,0.71);
-      --infobox-shadow: 0px 0px 20px 2px rgba(238,255,0,0.25);
-      --infobox-accent: #EEFF00;
-      --infobox-accent-shadow: 0px 0px 4px 2px rgba(238,255,0,0.61);
-    }
-    .infobox.error {
-      --infobox-border: rgba(255,0,0,0.71);
-      --infobox-shadow: 0px 0px 20px 2px rgba(255,0,0,0.25);
-      --infobox-accent: #FF0000;
-      --infobox-accent-shadow: 0px 0px 4px 2px rgba(255,0,0,0.61);
-    }
+        #app {
+            width: 100vw;
+            height: 100vh;
+            background: transparent;
+        }
 
-    /* Animações */
-    @keyframes slideIn {
-      from { transform: translateY(-20px); opacity: 0; }
-      to   { transform: translateY(0);     opacity: 1; }
-    }
-    @keyframes slideOut {
-      from { transform: translateY(0);     opacity: 1; }
-      to   { transform: translateY(-20px); opacity: 0; }
-    }
-    .infobox-enter { animation: slideIn 0.25s ease-out forwards; }
-    .infobox-exit  { animation: slideOut 0.25s ease-in forwards; }
-  </style>
+        /* Container de notificações */
+        .notification-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 10px;
+            z-index: 9999;
+            pointer-events: none;
+            max-width: 280px;
+            overflow: visible;
+        }
+
+        /* Estilo das notificações */
+        .notification {
+            width: 248px;
+            height: 58px;
+            background: var(--notification-bg);
+            color: #fff;
+            border-radius: 7px;
+            font-family: 'Inter', sans-serif;
+            box-shadow: var(--notification-shadow);
+            text-align: left;
+            pointer-events: auto;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid var(--notification-border);
+            position: relative;
+            overflow: hidden;
+            transform: translateZ(0);
+            will-change: transform, opacity;
+            display: flex;
+            align-items: center;
+            gap: 0;
+            padding: 0;
+        }
+
+        .notification-icon-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 3px;
+            height: 46px;
+            background: var(--notification-accent);
+            box-shadow: var(--notification-accent-shadow);
+            border-radius: 7px;
+            flex-shrink: 0;
+            margin-left: 6px;
+        }
+
+        .notification-icon {
+            display: none;
+        }
+
+        .notification-content {
+            padding: 10px 15px;
+            position: relative;
+            z-index: 2;
+            flex: 1;
+            display: flex;
+            align-items: center;
+        }
+
+        .notification-message {
+            font-size: 10px;
+            font-weight: 600;
+            line-height: 12px;
+            letter-spacing: -0.02em;
+            color: #FFFFFF;
+            word-wrap: break-word;
+        }
+
+        .notification-timestamp {
+            display: none;
+        }
+
+        .notification-close {
+            display: none;
+        }
+
+        .notification-progress {
+            display: none;
+        }
+
+        /* Tipos de notificação */
+        .notification.info {
+            --notification-bg: linear-gradient(97.75deg, rgba(47, 47, 47, 0.1911) -3.82%, rgba(0, 170, 255, 0.1407) 104.72%);
+            --notification-border: rgba(0, 170, 255, 0.61);
+            --notification-shadow: 0px 0px 4px 2px rgba(0, 170, 255, 0.25);
+            --notification-accent: #00AAFF;
+            --notification-accent-shadow: 0px 0px 4px 2px rgba(0, 170, 255, 0.61);
+        }
+
+        .notification.success {
+            --notification-bg: linear-gradient(97.75deg, rgba(47, 47, 47, 0.1911) -3.82%, rgba(17, 255, 0, 0.1407) 104.72%);
+            --notification-border: rgba(17, 255, 0, 0.61);
+            --notification-shadow: 0px 0px 4px rgba(17, 255, 0, 0.25);
+            --notification-accent: #11FF00;
+            --notification-accent-shadow: 0px 0px 4px 2px rgba(17, 255, 0, 0.25);
+        }
+
+        .notification.warn {
+            --notification-bg: linear-gradient(97.75deg, rgba(47, 47, 47, 0.1911) -3.82%, rgba(238, 255, 0, 0.1407) 104.72%);
+            --notification-border: rgba(238, 255, 0, 0.61);
+            --notification-shadow: 0px 0px 4px 2px rgba(238, 255, 0, 0.25);
+            --notification-accent: #EEFF00;
+            --notification-accent-shadow: 0px 0px 4px 2px rgba(238, 255, 0, 0.61);
+        }
+
+        .notification.error {
+            --notification-bg: linear-gradient(97.75deg, rgba(47, 47, 47, 0.1911) -3.82%, rgba(255, 0, 0, 0.1407) 104.72%);
+            --notification-border: rgba(255, 0, 0, 0.61);
+            --notification-shadow: 0px 0px 4px 2px rgba(255, 0, 0, 0.25);
+            --notification-accent: #FF0000;
+            --notification-accent-shadow: 0px 0px 4px 2px rgba(255, 0, 0, 0.25);
+        }
+
+        .notification.loading {
+            --notification-bg: linear-gradient(97.75deg, rgba(47, 47, 47, 0.1911) -3.82%, rgba(255, 255, 255, 0.1407) 104.72%);
+            --notification-border: rgba(255, 255, 255, 0.61);
+            --notification-shadow: 0px 0px 4px 2px rgba(255, 255, 255, 0.25);
+            --notification-accent: #FFFFFF;
+            --notification-accent-shadow: 0px 0px 4px 2px rgba(255, 255, 255, 0.61);
+        }
+
+        /* Animações */
+        @keyframes notification-progress {
+            0% { width: 100%; }
+            100% { width: 0%; }
+        }
+
+        /* Animação de entrada */
+        .notification-enter {
+            animation: notification-slide-in 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes notification-slide-in {
+            0% {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            100% {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* Animação de saída */
+        .notification-exit {
+            animation: notification-slide-out 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes notification-slide-out {
+            0% {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            100% {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+    </style>
 </head>
 <body>
-  <script>
-    console.log('[MiauAPI] Sistema iniciando...');
+    <div id="app">
+        <div class="notification-container" id="notificationContainer"></div>
+    </div>
 
-    const positionPresets = {
-      'superior-esquerdo': { x:20,  y:20 },
-      'superior-direito':  { x:1920-600-20, y:20 },
-      'inferior-esquerdo': { x:20, y:1080-20 },
-      'inferior-direito':  { x:1920-600-20, y:1080-20 },
-      'centro-superior':   { x:(1920-600)/2, y:20 },
-      'centro-inferior':   { x:(1920-600)/2, y:1080-20 },
-      'centro':            { x:(1920-600)/2, y:1080/2 }
-    };
-    const containers = {};
+    <script>
+        class NotificationSystem {
+            constructor() {
+                this.container = document.getElementById('notificationContainer');
+                this.notifications = new Map();
+            }
 
-    function getContainer(key) {
-      if (!containers[key]) {
-        const c = document.createElement('div');
-        c.className = 'infobox-container';
-        c.style.left = positionPresets[key].x + 'px';
-        c.style.top  = positionPresets[key].y + 'px';
-        document.body.appendChild(c);
-        containers[key] = c;
-      }
-      return containers[key];
-    }
+            show(message, type = 'info', duration = 5000) {
+                const id = Date.now() + Math.random();
+                const notification = this.createNotification(id, message, type, duration);
+                
+                this.container.appendChild(notification);
+                this.notifications.set(id, notification);
 
-    function parseMessage(text, parent) {
-      const parts = text.split(/(\*\*.*?\*\*)/g);
-      parts.forEach(p => {
-        if (p.startsWith('**') && p.endsWith('**') && p.length > 4) {
-          const span = document.createElement('span');
-          span.className = 'highlight';
-          span.textContent = p.slice(2, -2);
-          parent.appendChild(span);
-        } else if (p) {
-          const span = document.createElement('span');
-          span.className = 'normal-text';
-          span.textContent = p;
-          parent.appendChild(span);
+                // Adicionar animação de entrada
+                notification.classList.add('notification-enter');
+
+                // Auto-remover após a duração especificada
+                setTimeout(() => {
+                    this.remove(id);
+                }, duration);
+
+                return id;
+            }
+
+            createNotification(id, message, type, duration) {
+                const notification = document.createElement('div');
+                notification.className = `notification ${type}`;
+                notification.dataset.id = id;
+
+                const icon = this.getIcon(type);
+
+                notification.innerHTML = `
+                    <div class="notification-icon-wrapper">
+                        <i class="${icon} notification-icon"></i>
+                    </div>
+                    <div class="notification-content">
+                        <div class="notification-message">${message}</div>
+                    </div>
+                `;
+
+                return notification;
+            }
+
+            getIcon(type) {
+                const icons = {
+                    'info': 'fas fa-info-circle',
+                    'success': 'fas fa-check-circle',
+                    'warn': 'fas fa-exclamation-triangle',
+                    'error': 'fas fa-times-circle',
+                    'loading': 'fas fa-spinner'
+                };
+                return icons[type] || icons['info'];
+            }
+
+            remove(id) {
+                const notification = this.notifications.get(id);
+                if (notification) {
+                    notification.classList.add('notification-exit');
+                    setTimeout(() => {
+                        if (notification.parentNode) {
+                            notification.parentNode.removeChild(notification);
+                        }
+                        this.notifications.delete(id);
+                    }, 300);
+                }
+            }
+
+            clear() {
+                this.notifications.forEach((notification, id) => {
+                    this.remove(id);
+                });
+            }
         }
-      });
-    }
 
-    function showInfobox(message, position, size, level) {
-      if (!positionPresets[position]) return console.error('[MiauAPI] Posição inválida:', position);
-      const levelMap = { 'sucesso':'success', 'erro':'error', 'aviso':'warning', 'informacao':'info' };
-      const lvl = levelMap[level?.toLowerCase()] || level || 'info';
-      const prefixMap = { info:'Info:', success:'Success:', warning:'Warning:', error:'Error:' };
-      const prefixText = prefixMap[lvl];
+        // Inicializar sistema de notificações
+        const notificationSystem = new NotificationSystem();
 
-      const container = getContainer(position);
-      const box = document.createElement('div');
-      box.className = `infobox ${lvl} infobox-enter`;
-      box.innerHTML = `
-        <div class="infobox-accent"></div>
-        <div class="infobox-content">
-          <div class="infobox-message"></div>
-        </div>`;
-      container.appendChild(box);
-
-      const msgDiv = box.querySelector('.infobox-message');
-      const prefixSpan = document.createElement('span');
-      prefixSpan.className = 'infobox-prefix';
-      prefixSpan.textContent = prefixText;
-      msgDiv.appendChild(prefixSpan);
-
-      parseMessage(message, msgDiv);
-
-      setTimeout(() => {
-        box.classList.add('infobox-exit');
+        // Exemplos de uso
         setTimeout(() => {
-          if (box.parentNode) box.parentNode.removeChild(box);
-          if (container.children.length === 0) {
-            container.remove();
-            delete containers[position];
-          }
-        }, 150);
-      }, 4000);
-    }
+            notificationSystem.show('Info: Menu injetado com sucesso! agora basta configurar qual bind ira abrir o menu.', 'info', 5000);
+        }, 1000);
 
-    window.MiauAPI = { infobox: showInfobox };
-    window.addEventListener('message', e => {
-      const d = e.data;
-      if (d?.action === 'infobox') showInfobox(d.message, d.position, d.size, d.level);
-    });
+        setTimeout(() => {
+            notificationSystem.show('Warning: Menu injetado com sucesso! agora basta configurar qual bind ira abrir o menu.', 'warn', 5000);
+        }, 2000);
 
-    console.log('[MiauAPI] Sistema pronto! ✓');
-  </script>
+        setTimeout(() => {
+            notificationSystem.show('Loading: Menu injetado com sucesso! agora basta configurar qual bind ira abrir o menu.', 'loading', 5000);
+        }, 3000);
+
+        setTimeout(() => {
+            notificationSystem.show('Error: Não foi possivel utilizar esta função! contate um adiministrador ou abra ticket em nosso discord!', 'error', 5000);
+        }, 4000);
+
+        setTimeout(() => {
+            notificationSystem.show('Sucesso: Teleporte para a localização personalizada feita com exito!', 'success', 5000);
+        }, 5000);
+
+        // Expor para uso global
+        window.notificationSystem = notificationSystem;
+    </script>
 </body>
 </html>
