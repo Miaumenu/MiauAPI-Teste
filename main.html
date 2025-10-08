@@ -2,26 +2,22 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>MiauAPI – Sistema Modular Ajustado</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
   <style>
-    * {
-      margin: 0; padding: 0; box-sizing: border-box;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     html, body {
       width: 100%; height: 100%; overflow: hidden;
       background: transparent; font-family: 'Inter', sans-serif;
     }
-    body {
-      width: 1920px; height: 1080px; background: transparent;
-    }
+    body { width: 1920px; height: 1080px; }
 
     /* ==========================================
-       MÓDULO: INFOBOX – TAMANHO REDUZIDO
+       MÓDULO: INFOBOX – TAMANHO REDUZIDO E QUEBRA DE LINHA
        ========================================== */
     .infobox-container {
       position: fixed;
@@ -32,18 +28,18 @@
     }
     .infobox {
       position: relative;
-      max-width: 600px;        /* reduzido de 1200px para 600px */
+      max-width: 600px;
       width: calc(100% - 40px);
       display: flex;
       align-items: stretch;
-      padding: 15px 20px;      /* espaçamento interno reduzido */
+      padding: 15px 20px;
       background: rgba(0,0,0,0.7);
-      border-radius: 14px;     /* borda um pouco menor */
+      border-radius: 14px;
       border: 2px solid var(--infobox-border);
       box-shadow: var(--infobox-shadow);
     }
     .infobox-accent {
-      width: 6px;              /* faixa lateral mais estreita */
+      width: 6px;
       background: var(--infobox-accent);
       box-shadow: var(--infobox-accent-shadow);
       border-radius: 14px;
@@ -52,20 +48,41 @@
     }
     .infobox-content {
       flex: 1;
-      display: flex;
-      align-items: center;
+      display: block;
     }
     .infobox-message {
+      display: block;
+      white-space: normal;
+      word-wrap: break-word;
+      word-break: break-word;
+    }
+    .infobox-message span {
+      display: inline;
+    }
+    .normal-text {
+      opacity: 0.67;
+      color: #FFFFFF;
       font-weight: 600;
-      font-size: 20px;         /* fonte menor */
+      font-size: 20px;
       line-height: 1.3;
       letter-spacing: -0.01em;
+    }
+    .highlight {
+      opacity: 1;
       color: #FFFFFF;
-      word-wrap: break-word;
+      font-weight: 700;
+      font-size: 20px;
+      line-height: 1.3;
+      letter-spacing: -0.01em;
     }
     .infobox-prefix {
+      opacity: 1;
+      color: #FFFFFF;
       margin-right: 6px;
       font-weight: 700;
+      font-size: 20px;
+      line-height: 1.3;
+      letter-spacing: -0.01em;
     }
 
     /* Níveis de INFOBOX */
@@ -103,12 +120,8 @@
       from { transform: translateY(0);     opacity: 1; }
       to   { transform: translateY(-20px); opacity: 0; }
     }
-    .infobox-enter {
-      animation: slideIn 0.25s ease-out forwards;
-    }
-    .infobox-exit {
-      animation: slideOut 0.25s ease-in forwards;
-    }
+    .infobox-enter { animation: slideIn 0.25s ease-out forwards; }
+    .infobox-exit  { animation: slideOut 0.25s ease-in forwards; }
   </style>
 </head>
 <body>
@@ -116,15 +129,16 @@
     console.log('[MiauAPI] Sistema iniciando...');
 
     const positionPresets = {
-      'superior-esquerdo':  { x:20,  y:20 },
-      'superior-direito':   { x:1920-600-20, y:20 },     /* ajustado para nova largura */
-      'inferior-esquerdo':  { x:20, y:1080-20 },
-      'inferior-direito':   { x:1920-600-20, y:1080-20 },
-      'centro-superior':    { x:(1920-600)/2, y:20 },
-      'centro-inferior':    { x:(1920-600)/2, y:1080-20 },
-      'centro':             { x:(1920-600)/2, y:1080/2 }
+      'superior-esquerdo': { x:20,  y:20 },
+      'superior-direito':  { x:1920-600-20, y:20 },
+      'inferior-esquerdo': { x:20, y:1080-20 },
+      'inferior-direito':  { x:1920-600-20, y:1080-20 },
+      'centro-superior':   { x:(1920-600)/2, y:20 },
+      'centro-inferior':   { x:(1920-600)/2, y:1080-20 },
+      'centro':            { x:(1920-600)/2, y:1080/2 }
     };
     const containers = {};
+
     function getContainer(key) {
       if (!containers[key]) {
         const c = document.createElement('div');
@@ -140,10 +154,10 @@
     function parseMessage(text, parent) {
       const parts = text.split(/(\*\*.*?\*\*)/g);
       parts.forEach(p => {
-        if (p.startsWith('**') && p.endsWith('**') && p.length>4) {
+        if (p.startsWith('**') && p.endsWith('**') && p.length > 4) {
           const span = document.createElement('span');
           span.className = 'highlight';
-          span.textContent = p.slice(2,-2);
+          span.textContent = p.slice(2, -2);
           parent.appendChild(span);
         } else if (p) {
           const span = document.createElement('span');
@@ -156,44 +170,45 @@
 
     function showInfobox(message, position, size, level) {
       if (!positionPresets[position]) return console.error('[MiauAPI] Posição inválida:', position);
-      const levelMap = { 'sucesso':'success','erro':'error','aviso':'warning','informacao':'info' };
-      const lvl = levelMap[level?.toLowerCase()]||level||'info';
-      let prefix = lvl==='info'?'Info: ':lvl==='success'?'Success: ':lvl==='warning'?'Warning: ':'Error: ';
+      const levelMap = { 'sucesso':'success', 'erro':'error', 'aviso':'warning', 'informacao':'info' };
+      const lvl = levelMap[level?.toLowerCase()] || level || 'info';
+      const prefixMap = { info:'Info:', success:'Success:', warning:'Warning:', error:'Error:' };
+      const prefixText = prefixMap[lvl];
+
       const container = getContainer(position);
       const box = document.createElement('div');
       box.className = `infobox ${lvl} infobox-enter`;
-
       box.innerHTML = `
         <div class="infobox-accent"></div>
         <div class="infobox-content">
           <div class="infobox-message"></div>
-        </div>
-      `;
+        </div>`;
       container.appendChild(box);
 
       const msgDiv = box.querySelector('.infobox-message');
-      const pre = document.createElement('span');
-      pre.className = 'infobox-prefix';
-      pre.textContent = prefix;
-      msgDiv.appendChild(pre);
+      const prefixSpan = document.createElement('span');
+      prefixSpan.className = 'infobox-prefix';
+      prefixSpan.textContent = prefixText;
+      msgDiv.appendChild(prefixSpan);
+
       parseMessage(message, msgDiv);
 
       setTimeout(() => {
         box.classList.add('infobox-exit');
         setTimeout(() => {
           if (box.parentNode) box.parentNode.removeChild(box);
-          if (container.children.length===0) {
+          if (container.children.length === 0) {
             container.remove();
             delete containers[position];
           }
-        },150);
-      },4000);
+        }, 150);
+      }, 4000);
     }
 
     window.MiauAPI = { infobox: showInfobox };
     window.addEventListener('message', e => {
       const d = e.data;
-      if (d?.action==='infobox') showInfobox(d.message, d.position, d.size, d.level);
+      if (d?.action === 'infobox') showInfobox(d.message, d.position, d.size, d.level);
     });
 
     console.log('[MiauAPI] Sistema pronto! ✓');
