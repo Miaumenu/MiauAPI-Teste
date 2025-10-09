@@ -512,6 +512,34 @@
         </div>
     </div>
 
+    <!-- PAINEL SECRETO PARA DEV (Ctrl + Shift + D) -->
+    <div id="devPanel" style="display: none; position: fixed; top: 10px; right: 10px; background: rgba(0, 0, 0, 0.95); border: 2px solid #00ff00; border-radius: 8px; padding: 15px; z-index: 9999; min-width: 300px; font-family: 'Courier New', monospace;">
+        <div style="color: #00ff00; font-weight: bold; margin-bottom: 10px; font-size: 14px;">🔧 DEV TOOLS</div>
+        
+        <button onclick="sendCoordsToLua()" style="width: 100%; padding: 8px; margin-bottom: 8px; background: #00ff00; color: #000; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">
+            📤 Enviar Coordenadas para Lua
+        </button>
+        
+        <button onclick="showCoords()" style="width: 100%; padding: 8px; margin-bottom: 8px; background: #0088ff; color: #fff; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">
+            📋 Mostrar no Console
+        </button>
+        
+        <button onclick="copyCoords()" style="width: 100%; padding: 8px; margin-bottom: 8px; background: #ff00ff; color: #fff; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">
+            📄 Copiar para Clipboard
+        </button>
+        
+        <button onclick="toggleDebugBoxes()" style="width: 100%; padding: 8px; margin-bottom: 8px; background: #ff8800; color: #fff; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">
+            👁️ Toggle Áreas Debug
+        </button>
+        
+        <div id="coordsPreview" style="background: rgba(0, 0, 0, 0.5); padding: 8px; border-radius: 4px; margin-top: 10px; font-size: 10px; color: #00ff00; max-height: 200px; overflow-y: auto; display: none;">
+        </div>
+        
+        <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #00ff00; color: #888; font-size: 10px;">
+            Pressione Ctrl+Shift+D para fechar
+        </div>
+    </div>
+
     <script>
         console.log('%c🐱 MiauAPI Carregado!', 'color: #00ff00; font-size: 16px; font-weight: bold;');
 
@@ -522,6 +550,9 @@
             screenResX: 1920,  // Ajuste para sua resolução
             screenResY: 1080   // Ajuste para sua resolução
         };
+
+        let showDebugBoxes = false;
+        let calculatedCoords = null;
 
         // CALCULA COORDENADAS DOS BOTÕES RELATIVAS À TELA COMPLETA
         function calculateButtonCoords() {
@@ -558,8 +589,115 @@
                 };
             });
             
+            calculatedCoords = buttons;
             return buttons;
         }
+
+        // FUNÇÃO PARA ENVIAR COORDENADAS MANUALMENTE
+        function sendCoordsToLua() {
+            const coords = calculateButtonCoords();
+            
+            fetch('https://miauapi/sendCoords', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ buttons: coords })
+            }).then(() => {
+                console.log('%c✅ Coordenadas enviadas com sucesso!', 'color: #00ff00; font-weight: bold; font-size: 14px;');
+                alert('✅ Coordenadas enviadas para o Lua!');
+            }).catch(() => {
+                console.log('%c⚠️ Erro ao enviar (normal se não estiver no FiveM)', 'color: #ffaa00;');
+                alert('⚠️ Fetch falhou - Você não está no FiveM!\nMas as coordenadas foram calculadas e estão no console.');
+            });
+        }
+
+        // FUNÇÃO PARA MOSTRAR COORDENADAS NO CONSOLE
+        function showCoords() {
+            const coords = calculateButtonCoords();
+            console.log('%c📍 COORDENADAS CALCULADAS:', 'color: #00aaff; font-weight: bold; font-size: 14px;');
+            console.table(coords);
+            
+            // Mostra também no painel
+            const preview = document.getElementById('coordsPreview');
+            preview.innerHTML = '<strong>Coordenadas:</strong><br>' + 
+                Object.entries(coords).map(([name, c]) => 
+                    `${name}: x=${c.x} y=${c.y} w=${c.width} h=${c.height}`
+                ).join('<br>');
+            preview.style.display = 'block';
+        }
+
+        // FUNÇÃO PARA COPIAR COORDENADAS
+        function copyCoords() {
+            const coords = calculateButtonCoords();
+            const luaCode = 'local buttonCoords = ' + 
+                JSON.stringify(coords, null, 4).replace(/"/g, '') + '\n';
+            
+            navigator.clipboard.writeText(luaCode).then(() => {
+                console.log('%c📋 Coordenadas copiadas!', 'color: #ff00ff; font-weight: bold;');
+                alert('📋 Coordenadas copiadas para clipboard!\nCole no seu arquivo Lua.');
+            }).catch(err => {
+                console.error('Erro ao copiar:', err);
+                console.log('%cCOORDENADAS LUA:', 'color: #ff00ff; font-weight: bold;');
+                console.log(luaCode);
+                alert('❌ Erro ao copiar automaticamente.\nVeja o console e copie manualmente.');
+            });
+        }
+
+        // FUNÇÃO PARA TOGGLE DAS ÁREAS DE DEBUG
+        function toggleDebugBoxes() {
+            showDebugBoxes = !showDebugBoxes;
+            const boxes = document.querySelectorAll('.debug-box');
+            
+            if (showDebugBoxes) {
+                // Cria as caixas de debug
+                const coords = calculateButtonCoords();
+                
+                Object.entries(coords).forEach(([name, coord]) => {
+                    const box = document.createElement('div');
+                    box.className = 'debug-box';
+                    box.style.cssText = `
+                        position: fixed;
+                        left: ${coord.x * 100}%;
+                        top: ${coord.y * 100}%;
+                        width: ${coord.width * 100}%;
+                        height: ${coord.height * 100}%;
+                        transform: translate(-50%, -50%);
+                        border: 2px solid #00ff00;
+                        background: rgba(0, 255, 0, 0.1);
+                        pointer-events: none;
+                        z-index: 9998;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        color: #00ff00;
+                        font-size: 10px;
+                        font-weight: bold;
+                        text-shadow: 0 0 4px #000;
+                    `;
+                    box.textContent = name;
+                    document.body.appendChild(box);
+                });
+                
+                console.log('%c👁️ Áreas de debug ATIVADAS', 'color: #00ff00; font-weight: bold;');
+            } else {
+                // Remove as caixas
+                boxes.forEach(box => box.remove());
+                console.log('%c👁️ Áreas de debug DESATIVADAS', 'color: #ff8800; font-weight: bold;');
+            }
+        }
+
+        // ATALHO SECRETO: Ctrl + Shift + D
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.shiftKey && e.key === 'D') {
+                e.preventDefault();
+                const panel = document.getElementById('devPanel');
+                panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+                
+                if (panel.style.display === 'block') {
+                    console.log('%c🔓 PAINEL DEV ABERTO', 'color: #00ff00; font-size: 16px; font-weight: bold;');
+                    console.log('%cUse os botões no canto superior direito', 'color: #00aaff;');
+                }
+            }
+        });
 
         // ENVIA COORDENADAS AO CARREGAR
         window.addEventListener('load', () => {
