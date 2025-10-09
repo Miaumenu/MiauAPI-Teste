@@ -2,164 +2,532 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>MiauAPI Smart</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MiauAPI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=Roboto:wght@900&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
+
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Inter', sans-serif;
             background: transparent;
+            overflow: hidden;
+            width: 100vw;
+            height: 100vh;
             color: white;
         }
+
         .container {
             position: absolute;
             width: 860px;
             height: 660px;
-            background: rgba(0, 0, 0, 0.9);
-            border: 2px solid #00ff00;
-            border-radius: 15px;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(22.5px);
+            border-radius: 18px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
             left: 50%;
             top: 50%;
             transform: translate(-50%, -50%);
-            padding: 20px;
-            cursor: move;
         }
-        h1 {
-            text-align: center;
-            color: #00ff00;
-            margin-bottom: 30px;
+
+        .sidebar {
+            width: 150px;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 18px 0 0 18px;
+            padding: 15px 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
-        .toggle-item {
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 10px 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+            border-left: 3px solid transparent;
+        }
+
+        .menu-item:hover { background: rgba(255, 255, 255, 0.05); }
+        .menu-item.active {
+            background: rgba(255, 255, 255, 0.1);
+            border-left-color: #FF0000;
+        }
+
+        .menu-icon {
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
+            filter: brightness(0) invert(1);
+            opacity: 0.7;
+        }
+
+        .menu-text {
+            font-weight: 600;
+            font-size: 11px;
+            color: #FFFFFF;
+        }
+
+        .profile-section {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .profile-avatar {
+            width: 40px;
+            height: 50px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 14px;
+        }
+
+        .profile-info { display: flex; flex-direction: column; gap: 2px; }
+        .profile-name, .profile-role {
+            font-family: 'Roboto', sans-serif;
+            font-weight: 900;
+            font-size: 9px;
+            color: #817D7E;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 15px 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 15px;
-            margin: 10px 0;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 8px;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.34);
         }
-        .toggle-switch {
-            position: relative;
-            width: 50px;
-            height: 25px;
+
+        .tabs { display: flex; gap: 20px; }
+        .tab {
+            font-weight: 600;
+            font-size: 9px;
+            color: #FFFFFF;
+            opacity: 0.76;
+            cursor: pointer;
+            padding-bottom: 4px;
+        }
+        .tab.active { opacity: 1; border-bottom: 2px solid #FF0000; }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.21);
+            border-radius: 4px;
+            padding: 5px 10px;
+            width: 120px;
+        }
+
+        .search-input {
+            background: transparent;
+            border: none;
+            outline: none;
+            color: white;
+            font-size: 9px;
+            width: 100%;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            flex: 1;
+            overflow-y: auto;
+            max-height: 540px;
+        }
+
+        .card {
+            background: transparent;
+            border-radius: 7px;
+            height: fit-content;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            padding: 6px 12px;
+            background: rgba(0, 0, 0, 0.35);
+            border-radius: 7px 7px 0 0;
+        }
+
+        .card-icon {
+            width: 16px;
+            height: 16px;
+            margin-right: 8px;
+            filter: brightness(0) invert(1);
+        }
+
+        .card-title { font-weight: 600; font-size: 10px; }
+
+        .card-body {
+            background: rgba(0, 0, 0, 0.21);
+            border-radius: 0 0 7px 7px;
+        }
+
+        .table-header {
+            display: grid;
+            grid-template-columns: 2.5fr 1fr 0.8fr 0.8fr;
+            padding: 5px 12px;
+            background: rgba(0, 0, 0, 0.35);
+            font-size: 8px;
+            font-weight: 600;
+            opacity: 0.76;
+            gap: 8px;
+        }
+
+        .feature-item {
+            display: grid;
+            grid-template-columns: 2.5fr 1fr 0.8fr 0.8fr;
+            padding: 8px 12px;
+            border-bottom: 1px solid #454545;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-item:last-child { border-bottom: none; }
+
+        .feature-name { font-weight: 600; font-size: 10px; }
+        .feature-description {
+            font-size: 8px;
+            opacity: 0.45;
+            margin-top: 2px;
+        }
+
+        .status-badge {
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            justify-content: center;
+        }
+
+        .status-dot {
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+        }
+        .status-dot.safe { background: #11FF00; }
+        .status-dot.risk { background: #FF0000; }
+
+        .status-text { font-weight: 600; font-size: 7px; }
+        .status-text.safe { color: #11FF00; }
+        .status-text.risk { color: #FF0000; }
+
+        .config-btn {
+            width: 18px;
+            height: 18px;
+            background: transparent;
+            border: none;
             cursor: pointer;
         }
+
+        .config-icon {
+            width: 12px;
+            height: 12px;
+            filter: brightness(0) invert(1);
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 28px;
+            height: 14px;
+            cursor: pointer;
+        }
+
         .toggle-switch input { display: none; }
+
         .toggle-bg {
             position: absolute;
             width: 100%;
             height: 100%;
-            background: #ccc;
-            border-radius: 15px;
+            background: #454545;
+            border-radius: 7px;
             transition: all 0.3s;
         }
+
         .toggle-switch input:checked + .toggle-bg {
-            background: #00ff00;
+            background: rgba(17, 255, 0, 0.62);
         }
+
         .toggle-handle {
             position: absolute;
-            width: 21px;
-            height: 21px;
-            background: white;
-            border-radius: 50%;
-            top: 2px;
-            left: 2px;
+            width: 12px;
+            height: 12px;
+            background: #FFFFFF;
+            border-radius: 7px;
+            top: 1px;
+            left: 1px;
             transition: all 0.3s;
         }
-        .toggle-switch input:checked ~ .toggle-handle {
-            left: 27px;
-        }
-        .log {
-            position: absolute;
-            bottom: 20px;
-            left: 20px;
-            right: 20px;
-            background: rgba(0, 0, 0, 0.5);
-            padding: 10px;
-            border-radius: 5px;
-            font-size: 11px;
-            max-height: 100px;
-            overflow-y: auto;
-            font-family: monospace;
-        }
+
+        .toggle-switch input:checked ~ .toggle-handle { left: 15px; }
     </style>
 </head>
 <body>
-    <div class="container" id="container">
-        <h1>🧠 SMART SYSTEM</h1>
-        
-        <div class="toggle-item" data-feature="godmod">
-            <span>GodMod</span>
-            <label class="toggle-switch">
-                <input type="checkbox">
-                <div class="toggle-bg"></div>
-                <div class="toggle-handle"></div>
-            </label>
+    <div class="container">
+        <div class="sidebar">
+            <div>
+                <div class="menu-item active">
+                    <svg class="menu-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                    <span class="menu-text">Jogador</span>
+                </div>
+                <div class="menu-item">
+                    <svg class="menu-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99z"/></svg>
+                    <span class="menu-text">Veículos</span>
+                </div>
+                <div class="menu-item">
+                    <svg class="menu-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12.43 2.3c-2.38-.59-4.68-.27-6.63.64-.35.16-.41.64-.1.86C8.3 5.6 10 8.3 10 11.5c0 2.64-2.14 4.78-4.78 4.78-.37 0-.73-.04-1.08-.11-.41-.08-.79.2-.83.61-.04.34-.08.68-.08 1.02 0 4.25 3.47 7.7 7.72 7.7 3.15 0 5.85-1.89 7.05-4.59.33-.75-.08-1.59-.88-1.75-2.88-.56-5.09-3.08-5.09-6.15 0-2.08 1.03-3.93 2.61-5.06.45-.32.57-.92.3-1.39C13.76 5.78 13.14 4.03 12.43 2.3z"/></svg>
+                    <span class="menu-text">Armas</span>
+                </div>
+            </div>
+
+            <div class="profile-section">
+                <div class="profile-avatar">MG</div>
+                <div class="profile-info">
+                    <div class="profile-name">miaugamer</div>
+                    <div class="profile-role">CEO</div>
+                </div>
+            </div>
         </div>
-        
-        <div class="toggle-item" data-feature="heal">
-            <span>Heal</span>
-            <label class="toggle-switch">
-                <input type="checkbox">
-                <div class="toggle-bg"></div>
-                <div class="toggle-handle"></div>
-            </label>
-        </div>
-        
-        <div class="toggle-item" data-feature="suicide">
-            <span>Suicide</span>
-            <label class="toggle-switch">
-                <input type="checkbox">
-                <div class="toggle-bg"></div>
-                <div class="toggle-handle"></div>
-            </label>
-        </div>
-        
-        <div class="toggle-item" data-feature="noclip">
-            <span>Noclip</span>
-            <label class="toggle-switch">
-                <input type="checkbox">
-                <div class="toggle-bg"></div>
-                <div class="toggle-handle"></div>
-            </label>
-        </div>
-        
-        <div class="toggle-item" data-feature="superjump">
-            <span>Super Jump</span>
-            <label class="toggle-switch">
-                <input type="checkbox">
-                <div class="toggle-bg"></div>
-                <div class="toggle-handle"></div>
-            </label>
-        </div>
-        
-        <div class="log" id="log">
-            <div>Sistema carregado. Aguardando interação...</div>
+
+        <div class="main-content">
+            <div class="header">
+                <div class="tabs">
+                    <div class="tab active">Jogador</div>
+                    <div class="tab">Armário</div>
+                    <div class="tab">Teleports</div>
+                </div>
+                <div class="search-box">
+                    <input type="text" class="search-input" placeholder="Pesquisar">
+                </div>
+            </div>
+
+            <div class="content-grid">
+                <!-- Card Geral -->
+                <div class="card">
+                    <div class="card-header">
+                        <svg class="card-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                        <span class="card-title">Geral</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-header">
+                            <div>NOME</div>
+                            <div>STATUS</div>
+                            <div>CFG</div>
+                            <div>ON</div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-info">
+                                <div class="feature-name">GodMod</div>
+                                <div class="feature-description">Invencibilidade</div>
+                            </div>
+                            <div class="status-badge">
+                                <div class="status-dot safe"></div>
+                                <div class="status-text safe">Safe</div>
+                            </div>
+                            <button class="config-btn">
+                                <svg class="config-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+                            </button>
+                            <label class="toggle-switch" data-feature="godmod">
+                                <input type="checkbox">
+                                <div class="toggle-bg"></div>
+                                <div class="toggle-handle"></div>
+                            </label>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-info">
+                                <div class="feature-name">Curar</div>
+                                <div class="feature-description">Restaura vida</div>
+                            </div>
+                            <div class="status-badge">
+                                <div class="status-dot safe"></div>
+                                <div class="status-text safe">Safe</div>
+                            </div>
+                            <button class="config-btn">
+                                <svg class="config-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+                            </button>
+                            <label class="toggle-switch" data-feature="heal">
+                                <input type="checkbox">
+                                <div class="toggle-bg"></div>
+                                <div class="toggle-handle"></div>
+                            </label>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-info">
+                                <div class="feature-name">Suicidar</div>
+                                <div class="feature-description">Mata jogador</div>
+                            </div>
+                            <div class="status-badge">
+                                <div class="status-dot safe"></div>
+                                <div class="status-text safe">Safe</div>
+                            </div>
+                            <button class="config-btn">
+                                <svg class="config-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+                            </button>
+                            <label class="toggle-switch" data-feature="suicide">
+                                <input type="checkbox">
+                                <div class="toggle-bg"></div>
+                                <div class="toggle-handle"></div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card Movimento -->
+                <div class="card">
+                    <div class="card-header">
+                        <svg class="card-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71z"/></svg>
+                        <span class="card-title">Movimento</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-header">
+                            <div>NOME</div>
+                            <div>STATUS</div>
+                            <div>CFG</div>
+                            <div>ON</div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-info">
+                                <div class="feature-name">Noclip</div>
+                                <div class="feature-description">Voar invisível</div>
+                            </div>
+                            <div class="status-badge">
+                                <div class="status-dot safe"></div>
+                                <div class="status-text safe">Safe</div>
+                            </div>
+                            <button class="config-btn">
+                                <svg class="config-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+                            </button>
+                            <label class="toggle-switch" data-feature="noclip">
+                                <input type="checkbox">
+                                <div class="toggle-bg"></div>
+                                <div class="toggle-handle"></div>
+                            </label>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-info">
+                                <div class="feature-name">Super Pulo</div>
+                                <div class="feature-description">Pular alto</div>
+                            </div>
+                            <div class="status-badge">
+                                <div class="status-dot safe"></div>
+                                <div class="status-text safe">Safe</div>
+                            </div>
+                            <button class="config-btn">
+                                <svg class="config-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+                            </button>
+                            <label class="toggle-switch" data-feature="superjump">
+                                <input type="checkbox">
+                                <div class="toggle-bg"></div>
+                                <div class="toggle-handle"></div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card Veículos -->
+                <div class="card">
+                    <div class="card-header">
+                        <svg class="card-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99z"/></svg>
+                        <span class="card-title">Veículos</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-header">
+                            <div>NOME</div>
+                            <div>STATUS</div>
+                            <div>CFG</div>
+                            <div>ON</div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-info">
+                                <div class="feature-name">Reparar</div>
+                                <div class="feature-description">Conserta veículo</div>
+                            </div>
+                            <div class="status-badge">
+                                <div class="status-dot safe"></div>
+                                <div class="status-text safe">Safe</div>
+                            </div>
+                            <button class="config-btn">
+                                <svg class="config-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+                            </button>
+                            <label class="toggle-switch" data-feature="repairveh">
+                                <input type="checkbox">
+                                <div class="toggle-bg"></div>
+                                <div class="toggle-handle"></div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card Armas -->
+                <div class="card">
+                    <div class="card-header">
+                        <svg class="card-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12.43 2.3c-2.38-.59-4.68-.27-6.63.64-.35.16-.41.64-.1.86C8.3 5.6 10 8.3 10 11.5c0 2.64-2.14 4.78-4.78 4.78-.37 0-.73-.04-1.08-.11-.41-.08-.79.2-.83.61-.04.34-.08.68-.08 1.02 0 4.25 3.47 7.7 7.72 7.7 3.15 0 5.85-1.89 7.05-4.59.33-.75-.08-1.59-.88-1.75-2.88-.56-5.09-3.08-5.09-6.15 0-2.08 1.03-3.93 2.61-5.06.45-.32.57-.92.3-1.39C13.76 5.78 13.14 4.03 12.43 2.3z"/></svg>
+                        <span class="card-title">Armas</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-header">
+                            <div>NOME</div>
+                            <div>STATUS</div>
+                            <div>CFG</div>
+                            <div>ON</div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-info">
+                                <div class="feature-name">Muni Infinita</div>
+                                <div class="feature-description">Nunca acaba</div>
+                            </div>
+                            <div class="status-badge">
+                                <div class="status-dot risk"></div>
+                                <div class="status-text risk">Risk</div>
+                            </div>
+                            <button class="config-btn">
+                                <svg class="config-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+                            </button>
+                            <label class="toggle-switch" data-feature="infammo">
+                                <input type="checkbox">
+                                <div class="toggle-bg"></div>
+                                <div class="toggle-handle"></div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-    
+
     <script>
-        const container = document.getElementById('container');
-        const logEl = document.getElementById('log');
-        
-        function addLog(msg) {
-            const div = document.createElement('div');
-            div.textContent = `[${new Date().toLocaleTimeString()}] ${msg}`;
-            logEl.appendChild(div);
-            logEl.scrollTop = logEl.scrollHeight;
-            console.log(msg);
-        }
-        
-        // Função para calcular coordenadas RELATIVAS dos toggles
-        function getButtonPositions() {
+        console.log('%c🐱 MiauAPI Carregado!', 'color: #00ff00; font-size: 16px; font-weight: bold;');
+
+        // CALCULA COORDENADAS DOS BOTÕES
+        function calculateButtonCoords() {
             const buttons = {};
             const toggles = document.querySelectorAll('.toggle-switch');
             
             toggles.forEach(toggle => {
-                const item = toggle.closest('.toggle-item');
-                const feature = item.getAttribute('data-feature');
+                const feature = toggle.getAttribute('data-feature');
+                if (!feature) return;
+                
                 const rect = toggle.getBoundingClientRect();
                 
-                // Coordenadas ABSOLUTAS na tela (0-1)
+                // Coordenadas ABSOLUTAS (0-1) relativas à tela
                 const x = (rect.left + rect.width / 2) / window.innerWidth;
                 const y = (rect.top + rect.height / 2) / window.innerHeight;
                 const width = rect.width / window.innerWidth;
@@ -170,95 +538,44 @@
             
             return buttons;
         }
-        
-        // Envia coordenadas para o Lua
-        function sendButtonPositions() {
-            const positions = getButtonPositions();
-            
-            addLog('Enviando coordenadas para Lua...');
-            
-            fetch('https://miauapi/updateButtonPositions', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ buttons: positions })
-            })
-            .then(() => {
-                addLog('✓ Coordenadas enviadas!');
-            })
-            .catch((error) => {
-                addLog('✗ Erro ao enviar: ' + error.message);
-            });
-        }
-        
-        // Dragging
-        let isDragging = false;
-        let startX, startY, initialX, initialY;
-        
-        container.addEventListener('mousedown', (e) => {
-            if (e.target.tagName === 'INPUT' || e.target.closest('.toggle-switch')) return;
-            
-            isDragging = true;
-            const rect = container.getBoundingClientRect();
-            startX = e.clientX - rect.left;
-            startY = e.clientY - rect.top;
-            initialX = rect.left;
-            initialY = rect.top;
-        });
-        
-        document.addEventListener('mousemove', (e) => {
-            if (!isDragging) return;
-            
-            const newX = e.clientX - startX;
-            const newY = e.clientY - startY;
-            
-            container.style.left = newX + 'px';
-            container.style.top = newY + 'px';
-            container.style.transform = 'none';
-        });
-        
-        document.addEventListener('mouseup', () => {
-            if (isDragging) {
-                isDragging = false;
-                addLog('Interface arrastada! Atualizando coordenadas...');
+
+        // ENVIA COORDENADAS AO CARREGAR
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                const coords = calculateButtonCoords();
                 
-                // Notifica Lua sobre drag
-                fetch('https://miauapi/onDrag', {
+                console.log('%c📍 Coordenadas calculadas:', 'color: #00aaff; font-weight: bold;');
+                console.table(coords);
+                
+                // Tenta enviar via fetch
+                fetch('https://miauapi/sendCoords', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({})
-                }).catch(() => {});
+                    body: JSON.stringify({ buttons: coords })
+                }).catch(() => {
+                    console.log('%c⚠️ Fetch falhou (esperado com DUI)', 'color: #ffaa00;');
+                });
                 
-                // Envia novas coordenadas
-                setTimeout(sendButtonPositions, 100);
-            }
+                // LOG para copiar manualmente se necessário
+                console.log('%cCoordenadas JSON:', 'color: #ff00ff; font-weight: bold;');
+                console.log(JSON.stringify(coords, null, 2));
+                
+            }, 500);
         });
-        
-        // Listener para mensagens do Lua
+
+        // Listener para atualizações do Lua
         window.addEventListener('message', (event) => {
             const data = event.data;
             
-            if (data.type === 'requestButtonPositions') {
-                addLog('Lua solicitou coordenadas');
-                sendButtonPositions();
-            }
-            
             if (data.type === 'updateToggle') {
-                addLog(`Atualizando ${data.feature}: ${data.active}`);
-                const item = document.querySelector(`[data-feature="${data.feature}"]`);
-                if (item) {
-                    const checkbox = item.querySelector('input[type="checkbox"]');
-                    checkbox.checked = data.active;
+                const toggle = document.querySelector(`[data-feature="${data.feature}"] input`);
+                if (toggle) {
+                    toggle.checked = data.active;
                 }
             }
         });
-        
-        // Envia coordenadas ao carregar
-        setTimeout(() => {
-            addLog('Enviando coordenadas iniciais...');
-            sendButtonPositions();
-        }, 1000);
-        
-        addLog('Sistema carregado!');
+
+        console.log('%c✓ Sistema pronto!', 'color: #00ff00; font-weight: bold;');
     </script>
 </body>
 </html>
