@@ -204,7 +204,16 @@
         <div class="toggle-container">
             <span class="toggle-label">GodMod Test</span>
             <label class="toggle-switch">
-                <input type="checkbox" id="testToggle">
+                <input type="checkbox" id="testToggle" data-feature="godmod">
+                <div class="toggle-bg"></div>
+                <div class="toggle-handle"></div>
+            </label>
+        </div>
+
+        <div class="toggle-container">
+            <span class="toggle-label">Suicidar Test</span>
+            <label class="toggle-switch">
+                <input type="checkbox" id="suicideToggle" data-feature="suicide">
                 <div class="toggle-bg"></div>
                 <div class="toggle-handle"></div>
             </label>
@@ -314,16 +323,27 @@
             });
 
             // ============================================
-            // MÉTODO 2: TÍTULO DA PÁGINA
+            // MÉTODO 2: TÍTULO DA PÁGINA - FUNCIONA!
             // ============================================
             addLog('Tentando MÉTODO 2: Título...', 'info');
             try {
                 document.title = `MIAUAPI|godmod|${isActive}|${Date.now()}`;
                 addLog('✓ Título alterado para polling', 'success');
                 
+                // Envia também via callback se disponível
+                if (typeof fetch !== 'undefined') {
+                    fetch(`https://miauapi/titleChanged`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            title: document.title
+                        })
+                    }).catch(() => {});
+                }
+                
                 setTimeout(() => {
                     document.title = 'TEST';
-                }, 100);
+                }, 200);
             } catch(e) {
                 addLog('✗ Método 2 falhou: ' + e.message, 'error');
             }
