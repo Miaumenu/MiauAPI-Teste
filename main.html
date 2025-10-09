@@ -5,388 +5,194 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TEST</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
         body {
             font-family: Arial, sans-serif;
-            background: rgba(20, 20, 40, 0.95);
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
             display: flex;
             align-items: center;
             justify-content: center;
             height: 100vh;
             color: white;
-            margin: 0;
-            padding: 0;
         }
-
+        
         .container {
             text-align: center;
-            background: rgba(30, 30, 60, 0.95);
-            padding: 25px;
-            border-radius: 15px;
-            backdrop-filter: blur(10px);
-            width: 500px;
-            max-height: 90vh;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            border: 2px solid rgba(255, 255, 255, 0.1);
+            background: rgba(0, 0, 0, 0.8);
+            padding: 50px;
+            border-radius: 20px;
+            border: 2px solid #00ff00;
         }
-
+        
         h1 {
-            margin-bottom: 15px;
-            font-size: 20px;
+            margin-bottom: 40px;
+            color: #00ff00;
+            font-size: 32px;
         }
-
-        .test-methods {
-            margin-bottom: 15px;
-            font-size: 10px;
-            opacity: 0.7;
-            line-height: 1.4;
-        }
-
-        .toggle-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 20px;
-            margin: 20px 0;
-        }
-
-        .toggle-label {
+        
+        .test-btn {
+            display: block;
+            width: 300px;
+            margin: 20px auto;
+            padding: 20px;
             font-size: 18px;
             font-weight: bold;
-        }
-
-        .toggle-switch {
-            position: relative;
-            width: 60px;
-            height: 30px;
-            cursor: pointer;
-        }
-
-        .toggle-switch input {
-            display: none;
-        }
-
-        .toggle-bg {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            background: #ccc;
-            border-radius: 15px;
-            transition: all 0.3s;
-        }
-
-        .toggle-switch input:checked + .toggle-bg {
-            background: #00ff00;
-        }
-
-        .toggle-handle {
-            position: absolute;
-            width: 26px;
-            height: 26px;
-            background: white;
-            border-radius: 50%;
-            top: 2px;
-            left: 2px;
-            transition: all 0.3s;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
-        }
-
-        .toggle-switch input:checked ~ .toggle-handle {
-            left: 32px;
-        }
-
-        .status {
-            margin-top: 15px;
-            padding: 8px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: bold;
-        }
-
-        .log-container {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-top: 15px;
-            flex: 1;
-            min-height: 0;
-        }
-
-        .log-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 5px 10px;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 8px 8px 0 0;
-        }
-
-        .log-title {
-            font-size: 12px;
-            font-weight: bold;
-        }
-
-        .copy-btn {
-            background: rgba(0, 200, 0, 0.3);
-            border: 1px solid rgba(0, 255, 0, 0.5);
+            border: 2px solid #00ff00;
+            background: rgba(0, 255, 0, 0.1);
             color: #00ff00;
-            padding: 5px 15px;
-            border-radius: 5px;
+            border-radius: 10px;
             cursor: pointer;
-            font-size: 11px;
-            font-weight: bold;
-            transition: all 0.2s;
+            transition: all 0.3s;
         }
-
-        .copy-btn:hover {
-            background: rgba(0, 255, 0, 0.5);
+        
+        .test-btn:hover {
+            background: rgba(0, 255, 0, 0.3);
             transform: scale(1.05);
         }
-
-        .copy-btn:active {
+        
+        .test-btn:active {
             transform: scale(0.95);
         }
-
-        .copy-btn.copied {
-            background: rgba(0, 150, 255, 0.5);
-            border-color: #00aaff;
-            color: #00aaff;
-        }
-
+        
         .log {
-            padding: 10px;
+            margin-top: 30px;
+            padding: 20px;
             background: rgba(0, 0, 0, 0.5);
-            border-radius: 0 0 8px 8px;
+            border-radius: 10px;
             max-height: 200px;
             overflow-y: auto;
             text-align: left;
-            font-size: 10px;
-            font-family: 'Courier New', monospace;
-            flex: 1;
-            min-height: 150px;
+            font-size: 12px;
+            font-family: monospace;
         }
-
+        
         .log-entry {
             margin: 5px 0;
-            padding: 3px;
+            padding: 5px;
         }
-
-        .log-success {
-            color: #00ff00;
-        }
-
-        .log-error {
-            color: #ff0000;
-        }
-
-        .log-info {
-            color: #00aaff;
-        }
+        
+        .log-success { color: #00ff00; }
+        .log-error { color: #ff0000; }
+        .log-info { color: #00aaff; }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🧪 TESTE DE COMUNICAÇÃO 🧪</h1>
+        <h1>🧪 TESTE DE MÉTODOS</h1>
         
-        <div class="test-methods">
-            Testando 4 métodos:<br>
-            1. NUI Callback | 2. Título | 3. SendDuiMessage | 4. Coordenadas
-        </div>
-
-        <div class="toggle-container">
-            <span class="toggle-label">GodMod Test</span>
-            <label class="toggle-switch">
-                <input type="checkbox" id="testToggle" data-feature="godmod">
-                <div class="toggle-bg"></div>
-                <div class="toggle-handle"></div>
-            </label>
-        </div>
-
-        <div class="toggle-container">
-            <span class="toggle-label">Suicidar Test</span>
-            <label class="toggle-switch">
-                <input type="checkbox" id="suicideToggle" data-feature="suicide">
-                <div class="toggle-bg"></div>
-                <div class="toggle-handle"></div>
-            </label>
-        </div>
-
-        <div class="status">
-            Status: <span id="status">OFF</span>
-        </div>
-
-        <div class="log-container">
-            <div class="log-header">
-                <span class="log-title">📋 Log de Eventos</span>
-                <button class="copy-btn" id="copyBtn">📋 Copiar Log</button>
-            </div>
-            <div class="log" id="log">
-                <div class="log-entry log-info">Aguardando interação...</div>
-            </div>
+        <button class="test-btn" onclick="testMethod1()">
+            MÉTODO 1: RegisterNUICallback
+        </button>
+        
+        <button class="test-btn" onclick="testMethod2()">
+            MÉTODO 2: Document.title
+        </button>
+        
+        <button class="test-btn" onclick="testMethod3()">
+            MÉTODO 3: LocalStorage
+        </button>
+        
+        <button class="test-btn" onclick="testMethod4()">
+            MÉTODO 4: Clique Aqui (Coordenadas)
+        </button>
+        
+        <div class="log" id="log">
+            <div class="log-entry log-info">Clique nos botões para testar...</div>
         </div>
     </div>
-
+    
     <script>
-        const toggles = document.querySelectorAll('.toggle-switch input');
-        const statusEl = document.getElementById('status');
         const logEl = document.getElementById('log');
-        const copyBtn = document.getElementById('copyBtn');
-
-        let logHistory = [];
-
+        
         function addLog(message, type = 'info') {
-            const timestamp = new Date().toLocaleTimeString();
-            const logText = `[${timestamp}] ${message}`;
-            
-            // Adiciona ao histórico
-            logHistory.push(logText);
-            
-            // Adiciona ao DOM
             const entry = document.createElement('div');
             entry.className = `log-entry log-${type}`;
-            entry.textContent = logText;
+            entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
             logEl.appendChild(entry);
             logEl.scrollTop = logEl.scrollHeight;
-        }
-
-        // Função para copiar log
-        copyBtn.addEventListener('click', () => {
-            const logText = logHistory.join('\n');
             
-            // Cria elemento temporário para copiar
-            const textarea = document.createElement('textarea');
-            textarea.value = logText;
-            textarea.style.position = 'fixed';
-            textarea.style.opacity = '0';
-            document.body.appendChild(textarea);
-            textarea.select();
+            console.log(`%c${message}`, `color: ${type === 'success' ? '#00ff00' : type === 'error' ? '#ff0000' : '#00aaff'}`);
+        }
+        
+        // MÉTODO 1: RegisterNUICallback (fetch)
+        function testMethod1() {
+            addLog('MÉTODO 1: Enviando via fetch...', 'info');
+            
+            fetch('https://miauapi/method1', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    test: 'method1',
+                    timestamp: Date.now()
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                addLog('MÉTODO 1: ✓ SUCESSO! Recebeu resposta', 'success');
+            })
+            .catch(error => {
+                addLog('MÉTODO 1: ✗ FALHOU - ' + error.message, 'error');
+            });
+        }
+        
+        // MÉTODO 2: Document.title
+        function testMethod2() {
+            addLog('MÉTODO 2: Mudando document.title...', 'info');
             
             try {
-                document.execCommand('copy');
-                copyBtn.textContent = '✓ Copiado!';
-                copyBtn.classList.add('copied');
-                addLog('Log copiado para área de transferência!', 'success');
+                const data = `TEST|method2|${Date.now()}`;
+                document.title = data;
+                addLog('MÉTODO 2: ✓ Título alterado para: ' + data, 'success');
                 
-                setTimeout(() => {
-                    copyBtn.textContent = '📋 Copiar Log';
-                    copyBtn.classList.remove('copied');
-                }, 2000);
-            } catch(e) {
-                addLog('Erro ao copiar: ' + e.message, 'error');
-            }
-            
-            document.body.removeChild(textarea);
-        });
-
-        // Adiciona evento para cada toggle
-        toggles.forEach(toggle => {
-            toggle.addEventListener('change', (e) => {
-                const feature = e.target.getAttribute('data-feature');
-                const isActive = e.target.checked;
-                
-                statusEl.textContent = `${feature}: ${isActive ? 'ON' : 'OFF'}`;
-                statusEl.style.color = isActive ? '#00ff00' : '#ff0000';
-
-                addLog(`Toggle ${feature} mudou para: ${isActive ? 'ON' : 'OFF'}`, 'info');
-
-                // ============================================
-                // MÉTODO 1: NUI CALLBACK
-                // ============================================
-                addLog(`Método 1: NUI Callback (${feature})...`, 'info');
-                fetch(`https://miauapi/testToggle`, {
+                // Também tenta enviar via fetch como fallback
+                fetch('https://miauapi/method2', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        feature: feature,
-                        active: isActive
-                    })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    addLog(`✓ Método 1 funcionou! (${feature})`, 'success');
-                })
-                .catch(error => {
-                    addLog(`✗ Método 1 falhou: ${error.message}`, 'error');
-                });
-
-                // ============================================
-                // MÉTODO 2: TÍTULO DA PÁGINA
-                // ============================================
-                addLog(`Método 2: Título (${feature})...`, 'info');
-                try {
-                    document.title = `MIAUAPI|${feature}|${isActive}|${Date.now()}`;
-                    addLog(`✓ Título alterado: ${feature}`, 'success');
-                    
-                    // Envia também via callback
-                    fetch(`https://miauapi/titleChanged`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            title: document.title
-                        })
-                    }).catch(() => {});
-                    
-                    setTimeout(() => {
-                        document.title = 'TEST';
-                    }, 200);
-                } catch(e) {
-                    addLog(`✗ Método 2 falhou: ${e.message}`, 'error');
-                }
-
-                // ============================================
-                // MÉTODO 3: POSTMESSAGE
-                // ============================================
-                addLog(`Método 3: PostMessage (${feature})...`, 'info');
-                try {
-                    window.parent.postMessage({
-                        type: 'toggleFeature',
-                        feature: feature,
-                        active: isActive
-                    }, '*');
-                    addLog(`✓ PostMessage enviado (${feature})`, 'success');
-                } catch(e) {
-                    addLog(`✗ Método 3 falhou: ${e.message}`, 'error');
-                }
-
-                // ============================================
-                // MÉTODO 4: CONSOLE.LOG
-                // ============================================
-                console.log(`%c[${feature.toUpperCase()}]`, 'color: #00ff00; font-weight: bold;', {
-                    feature: feature,
-                    active: isActive,
+                    body: JSON.stringify({ title: data })
+                }).catch(() => {});
+                
+                setTimeout(() => {
+                    document.title = 'TEST';
+                }, 200);
+            } catch(e) {
+                addLog('MÉTODO 2: ✗ FALHOU - ' + e.message, 'error');
+            }
+        }
+        
+        // MÉTODO 3: LocalStorage
+        function testMethod3() {
+            addLog('MÉTODO 3: Salvando em localStorage...', 'info');
+            
+            try {
+                const data = {
+                    method: 'method3',
                     timestamp: Date.now()
-                });
-                addLog(`Console.log enviado (${feature})`, 'info');
-            });
-        });
-
-        // Listener para mensagens do Lua
-        window.addEventListener('message', (event) => {
-            const data = event.data;
-            
-            if (data.type === 'ping') {
-                addLog('Recebeu ping do Lua!', 'success');
+                };
+                
+                localStorage.setItem('miautest', JSON.stringify(data));
+                addLog('MÉTODO 3: ✓ Salvo no localStorage', 'success');
+                
+                // Verifica se salvou
+                const saved = localStorage.getItem('miautest');
+                addLog('MÉTODO 3: Valor salvo: ' + saved, 'info');
+                
+            } catch(e) {
+                addLog('MÉTODO 3: ✗ FALHOU - ' + e.message, 'error');
             }
-            
-            if (data.type === 'featureUpdated') {
-                addLog(`Feature atualizada: ${data.feature}`, 'success');
-                toggle.checked = data.active;
-            }
-        });
-
+        }
+        
+        // MÉTODO 4: Coordenadas (apenas log, Lua detecta o clique)
+        function testMethod4() {
+            addLog('MÉTODO 4: Botão clicado! Lua deve detectar coordenadas', 'success');
+            addLog('MÉTODO 4: Verifique o console F8 do FiveM', 'info');
+        }
+        
         // Log inicial
         addLog('Sistema carregado!', 'success');
-        addLog('Clique no toggle para testar...', 'info');
+        addLog('Clique nos botões e veja o F8 do FiveM', 'info');
         
-        console.log('%c🧪 TESTE DE COMUNICAÇÃO INICIADO', 'color: #00ff00; font-size: 20px; font-weight: bold;');
+        console.log('%c🧪 TESTE INICIADO', 'color: #00ff00; font-size: 20px; font-weight: bold;');
     </script>
 </body>
 </html>
