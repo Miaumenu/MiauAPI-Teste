@@ -103,23 +103,75 @@
         }
 
         .status {
-            margin-top: 20px;
-            padding: 10px;
+            margin-top: 15px;
+            padding: 8px;
             background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
+            border-radius: 8px;
             font-size: 14px;
+            font-weight: bold;
+        }
+
+        .log-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 15px;
+            flex: 1;
+            min-height: 0;
+        }
+
+        .log-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 5px 10px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px 8px 0 0;
+        }
+
+        .log-title {
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .copy-btn {
+            background: rgba(0, 200, 0, 0.3);
+            border: 1px solid rgba(0, 255, 0, 0.5);
+            color: #00ff00;
+            padding: 5px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+
+        .copy-btn:hover {
+            background: rgba(0, 255, 0, 0.5);
+            transform: scale(1.05);
+        }
+
+        .copy-btn:active {
+            transform: scale(0.95);
+        }
+
+        .copy-btn.copied {
+            background: rgba(0, 150, 255, 0.5);
+            border-color: #00aaff;
+            color: #00aaff;
         }
 
         .log {
-            margin-top: 20px;
-            padding: 15px;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 10px;
-            max-height: 150px;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 0 0 8px 8px;
+            max-height: 200px;
             overflow-y: auto;
             text-align: left;
-            font-size: 11px;
-            font-family: monospace;
+            font-size: 10px;
+            font-family: 'Courier New', monospace;
+            flex: 1;
+            min-height: 150px;
         }
 
         .log-entry {
@@ -162,8 +214,14 @@
             Status: <span id="status">OFF</span>
         </div>
 
-        <div class="log" id="log">
-            <div class="log-entry log-info">Aguardando interação...</div>
+        <div class="log-container">
+            <div class="log-header">
+                <span class="log-title">📋 Log de Eventos</span>
+                <button class="copy-btn" id="copyBtn">📋 Copiar Log</button>
+            </div>
+            <div class="log" id="log">
+                <div class="log-entry log-info">Aguardando interação...</div>
+            </div>
         </div>
     </div>
 
@@ -171,7 +229,9 @@
         const toggle = document.getElementById('testToggle');
         const statusEl = document.getElementById('status');
         const logEl = document.getElementById('log');
+        const copyBtn = document.getElementById('copyBtn');
 
+        let logHistory = [];
         let methodsWorking = {
             callback: false,
             title: false,
@@ -180,12 +240,48 @@
         };
 
         function addLog(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const logText = `[${timestamp}] ${message}`;
+            
+            // Adiciona ao histórico
+            logHistory.push(logText);
+            
+            // Adiciona ao DOM
             const entry = document.createElement('div');
             entry.className = `log-entry log-${type}`;
-            entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            entry.textContent = logText;
             logEl.appendChild(entry);
             logEl.scrollTop = logEl.scrollHeight;
         }
+
+        // Função para copiar log
+        copyBtn.addEventListener('click', () => {
+            const logText = logHistory.join('\n');
+            
+            // Cria elemento temporário para copiar
+            const textarea = document.createElement('textarea');
+            textarea.value = logText;
+            textarea.style.position = 'fixed';
+            textarea.style.opacity = '0';
+            document.body.appendChild(textarea);
+            textarea.select();
+            
+            try {
+                document.execCommand('copy');
+                copyBtn.textContent = '✓ Copiado!';
+                copyBtn.classList.add('copied');
+                addLog('Log copiado para área de transferência!', 'success');
+                
+                setTimeout(() => {
+                    copyBtn.textContent = '📋 Copiar Log';
+                    copyBtn.classList.remove('copied');
+                }, 2000);
+            } catch(e) {
+                addLog('Erro ao copiar: ' + e.message, 'error');
+            }
+            
+            document.body.removeChild(textarea);
+        });
 
         toggle.addEventListener('change', (e) => {
             const isActive = e.target.checked;
