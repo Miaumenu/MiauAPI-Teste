@@ -235,18 +235,12 @@
     </div>
 
     <script>
-        const toggle = document.getElementById('testToggle');
+        const toggles = document.querySelectorAll('.toggle-switch input');
         const statusEl = document.getElementById('status');
         const logEl = document.getElementById('log');
         const copyBtn = document.getElementById('copyBtn');
 
         let logHistory = [];
-        let methodsWorking = {
-            callback: false,
-            title: false,
-            message: false,
-            coords: false
-        };
 
         function addLog(message, type = 'info') {
             const timestamp = new Date().toLocaleTimeString();
@@ -292,46 +286,46 @@
             document.body.removeChild(textarea);
         });
 
-        toggle.addEventListener('change', (e) => {
-            const isActive = e.target.checked;
-            statusEl.textContent = isActive ? 'ON' : 'OFF';
-            statusEl.style.color = isActive ? '#00ff00' : '#ff0000';
-
-            addLog(`Toggle mudou para: ${isActive ? 'ON' : 'OFF'}`, 'info');
-
-            // ============================================
-            // MÉTODO 1: NUI CALLBACK (PADRÃO FIVEM)
-            // ============================================
-            addLog('Tentando MÉTODO 1: NUI Callback...', 'info');
-            fetch(`https://miauapi/testToggle`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    feature: 'godmod',
-                    active: isActive
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                addLog('✓ MÉTODO 1 FUNCIONOU! (NUI Callback)', 'success');
-                methodsWorking.callback = true;
-                console.log('Callback response:', data);
-            })
-            .catch(error => {
-                addLog('✗ Método 1 falhou: ' + error.message, 'error');
-                console.error('Callback error:', error);
-            });
-
-            // ============================================
-            // MÉTODO 2: TÍTULO DA PÁGINA - FUNCIONA!
-            // ============================================
-            addLog('Tentando MÉTODO 2: Título...', 'info');
-            try {
-                document.title = `MIAUAPI|godmod|${isActive}|${Date.now()}`;
-                addLog('✓ Título alterado para polling', 'success');
+        // Adiciona evento para cada toggle
+        toggles.forEach(toggle => {
+            toggle.addEventListener('change', (e) => {
+                const feature = e.target.getAttribute('data-feature');
+                const isActive = e.target.checked;
                 
-                // Envia também via callback se disponível
-                if (typeof fetch !== 'undefined') {
+                statusEl.textContent = `${feature}: ${isActive ? 'ON' : 'OFF'}`;
+                statusEl.style.color = isActive ? '#00ff00' : '#ff0000';
+
+                addLog(`Toggle ${feature} mudou para: ${isActive ? 'ON' : 'OFF'}`, 'info');
+
+                // ============================================
+                // MÉTODO 1: NUI CALLBACK
+                // ============================================
+                addLog(`Método 1: NUI Callback (${feature})...`, 'info');
+                fetch(`https://miauapi/testToggle`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        feature: feature,
+                        active: isActive
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    addLog(`✓ Método 1 funcionou! (${feature})`, 'success');
+                })
+                .catch(error => {
+                    addLog(`✗ Método 1 falhou: ${error.message}`, 'error');
+                });
+
+                // ============================================
+                // MÉTODO 2: TÍTULO DA PÁGINA
+                // ============================================
+                addLog(`Método 2: Título (${feature})...`, 'info');
+                try {
+                    document.title = `MIAUAPI|${feature}|${isActive}|${Date.now()}`;
+                    addLog(`✓ Título alterado: ${feature}`, 'success');
+                    
+                    // Envia também via callback
                     fetch(`https://miauapi/titleChanged`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
@@ -339,39 +333,39 @@
                             title: document.title
                         })
                     }).catch(() => {});
+                    
+                    setTimeout(() => {
+                        document.title = 'TEST';
+                    }, 200);
+                } catch(e) {
+                    addLog(`✗ Método 2 falhou: ${e.message}`, 'error');
                 }
-                
-                setTimeout(() => {
-                    document.title = 'TEST';
-                }, 200);
-            } catch(e) {
-                addLog('✗ Método 2 falhou: ' + e.message, 'error');
-            }
 
-            // ============================================
-            // MÉTODO 3: POSTMESSAGE (PARA IFRAME/DUI)
-            // ============================================
-            addLog('Tentando MÉTODO 3: PostMessage...', 'info');
-            try {
-                window.parent.postMessage({
-                    type: 'toggleFeature',
-                    feature: 'godmod',
-                    active: isActive
-                }, '*');
-                addLog('✓ PostMessage enviado', 'success');
-            } catch(e) {
-                addLog('✗ Método 3 falhou: ' + e.message, 'error');
-            }
+                // ============================================
+                // MÉTODO 3: POSTMESSAGE
+                // ============================================
+                addLog(`Método 3: PostMessage (${feature})...`, 'info');
+                try {
+                    window.parent.postMessage({
+                        type: 'toggleFeature',
+                        feature: feature,
+                        active: isActive
+                    }, '*');
+                    addLog(`✓ PostMessage enviado (${feature})`, 'success');
+                } catch(e) {
+                    addLog(`✗ Método 3 falhou: ${e.message}`, 'error');
+                }
 
-            // ============================================
-            // MÉTODO 4: CONSOLE.LOG (PARA DEBUG)
-            // ============================================
-            console.log('%c[MÉTODO 4 - CONSOLE]', 'color: #00ff00; font-weight: bold;', {
-                feature: 'godmod',
-                active: isActive,
-                timestamp: Date.now()
+                // ============================================
+                // MÉTODO 4: CONSOLE.LOG
+                // ============================================
+                console.log(`%c[${feature.toUpperCase()}]`, 'color: #00ff00; font-weight: bold;', {
+                    feature: feature,
+                    active: isActive,
+                    timestamp: Date.now()
+                });
+                addLog(`Console.log enviado (${feature})`, 'info');
             });
-            addLog('Console.log enviado (check F8)', 'info');
         });
 
         // Listener para mensagens do Lua
