@@ -1,4 +1,54 @@
-<!DOCTYPE html>
+.status {
+            margin-top: 15px;
+            padding: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .log-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 15px;
+            flex: 1;
+            min-height: 0;
+        }
+
+        .log-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 5px 10px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px 8px 0 0;
+        }
+
+        .log-title {
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .copy-btn {
+            background: rgba(0, 200, 0, 0.3);
+            border: 1px solid rgba(0, 255, 0, 0.5);
+            color: #00ff00;
+            padding: 5px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+
+        .copy-btn:hover {
+            background: rgba(0, 255, 0, 0.5);
+            transform: scale(1.05);
+        }
+
+        .copy-btn:active {
+            transform: s<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
@@ -13,31 +63,40 @@
 
         body {
             font-family: Arial, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: rgba(20, 20, 40, 0.95);
             display: flex;
             align-items: center;
             justify-content: center;
             height: 100vh;
             color: white;
+            margin: 0;
+            padding: 0;
         }
 
         .container {
             text-align: center;
-            background: rgba(0, 0, 0, 0.5);
-            padding: 40px;
-            border-radius: 20px;
+            background: rgba(30, 30, 60, 0.95);
+            padding: 25px;
+            border-radius: 15px;
             backdrop-filter: blur(10px);
+            width: 500px;
+            max-height: 90vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            border: 2px solid rgba(255, 255, 255, 0.1);
         }
 
         h1 {
-            margin-bottom: 30px;
-            font-size: 24px;
+            margin-bottom: 15px;
+            font-size: 20px;
         }
 
         .test-methods {
-            margin-bottom: 30px;
-            font-size: 12px;
-            opacity: 0.8;
+            margin-bottom: 15px;
+            font-size: 10px;
+            opacity: 0.7;
+            line-height: 1.4;
         }
 
         .toggle-container {
