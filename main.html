@@ -2,197 +2,263 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TEST</title>
+    <title>MiauAPI Smart</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        
         body {
             font-family: Arial, sans-serif;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
+            background: transparent;
             color: white;
         }
-        
         .container {
-            text-align: center;
-            background: rgba(0, 0, 0, 0.8);
-            padding: 50px;
-            border-radius: 20px;
+            position: absolute;
+            width: 860px;
+            height: 660px;
+            background: rgba(0, 0, 0, 0.9);
             border: 2px solid #00ff00;
-        }
-        
-        h1 {
-            margin-bottom: 40px;
-            color: #00ff00;
-            font-size: 32px;
-        }
-        
-        .test-btn {
-            display: block;
-            width: 300px;
-            margin: 20px auto;
+            border-radius: 15px;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
             padding: 20px;
-            font-size: 18px;
-            font-weight: bold;
-            border: 2px solid #00ff00;
-            background: rgba(0, 255, 0, 0.1);
+            cursor: move;
+        }
+        h1 {
+            text-align: center;
             color: #00ff00;
-            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        .toggle-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            margin: 10px 0;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+        }
+        .toggle-switch {
+            position: relative;
+            width: 50px;
+            height: 25px;
             cursor: pointer;
+        }
+        .toggle-switch input { display: none; }
+        .toggle-bg {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: #ccc;
+            border-radius: 15px;
             transition: all 0.3s;
         }
-        
-        .test-btn:hover {
-            background: rgba(0, 255, 0, 0.3);
-            transform: scale(1.05);
+        .toggle-switch input:checked + .toggle-bg {
+            background: #00ff00;
         }
-        
-        .test-btn:active {
-            transform: scale(0.95);
+        .toggle-handle {
+            position: absolute;
+            width: 21px;
+            height: 21px;
+            background: white;
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: all 0.3s;
         }
-        
+        .toggle-switch input:checked ~ .toggle-handle {
+            left: 27px;
+        }
         .log {
-            margin-top: 30px;
-            padding: 20px;
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
             background: rgba(0, 0, 0, 0.5);
-            border-radius: 10px;
-            max-height: 200px;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 11px;
+            max-height: 100px;
             overflow-y: auto;
-            text-align: left;
-            font-size: 12px;
             font-family: monospace;
         }
-        
-        .log-entry {
-            margin: 5px 0;
-            padding: 5px;
-        }
-        
-        .log-success { color: #00ff00; }
-        .log-error { color: #ff0000; }
-        .log-info { color: #00aaff; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>🧪 TESTE DE MÉTODOS</h1>
+    <div class="container" id="container">
+        <h1>🧠 SMART SYSTEM</h1>
         
-        <button class="test-btn" onclick="testMethod1()">
-            MÉTODO 1: RegisterNUICallback
-        </button>
+        <div class="toggle-item" data-feature="godmod">
+            <span>GodMod</span>
+            <label class="toggle-switch">
+                <input type="checkbox">
+                <div class="toggle-bg"></div>
+                <div class="toggle-handle"></div>
+            </label>
+        </div>
         
-        <button class="test-btn" onclick="testMethod2()">
-            MÉTODO 2: Document.title
-        </button>
+        <div class="toggle-item" data-feature="heal">
+            <span>Heal</span>
+            <label class="toggle-switch">
+                <input type="checkbox">
+                <div class="toggle-bg"></div>
+                <div class="toggle-handle"></div>
+            </label>
+        </div>
         
-        <button class="test-btn" onclick="testMethod3()">
-            MÉTODO 3: LocalStorage
-        </button>
+        <div class="toggle-item" data-feature="suicide">
+            <span>Suicide</span>
+            <label class="toggle-switch">
+                <input type="checkbox">
+                <div class="toggle-bg"></div>
+                <div class="toggle-handle"></div>
+            </label>
+        </div>
         
-        <button class="test-btn" onclick="testMethod4()">
-            MÉTODO 4: Clique Aqui (Coordenadas)
-        </button>
+        <div class="toggle-item" data-feature="noclip">
+            <span>Noclip</span>
+            <label class="toggle-switch">
+                <input type="checkbox">
+                <div class="toggle-bg"></div>
+                <div class="toggle-handle"></div>
+            </label>
+        </div>
+        
+        <div class="toggle-item" data-feature="superjump">
+            <span>Super Jump</span>
+            <label class="toggle-switch">
+                <input type="checkbox">
+                <div class="toggle-bg"></div>
+                <div class="toggle-handle"></div>
+            </label>
+        </div>
         
         <div class="log" id="log">
-            <div class="log-entry log-info">Clique nos botões para testar...</div>
+            <div>Sistema carregado. Aguardando interação...</div>
         </div>
     </div>
     
     <script>
+        const container = document.getElementById('container');
         const logEl = document.getElementById('log');
         
-        function addLog(message, type = 'info') {
-            const entry = document.createElement('div');
-            entry.className = `log-entry log-${type}`;
-            entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
-            logEl.appendChild(entry);
+        function addLog(msg) {
+            const div = document.createElement('div');
+            div.textContent = `[${new Date().toLocaleTimeString()}] ${msg}`;
+            logEl.appendChild(div);
             logEl.scrollTop = logEl.scrollHeight;
-            
-            console.log(`%c${message}`, `color: ${type === 'success' ? '#00ff00' : type === 'error' ? '#ff0000' : '#00aaff'}`);
+            console.log(msg);
         }
         
-        // MÉTODO 1: RegisterNUICallback (fetch)
-        function testMethod1() {
-            addLog('MÉTODO 1: Enviando via fetch...', 'info');
+        // Função para calcular coordenadas RELATIVAS dos toggles
+        function getButtonPositions() {
+            const buttons = {};
+            const toggles = document.querySelectorAll('.toggle-switch');
             
-            fetch('https://miauapi/method1', {
+            toggles.forEach(toggle => {
+                const item = toggle.closest('.toggle-item');
+                const feature = item.getAttribute('data-feature');
+                const rect = toggle.getBoundingClientRect();
+                
+                // Coordenadas ABSOLUTAS na tela (0-1)
+                const x = (rect.left + rect.width / 2) / window.innerWidth;
+                const y = (rect.top + rect.height / 2) / window.innerHeight;
+                const width = rect.width / window.innerWidth;
+                const height = rect.height / window.innerHeight;
+                
+                buttons[feature] = { x, y, width, height };
+            });
+            
+            return buttons;
+        }
+        
+        // Envia coordenadas para o Lua
+        function sendButtonPositions() {
+            const positions = getButtonPositions();
+            
+            addLog('Enviando coordenadas para Lua...');
+            
+            fetch('https://miauapi/updateButtonPositions', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    test: 'method1',
-                    timestamp: Date.now()
-                })
+                body: JSON.stringify({ buttons: positions })
             })
-            .then(response => response.json())
-            .then(data => {
-                addLog('MÉTODO 1: ✓ SUCESSO! Recebeu resposta', 'success');
+            .then(() => {
+                addLog('✓ Coordenadas enviadas!');
             })
-            .catch(error => {
-                addLog('MÉTODO 1: ✗ FALHOU - ' + error.message, 'error');
+            .catch((error) => {
+                addLog('✗ Erro ao enviar: ' + error.message);
             });
         }
         
-        // MÉTODO 2: Document.title
-        function testMethod2() {
-            addLog('MÉTODO 2: Mudando document.title...', 'info');
+        // Dragging
+        let isDragging = false;
+        let startX, startY, initialX, initialY;
+        
+        container.addEventListener('mousedown', (e) => {
+            if (e.target.tagName === 'INPUT' || e.target.closest('.toggle-switch')) return;
             
-            try {
-                const data = `TEST|method2|${Date.now()}`;
-                document.title = data;
-                addLog('MÉTODO 2: ✓ Título alterado para: ' + data, 'success');
+            isDragging = true;
+            const rect = container.getBoundingClientRect();
+            startX = e.clientX - rect.left;
+            startY = e.clientY - rect.top;
+            initialX = rect.left;
+            initialY = rect.top;
+        });
+        
+        document.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            
+            const newX = e.clientX - startX;
+            const newY = e.clientY - startY;
+            
+            container.style.left = newX + 'px';
+            container.style.top = newY + 'px';
+            container.style.transform = 'none';
+        });
+        
+        document.addEventListener('mouseup', () => {
+            if (isDragging) {
+                isDragging = false;
+                addLog('Interface arrastada! Atualizando coordenadas...');
                 
-                // Também tenta enviar via fetch como fallback
-                fetch('https://miauapi/method2', {
+                // Notifica Lua sobre drag
+                fetch('https://miauapi/onDrag', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ title: data })
+                    body: JSON.stringify({})
                 }).catch(() => {});
                 
-                setTimeout(() => {
-                    document.title = 'TEST';
-                }, 200);
-            } catch(e) {
-                addLog('MÉTODO 2: ✗ FALHOU - ' + e.message, 'error');
+                // Envia novas coordenadas
+                setTimeout(sendButtonPositions, 100);
             }
-        }
+        });
         
-        // MÉTODO 3: LocalStorage
-        function testMethod3() {
-            addLog('MÉTODO 3: Salvando em localStorage...', 'info');
+        // Listener para mensagens do Lua
+        window.addEventListener('message', (event) => {
+            const data = event.data;
             
-            try {
-                const data = {
-                    method: 'method3',
-                    timestamp: Date.now()
-                };
-                
-                localStorage.setItem('miautest', JSON.stringify(data));
-                addLog('MÉTODO 3: ✓ Salvo no localStorage', 'success');
-                
-                // Verifica se salvou
-                const saved = localStorage.getItem('miautest');
-                addLog('MÉTODO 3: Valor salvo: ' + saved, 'info');
-                
-            } catch(e) {
-                addLog('MÉTODO 3: ✗ FALHOU - ' + e.message, 'error');
+            if (data.type === 'requestButtonPositions') {
+                addLog('Lua solicitou coordenadas');
+                sendButtonPositions();
             }
-        }
+            
+            if (data.type === 'updateToggle') {
+                addLog(`Atualizando ${data.feature}: ${data.active}`);
+                const item = document.querySelector(`[data-feature="${data.feature}"]`);
+                if (item) {
+                    const checkbox = item.querySelector('input[type="checkbox"]');
+                    checkbox.checked = data.active;
+                }
+            }
+        });
         
-        // MÉTODO 4: Coordenadas (apenas log, Lua detecta o clique)
-        function testMethod4() {
-            addLog('MÉTODO 4: Botão clicado! Lua deve detectar coordenadas', 'success');
-            addLog('MÉTODO 4: Verifique o console F8 do FiveM', 'info');
-        }
+        // Envia coordenadas ao carregar
+        setTimeout(() => {
+            addLog('Enviando coordenadas iniciais...');
+            sendButtonPositions();
+        }, 1000);
         
-        // Log inicial
-        addLog('Sistema carregado!', 'success');
-        addLog('Clique nos botões e veja o F8 do FiveM', 'info');
-        
-        console.log('%c🧪 TESTE INICIADO', 'color: #00ff00; font-size: 20px; font-weight: bold;');
+        addLog('Sistema carregado!');
     </script>
 </body>
 </html>
